@@ -1,5 +1,84 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model PaginationViewModel<UserViewModel>
+@{ 
+    List<UserViewModel> users = Model.Items.ToList();
 }
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-block text-center">MANAGE USER</h2>
+            </div>
+            <div class="w-100 pagination row mx-auto">
+                <!--Search and pagesize-->
+                <div class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12">
+                    <select class="mr-2 text-center" style="min-width:5rem;" id="pageSize" onchange="changePageSize(this)">
+                        @foreach (var item in Model.PageSizeItem)
+                        {
+                            if (Model.Pager.PageSize == item)
+                            {
+                                <option name="pageSize" selected value="@item">@item</option>
+                            }
+                            else
+                            {
+                                <option name="pageSize" value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                    @if (ViewBag.Search != null)
+                    {
+                        <input class="form-control col-11 bg-light text-body" type="search" value="@ViewBag.Search" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                    }
+                    else
+                    {
+                        <input class="form-control col-11 bg-light text-body" type="search" value="" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                    }
+                </div>
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover w-100 table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle">STT</th>
+                            <th class="pr-1 pl-1 align-middle">Họ và tên</th>
+                            <th class="pr-1 pl-1 align-middle">Chức vụ</th>
+                            <th class="p-0 align-middle">Số điện thoại</th>
+                            <th class="p-0 align-middle">Trạng thái</th>
+                            <th class="p-0 align-middle w-25">Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < users.Count; i++)
+                        {
+                            int stt = i + 1;
+                            string status = (users[i].IsAvalable) ? "Sẵn sàng" : "Không sẵn sàng";
+                            <tr>
+                                <td class="p-0 text-center">@stt</td>
+                                <td class="pr-1 pl-1">@users[i].FullName</td>
+                                <td class="pr-1 pl-1 text-center">@users[i].JobTitle</td>
+                                <td class="p-0 text-center">@users[i].PhoneNumber</td>
+                                <td class="p-0 text-center">@status</td>
+                                <td class="p-0 text-center w-25">
+                                    <a asp-controller="User" asp-action="Edit" class="btn btn-small btn--primary">Edit</a>
+                                    <a asp-controller="User" asp-action="Delete" class="btn btn-small btn--danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!--Footer of pagination-->
+                <div class="col-12 mt-2">
+                    <ul class="pagination col-12 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

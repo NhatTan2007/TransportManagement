@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.DbContexts;
 using TransportManagement.Entities;
+using TransportManagement.Services;
 
 namespace TransportManagement
 {
@@ -34,6 +35,7 @@ namespace TransportManagement
                 opt.EnableEndpointRouting = false; 
             });
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddTransient<IUserServices, UserServices>();
             services.AddDbContext<TransportDbContext>(opt =>
                 opt.UseSqlServer(_config.GetConnectionString("Dbconection")));
             services.AddIdentity<AppIdentityUser, AppIdentityRole>(opt =>
@@ -63,7 +65,10 @@ namespace TransportManagement
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{page?}/{pageSize?}/{search?}");
+                routes.MapRoute(
+                    name: "User",
+                    template: "{controller=User}/{action=Index}/{page?}/{pageSize?}/{search?}");
             });
         }
     }

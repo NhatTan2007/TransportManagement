@@ -7,3 +7,7 @@
 a{
     text-decoration-style: none;
 }
+
+.pagination .page-link{
+    padding: 7px 11px;
+}
