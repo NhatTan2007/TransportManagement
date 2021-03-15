@@ -1,0 +1,81 @@
+﻿@model CreateUserViewModel
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-block text-center">CREATE USER</h2>
+            </div>
+            <div class="form-group w-100">
+                <form action="" class="form-group w-100 row m-0">
+                    <div class="col-xl-8 col-lg-8 col-md-12">
+                        <div class="form-group mb-3">
+                            <label asp-for="UserName" class="control-label"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="FirstName" class="control-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="LastName" class="control-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="control-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="ConfirmPassword" class="control-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label for="expire_date">
+                                    Expire Date
+                                </label>
+                                <input id="expire_date"
+                                       name="expire_date"
+                                       type="text"
+                                       class="form-control validate"
+                                       data-large-mode="true" />
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label for="stock">
+                                    Units In Stock
+                                </label>
+                                <input id="stock"
+                                       name="stock"
+                                       type="text"
+                                       class="form-control validate"
+                                       required />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 mx-auto mb-4">
+                        <div class="tm-product-img-dummy mx-auto">
+                            <i class="fas fa-cloud-upload-alt tm-upload-icon"
+                               onclick="document.getElementById('fileInput').click();"></i>
+                        </div>
+                        <div class="custom-file mt-3 mb-3">
+                            <input id="fileInput" type="file" style="display:none;" />
+                            <input type="button"
+                                   class="btn btn-primary btn-block mx-auto"
+                                   value="UPLOAD PRODUCT IMAGE"
+                                   onclick="document.getElementById('fileInput').click();" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-block text-uppercase">Add Product Now</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
