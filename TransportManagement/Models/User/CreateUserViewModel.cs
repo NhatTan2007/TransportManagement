@@ -22,6 +22,7 @@ namespace TransportManagement.Models.User
         private bool _isAvailable;
         [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         [MaxLength(20, ErrorMessage = ("Độ dài tối đa của tên đăng nhập là 20"))]
+        [Display(Name = "Tên đăng nhập(Username)")]
         public string UserName { get => _userName; set => _userName = value; }
         [Required(ErrorMessage = "Tên không được để trống")]
         [MaxLength(20, ErrorMessage = ("Độ dài tối đa của tên là 20"))]

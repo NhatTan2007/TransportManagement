@@ -15,6 +15,8 @@ namespace TransportManagement.Entities
         private string _avatar;
         private bool _isActive;
         private bool _isAvailable;
+        private string _jobTitle;
+        private string _department;
         [Required]
         public string FirstName { get => _firstName; set => _firstName = value; }
         public string MiddleName { get => _middleName; set => _middleName = value; }
@@ -27,5 +29,7 @@ namespace TransportManagement.Entities
         [Required]
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
         public ICollection<DayJob> DayJobs { get; set; }
+        public string JobTitle { get => _jobTitle; set => _jobTitle = value; }
+        public string Department { get => _department; set => _department = value; }
     }
 }

@@ -336,18 +336,34 @@ thead {
 .btn-small {
   padding: 10px 24px;
 }
-.btn-primary {
-  color: #fff;
-  background-color: #f5a623;
-  border: 2px solid #f5a623;
-  font-size: 90%;
-  font-weight: 600;
+.btn--primary {
+    color: #fff;
+    background-color: #f5a623;
+    border: 2px solid #f5a623;
+    font-size: 90%;
+    font-weight: 600;
 }
-.btn-primary:active,
-.btn-primary:hover {
-  color: #f5a623;
-  background-color: transparent;
-  border: 2px solid #f5a623;
+
+    .btn--primary:active,
+    .btn--primary:hover {
+        color: #f5a623;
+        background-color: transparent;
+        border: 2px solid #f5a623;
+    }
+
+.btn--danger {
+    color: #fff;
+    background-color: #dc3545;
+    border: 2px solid #dc3545;
+    font-size: 90%;
+    font-weight: 600;
+}
+
+.btn--danger:active,
+.btn--danger:hover {
+    color: #dc3545;
+    background-color: transparent;
+    border: 2px solid #dc3545;
 }
 .custom-file-input {
   cursor: pointer;
@@ -422,7 +438,7 @@ input[type="checkbox"] {
   transition: all 0.1s linear;
 }
 input[type="checkbox"]:checked {
-  background: url(../img/check-mark.png) #394e64 center no-repeat;
+  background: url(../images/check-mark.png) #394e64 center no-repeat;
 }
 input[type="checkbox"]:focus {
   outline: 0 none;
@@ -478,7 +494,7 @@ input[type="checkbox"]:focus {
   -o-border-radius: 0;
   border-radius: 0;
   padding: 15px;
-  background: url(../img/arrow-down.png) 98% no-repeat #50657b;
+  background: url(../images/arrow-down.png) 98% no-repeat #50657b;
 }
 .custom-select:focus {
   outline: 0;
