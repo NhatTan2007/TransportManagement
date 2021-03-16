@@ -61,7 +61,6 @@ if (pageLinks.length > 0) {
 
 const notfication = document.getElementById("notification-response");
 if (notfication.innerHTML !== "") {
-    notfication.innerHTML +=
     setTimeout(function () { notfication.style.display = "none" }, 4000);
 }
 //make active

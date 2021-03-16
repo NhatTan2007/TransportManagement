@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Services;
+using TransportManagement.Services.ImplementServices;
+using TransportManagement.Services.IServices;
 
 namespace TransportManagement
 {
@@ -37,6 +39,7 @@ namespace TransportManagement
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddTransient<IUserServices, UserServices>();
             services.AddTransient<ILocationServices, LocationServices>();
+            services.AddTransient<IRouteServices, RouteServices>();
             services.AddDbContext<TransportDbContext>(opt =>
                 opt.UseSqlServer(_config.GetConnectionString("Dbconection")));
             services.AddIdentity<AppIdentityUser, AppIdentityRole>(opt =>
