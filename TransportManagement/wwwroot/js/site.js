@@ -15,11 +15,11 @@ let pathArr = path.split("/");
 
 function changePageSize(el) {
     if (path == "/") {
-        window.location.href = `/home/index/${defaultPage}/${el.value}`;
+        window.location.href = `/home/index?page${defaultPage}/${el.value}`;
     } else if (pathArr[2] == null) {
-        window.location.href = `${domain}/${pathArr[1]}/Index/${defaultPage}/${el.value}`;
+        window.location.href = `${domain}/${pathArr[1]}/Index?page=${defaultPage}&pageSize=${el.value}`;
     } else {
-        window.location.href = `${domain}/${pathArr[1]}/${pathArr[2]}/${defaultPage}/${el.value}`;
+        window.location.href = `${domain}/${pathArr[1]}/${pathArr[2]}?page=${defaultPage}&pageSize=${el.value}`;
     }
 }
 
@@ -27,11 +27,11 @@ function changePageSize(el) {
 
 function searchKeyWord(el) {
     if (path == "/") {
-        window.location.href = `/home/index/${defaultPage}/${defaultPageSize}/${el.value}`;
+        window.location.href = `/home/index/${defaultPage}?page=${defaultPageSize}&search=${el.value}`;
     } else if (pathArr[2] == null) {
-        window.location.href = `${domain}/${pathArr[1]}/Index/${defaultPage}/${defaultPageSize}/${el.value}`;
+        window.location.href = `${domain}/${pathArr[1]}/Index?page=${defaultPage}&pageSize=${defaultPageSize}&search=${el.value}`;
     } else {
-        window.location.href = `${domain}/${pathArr[1]}/${pathArr[2]}/${defaultPage}/${defaultPageSize}/${el.value}`;
+        window.location.href = `${domain}/${pathArr[1]}/${pathArr[2]}?page=${defaultPage}&pageSize=${defaultPageSize}&search=${el.value}`;
     }
 }
 
@@ -59,6 +59,11 @@ if (pageLinks.length > 0) {
     }
 }
 
+const notfication = document.getElementById("notification-response");
+if (notfication.innerHTML !== "") {
+    notfication.innerHTML +=
+    setTimeout(function () { notfication.style.display = "none" }, 4000);
+}
 //make active
 //function makeActive() {
 //    const navLinks = document.getElementsByClassName("nav-link");
@@ -73,4 +78,6 @@ if (pageLinks.length > 0) {
 //        }
 //    }
 //}
+
+//bootbox call
 

@@ -11,3 +11,10 @@ a{
 .pagination .page-link{
     padding: 7px 11px;
 }
+
+#notification-response{
+    position: absolute;
+    z-index: 999;
+    top: -55px;
+    right: 0;
+}

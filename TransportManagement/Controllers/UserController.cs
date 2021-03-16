@@ -86,10 +86,9 @@ namespace TransportManagement.Controllers
                     PhoneNumber = model.PhoneNumber,
                     Avatar = fileName
                 };
-                IdentityResult result = new IdentityResult();
                 try
                 {
-                    result = await _userManager.CreateAsync(newUser);
+                    var result = await _userManager.CreateAsync(newUser);
                     if (result.Succeeded)
                     {
                         if (model.Avatar != null)

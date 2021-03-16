@@ -1,0 +1,145 @@
+﻿@model PaginationViewModel<LocationViewModel>
+@{
+    List<LocationViewModel> locations = Model.Items.ToList();
+}
+
+@section Scripts{
+    <script>
+        function confirmDelete(id) {
+            bootbox.confirm({
+                size: "small",
+                message: "Bạn muốn xóa địa điểm này?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-dark pl-3 pr-3'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger pr-3 pl-3'
+                    }
+                },
+                callback: async function (result) {
+                    if (result) {
+                        window.location.href = `Location/Delete?locationId=${id}`;
+                        //await $.ajax({
+                        //    url: `Location/Delete?locationId=${id}`,
+                        //    method: 'GET',
+                        //    success: function (data) {
+                        //        window.location.reload();
+                        //    }
+                        //})
+                    }
+                }
+            })
+        }
+    </script>
+}
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-block text-center">QUẢN LÝ ĐỊA ĐIỂM</h2>
+            </div>
+            <div>
+                <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3" style="font-size: 1.3rem" data-toggle="modal" data-target="#createLocation"></i>
+            </div>
+            <div class="w-100 pagination row mx-auto">
+                <!--Search and pagesize-->
+                <div class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12">
+                    <select class="mr-2 text-center" style="min-width:5rem;" id="pageSize" onchange="changePageSize(this)">
+                        @foreach (var item in Model.PageSizeItem)
+                        {
+                            if (Model.Pager.PageSize == item)
+                            {
+                                <option name="pageSize" selected value="@item">@item</option>
+                            }
+                            else
+                            {
+                                <option name="pageSize" value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                    @if (ViewBag.Search != null)
+                    {
+                        <input class="form-control col-11 bg-light text-body" type="search" value="@ViewBag.Search" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                    }
+                    else
+                    {
+                        <input class="form-control col-11 bg-light text-body" type="search" value="" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                    }
+                </div>
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover w-100 table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle">STT</th>
+                            <th class="pr-1 pl-1 align-middle">Tên địa điểm</th>
+                            <th class="p-0 align-middle w-25">Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < locations.Count; i++)
+                        {
+                            int stt = i + 1;
+                            <tr>
+                                <td class="p-0 text-center">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">@locations[i].LocationName</td>
+                                <td class="p-0 text-center w-25">
+                                    <a asp-controller="Location" asp-action="Edit" class="btn-small btn--primary">Edit</a>
+                                    <a class="btn-small btn--danger delete-confirm" onclick="confirmDelete('@locations[i].LocationId')">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!--Footer of pagination-->
+                <div class="col-12 mt-2">
+                    <ul class="pagination col-12 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="createLocation" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo địa điểm mới</h5>
+            </div>
+            <form asp-controller="Location" asp-action="Create" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-12 p-0 mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                Tên địa điểm
+                            </span>
+                        </div>
+                        <input class="form-control" type="text" data-val="true" data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự" data-val-maxlength-max="200" data-val-required="Tên địa điểm không được để trống" id="LocationName" maxlength="200" name="LocationName">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

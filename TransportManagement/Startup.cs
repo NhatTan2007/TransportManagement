@@ -36,6 +36,7 @@ namespace TransportManagement
             });
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddTransient<IUserServices, UserServices>();
+            services.AddTransient<ILocationServices, LocationServices>();
             services.AddDbContext<TransportDbContext>(opt =>
                 opt.UseSqlServer(_config.GetConnectionString("Dbconection")));
             services.AddIdentity<AppIdentityUser, AppIdentityRole>(opt =>
@@ -65,10 +66,7 @@ namespace TransportManagement
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{page?}/{pageSize?}/{search?}");
-                routes.MapRoute(
-                    name: "User",
-                    template: "{controller=User}/{action=Index}/{page?}/{pageSize?}/{search?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
