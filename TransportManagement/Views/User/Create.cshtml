@@ -8,6 +8,7 @@
             </div>
             <div class="form-group w-100">
                 <form enctype="multipart/form-data" asp-controller="User" asp-action="Create" method="post" class="form-group w-100 row m-0">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="col-xl-9 col-lg-9 col-md-12">
                         <div class="form-group mb-3">
                             <label asp-for="UserName" class="control-label"></label>

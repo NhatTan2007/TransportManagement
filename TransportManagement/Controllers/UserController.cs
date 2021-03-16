@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.DbContexts;
@@ -17,14 +19,17 @@ namespace TransportManagement.Controllers
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly SignInManager<AppIdentityUser> _signInManager;
         private readonly IUserServices _userServices;
+        private readonly IWebHostEnvironment _webEnv;
 
         public UserController(UserManager<AppIdentityUser> userManager,
                                 SignInManager<AppIdentityUser> signInManager,
-                                    IUserServices userServices)
+                                    IUserServices userServices,
+                                        IWebHostEnvironment webEnv)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userServices = userServices;
+            _webEnv = webEnv;
         }
         public IActionResult Index(int page, int pageSize, string search)
         {
@@ -51,10 +56,23 @@ namespace TransportManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateUserViewModel model)
+        public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (ModelState.IsValid)
             {
+                string folderPath = Path.Combine(_webEnv.WebRootPath, "images", "account");
+                string fileName = String.Empty;
+                //Upload avatar if user using avatar
+                if (model.Avatar != null)
+                {
+                    fileName = $"{Guid.NewGuid()}_{model.Avatar.FileName}";
+                }
+                else
+                {
+                    fileName = "noavatar.png";
+                }
+                string filePath = Path.Combine(folderPath, fileName);
+                //Create new user
                 AppIdentityUser newUser = new AppIdentityUser()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -65,25 +83,42 @@ namespace TransportManagement.Controllers
                     UserName = model.UserName,
                     IsActive = model.IsActive,
                     IsAvailable = model.IsAvailable,
-                    PhoneNumber = model.PhoneNumber
+                    PhoneNumber = model.PhoneNumber,
+                    Avatar = fileName
                 };
-                if (model.Avatar != null)
+                IdentityResult result = new IdentityResult();
+                try
                 {
-                    newUser.Avatar = model.Avatar.FileName;
+                    result = await _userManager.CreateAsync(newUser);
+                    if (result.Succeeded)
+                    {
+                        if (model.Avatar != null)
+                        {
+                            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                            {
+                                try
+                                {
+                                    await model.Avatar.CopyToAsync(fs);
+                                }
+                                catch (Exception)
+                                {
+                                    return View(model);
+                                }
+                            }
+                        }
+                        return RedirectToAction("Index", controllerName: "Home"); //Nên tạo 1 trang thông báo success
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    newUser.Avatar = "noavatar.png";
+                    ModelState.AddModelError("", "Có lỗi xảy ra, xin mời liên hệ quản trị hệ thống");
+                    return View(model);
                 }
-                var result = Task.Run(async () => await _userManager.CreateAsync(newUser)).Result;
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", controllerName: "Home"); //Nên tạo 1 trang thông báo success
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+
             }
             return View(model);
         }

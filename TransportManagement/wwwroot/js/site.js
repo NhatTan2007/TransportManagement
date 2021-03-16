@@ -59,3 +59,18 @@ if (pageLinks.length > 0) {
     }
 }
 
+//make active
+//function makeActive() {
+//    const navLinks = document.getElementsByClassName("nav-link");
+//    const url = window.location.pathname;
+//    for (var i = 0; i < navLinks.length; i++) {
+//        if (url === navLinks[i]) {
+//            navLinks[i].classList.add("active");
+//            return
+//        }if (url !== "/" && url.indexOf(navLinks[i] !== -1)){
+//            navLinks[i].classList.add("active");
+//            return
+//        }
+//    }
+//}
+
