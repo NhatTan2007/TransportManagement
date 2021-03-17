@@ -49,6 +49,19 @@ namespace TransportManagement.Services
             }
         }
 
+        public async Task<bool> EditLocation(EditLocationViewModel model)
+        {
+            var location = GetLocation(model.LocationId);
+            if (location != null)
+            {
+                _context.Locations.Attach(location);
+                location.LocationName = model.LocationName;
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
+        }
+
         public ICollection<LocationViewModel> GetAllLocations()
         {
             return _context.Locations.Select(l => new LocationViewModel

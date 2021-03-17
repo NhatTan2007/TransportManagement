@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models;
 using TransportManagement.Models.Location;
@@ -55,7 +56,7 @@ namespace TransportManagement.Controllers
                 }
                 else
                 {
-                    var userMessage = new MessageVM() { CssClassName = "alert alert-error", Title = "Không thành công", Message = "Đã có lỗi khi thao tác, xin mời thử lại" };
+                    var userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Đã có lỗi khi thao tác, xin mời thử lại" };
                     TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
                 };
             }
@@ -72,10 +73,27 @@ namespace TransportManagement.Controllers
             }
             else
             {
-                var userMessage = new MessageVM() { CssClassName = "alert alert-success", Title = "Thành công", Message = "Đã có lỗi khi thao tác, xin mời thử lại" };
+                var userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Đã có lỗi khi thao tác, xin mời thử lại" };
                 TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
             }
             return RedirectToAction(actionName: "Index", controllerName: "Location");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditLocationViewModel model)
+        {
+            MessageVM userMessage = new MessageVM();
+            if (ModelState.IsValid)
+            {
+                if (await _locationServices.EditLocation(model))
+                {
+                    userMessage = new MessageVM() { CssClassName = "alert alert-success ", Title = "Thành công", Message = "Chỉnh sửa địa điểm thành công" };
+                    TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+                    return RedirectToAction(actionName: "Index");
+                }
+            }
+            userMessage = new MessageVM() { CssClassName = "alert alert-danger ", Title = "Không thành công", Message = "Thao tác thất bại, xin mời thử lại" };
+            TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+            return RedirectToAction(actionName: "Index");
         }
     }
 }

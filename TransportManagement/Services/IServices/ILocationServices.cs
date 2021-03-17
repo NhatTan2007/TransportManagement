@@ -16,5 +16,6 @@ namespace TransportManagement.Services
         public Task<bool> CreateLocation(Location newLocation);
         public Task<bool> DeleteLocation(Location location);
         public Location GetLocation(string locationId);
+        public Task<bool> EditLocation(EditLocationViewModel model);
     }
 }

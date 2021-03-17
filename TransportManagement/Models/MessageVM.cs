@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace TransportManagement.Models
 {
+    [Serializable]
     public class MessageVM
     {
         public string CssClassName { get; set; }

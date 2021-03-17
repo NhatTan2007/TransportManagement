@@ -1,6 +1,10 @@
 ﻿@model PaginationViewModel<LocationViewModel>
 @{
-    List<LocationViewModel> locations = Model.Items.ToList();
+    List<LocationViewModel> locations = new List<LocationViewModel>();
+    if (Model.Items != null)
+    {
+        locations = Model.Items.ToList();
+    }
 }
 
 @section Scripts{
@@ -22,16 +26,18 @@
                 callback: async function (result) {
                     if (result) {
                         window.location.href = `Location/Delete?locationId=${id}`;
-                        //await $.ajax({
-                        //    url: `Location/Delete?locationId=${id}`,
-                        //    method: 'GET',
-                        //    success: function (data) {
-                        //        window.location.reload();
-                        //    }
-                        //})
                     }
                 }
             })
+        }
+
+        const editModal = document.getElementById("editLocation");
+        const editLocaId = document.getElementById("LocationId");
+        const editLocaName = document.getElementById("editLocationName");
+        function editLocation({ target }) {
+            editLocaId.value = target.id;
+            editLocaName.value = target.innerText;
+            $("#editLocation").modal();;
         }
     </script>
 }
@@ -74,9 +80,9 @@
                 <table class="table table-bordered table-hover w-100 table-light">
                     <thead class="thead-light text-center text-uppercase">
                         <tr>
-                            <th class="p-0 align-middle">STT</th>
+                            <th class="p-0 align-middle" style="width: 50px">STT</th>
                             <th class="pr-1 pl-1 align-middle">Tên địa điểm</th>
-                            <th class="p-0 align-middle w-25">Chức năng</th>
+                            <th class="p-0 align-middle" style="width:50px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,11 +90,10 @@
                         {
                             int stt = i + 1;
                             <tr>
-                                <td class="p-0 text-center">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">@locations[i].LocationName</td>
-                                <td class="p-0 text-center w-25">
-                                    <a asp-controller="Location" asp-action="Edit" class="btn-small btn--primary">Edit</a>
-                                    <a class="btn-small btn--danger delete-confirm" onclick="confirmDelete('@locations[i].LocationId')">Delete</a>
+                                <td class="p-0 text-center" style="width: 50px">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3"><a class="text-decoration-none text-white edit-toggle" href="javascript:;" id="@locations[i].LocationId" onclick="editLocation(event)">@locations[i].LocationName</a></td>
+                                <td class="p-0 text-center" style="width: 50px">
+                                    <a class="delete-confirm" style="cursor: pointer; font-size: 1.3rem; color: #ff8383" onclick="confirmDelete('@locations[i].LocationId')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         }
@@ -97,14 +102,14 @@
                 <!--Footer of pagination-->
                 <div class="col-12 mt-2">
                     <ul class="pagination col-12 justify-content-center" id="pagination">
-                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
                         @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
                         {
-                            <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                            <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
                         }
-                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
                     </ul>
                 </div>
             </div>
@@ -124,14 +129,21 @@
             </div>
             <form asp-controller="Location" asp-action="Create" method="post">
                 <div class="modal-body">
-                    <div class="input-group col-12 p-0 mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                Tên địa điểm
-                            </span>
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 d-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    Tên địa điểm
+                                </span>
+                            </div>
+                            <input class="form-control" type="text"
+                                   data-val="true"
+                                   data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự"
+                                   data-val-maxlength-max="200"
+                                   data-val-required="Tên địa điểm không được để trống"
+                                   id="LocationName" maxlength="200" name="LocationName">
                         </div>
-                        <input class="form-control" type="text" data-val="true" data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự" data-val-maxlength-max="200" data-val-required="Tên địa điểm không được để trống" id="LocationName" maxlength="200" name="LocationName">
-                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                        <span class="text-danger field-validation-valid col-sm-12 mt-2" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="modal-footer pb-1 pt-1">
@@ -143,3 +155,47 @@
 
     </div>
 </div>
+
+<!-- Edit Modal -->
+<div id="editLocation" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa địa điểm</h5>
+            </div>
+            <form asp-controller="Location" asp-action="Edit" method="post">
+                <input type="hidden" name="LocationId" value="" id="LocationId"/>
+                <div class="modal-body">
+                    <div class="input-group col-12 p-0 mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                Tên địa điểm
+                            </span>
+                        </div>
+                        <input class="form-control" type="text" 
+                               data-val="true" 
+                               data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự" 
+                               data-val-maxlength-max="200" 
+                               data-val-required="Tên địa điểm không được để trống" 
+                               id="editLocationName" 
+                               maxlength="200" 
+                               name="LocationName">
+                        <span class="text-danger field-validation-valid" 
+                              data-valmsg-for="editLocationName" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    
+</script>

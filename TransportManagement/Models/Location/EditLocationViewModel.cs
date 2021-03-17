@@ -13,6 +13,7 @@ namespace TransportManagement.Models.Location
 
         public string LocationId { get => _locationId; set => _locationId = value; }
         [Required(ErrorMessage = "Tên địa điểm không được bỏ trống")]
+        [Display(Name = "Tên địa điểm")]
         public string LocationName { get => _locationName; set => _locationName = value; }
     }
 }
