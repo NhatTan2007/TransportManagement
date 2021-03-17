@@ -61,13 +61,20 @@ namespace TransportManagement.Services.ImplementServices
             //map new data to route
             if (arrivalPlace != null && departurePlace != null && routeEdit != null)
             {
-                _context.Attach(routeEdit);
-                routeEdit.DeparturePlaceId = departurePlace.LocationId;
-                routeEdit.DeparturePlace = departurePlace.LocationName;
-                routeEdit.ArrivalPlaceId = arrivalPlace.LocationId;
-                routeEdit.ArrivalPlace = arrivalPlace.LocationName;
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                try
+                {
+                    _context.Attach(routeEdit);
+                    routeEdit.DeparturePlaceId = departurePlace.LocationId;
+                    routeEdit.DeparturePlace = departurePlace.LocationName;
+                    routeEdit.ArrivalPlaceId = arrivalPlace.LocationId;
+                    routeEdit.ArrivalPlace = arrivalPlace.LocationName;
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return false;
         }

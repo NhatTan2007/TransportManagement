@@ -27,11 +27,11 @@ namespace TransportManagement.Controllers
         }
         public IActionResult Index(int page, int pageSize, string search)
         {
-            int countTotalUsers = _routeServices.CountRoutes();
+            int countTotalRoutes = _routeServices.CountRoutes();
             PaginationViewModel<RouteViewModel> model = new PaginationViewModel<RouteViewModel>();
             if (page == 0) page = 1;
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
-            model.Pager = new Pager(countTotalUsers, page, pageSize);
+            model.Pager = new Pager(countTotalRoutes, page, pageSize);
             if (String.IsNullOrEmpty(search))
             {
                 model.Items = _routeServices.GetAllRoutes(page, pageSize).ToList();

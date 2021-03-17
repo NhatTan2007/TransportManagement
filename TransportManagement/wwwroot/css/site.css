@@ -20,6 +20,41 @@ a{
     transition-duration: 1s; 
 }
 
+#home{
+    min-height: 100vh;
+}
+
 .select2-container{
     width: 100%!important;
+}
+
+.delete-confirm {
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #ff8383;
+}
+/* typical phone screen resolution */
+@media only screen and (max-width : 667px) {
+    .page-item {
+        margin-right: 5px;
+    }
+    .pagination .page-link {
+        padding: 5px;
+    }
+    table{
+        font-size: 80% !important;
+    }
+    .page-link{
+        font-size: 80%;
+    }
+    .nav-link{
+        justify-content: left;
+        padding-left: 10px!important;
+    }
+    .nav-link span {
+        font-size: 100% !important;
+    }
+    .delete-confirm{
+        font-size: 1.1rem;
+    }
 }

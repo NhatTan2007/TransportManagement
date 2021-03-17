@@ -635,6 +635,8 @@ input[type="checkbox"]:focus {
     background-color: #567086;
     padding: 15px;
     flex-direction: row;
+    justify-content: left;
+    padding-left: 10px!important;
   }
   .nav-link > i {
     font-size: 1rem;

@@ -4,54 +4,54 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models;
-using TransportManagement.Models.Location;
 using TransportManagement.Models.Pagination;
-using TransportManagement.Services;
+using TransportManagement.Models.VehicleBrand;
+using TransportManagement.Services.IServices;
 
 namespace TransportManagement.Controllers
 {
-    public class LocationController : Controller
+    public class VehicleBrandController : Controller
     {
-        private readonly ILocationServices _locationServices;
+        private readonly IVehicleBrandServices _brandServices;
 
-        public LocationController(ILocationServices locationServices)
+        public VehicleBrandController(IVehicleBrandServices brandServices)
         {
-            _locationServices = locationServices;
+            _brandServices = brandServices;
         }
         public IActionResult Index(int page, int pageSize, string search)
         {
-            int countTotalLocations = _locationServices.CountLocations();
-            PaginationViewModel<LocationViewModel> model = new PaginationViewModel<LocationViewModel>();
+            int countTotalLocations = _brandServices.CountBrands();
+            PaginationViewModel<VehicleBrandViewModel> model = new PaginationViewModel<VehicleBrandViewModel>();
             if (page == 0) page = 1;
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
             model.Pager = new Pager(countTotalLocations, page, pageSize);
             if (String.IsNullOrEmpty(search))
             {
-                model.Items = _locationServices.GetAllLocations(page, pageSize).ToList();
+                model.Items = _brandServices.GetAllBrands(page, pageSize).ToList();
             }
             else
             {
-                model.Items = _locationServices.GetAllLocations(page, pageSize, search).ToList();
+                model.Items = _brandServices.GetAllBrands(page, pageSize, search).ToList();
             }
             ViewBag.Search = search;
             return View(model);
         }
+
         [HttpPost]
-        public async Task<IActionResult> Create(CreateLocationViewModel model)
+        public async Task<IActionResult> Create(CreateVehicleBrandViewModel model)
         {
             if (ModelState.IsValid)
             {
-                Location newLocation = new Location()
+                VehicleBrand newBrand = new VehicleBrand()
                 {
-                    LocationId = Guid.NewGuid().ToString(),
-                    LocationName = model.LocationName
+                    BrandId = Guid.NewGuid().ToString(),
+                    BrandName = model.BrandName
                 };
-                if (await _locationServices.CreateLocation(newLocation)) 
+                if (await _brandServices.CreateBrand(newBrand))
                 {
-                    var userMessage = new MessageVM() { CssClassName = "alert alert-success", Title = "Thành công", Message = "Tạo địa điểm mới thành công" };
+                    var userMessage = new MessageVM() { CssClassName = "alert alert-success", Title = "Thành công", Message = "Tạo nhãn hiệu mới thành công" };
                     TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
                 }
                 else
@@ -60,15 +60,15 @@ namespace TransportManagement.Controllers
                     TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
                 };
             }
-            return RedirectToAction(actionName: "Index", controllerName: "Location");
+            return RedirectToAction(actionName: "Index");
         }
 
-        public async Task<IActionResult> Delete(string locationId)
+        public async Task<IActionResult> Delete(string brandId)
         {
-            var locationDel = _locationServices.GetLocation(locationId);
-            if (await _locationServices.DeleteLocation(locationDel))
+            var brandDel = _brandServices.GetBrand(brandId);
+            if (await _brandServices.DeleteBrand(brandDel))
             {
-                var userMessage = new MessageVM() { CssClassName = "alert alert-success ", Title = "Thành công", Message = "Đã xóa địa điểm thành công" };
+                var userMessage = new MessageVM() { CssClassName = "alert alert-success ", Title = "Thành công", Message = "Đã xóa nhãn hiệu thành công" };
                 TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
             }
             else
@@ -76,15 +76,15 @@ namespace TransportManagement.Controllers
                 var userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Đã có lỗi khi thao tác, xin mời thử lại" };
                 TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
             }
-            return RedirectToAction(actionName: "Index", controllerName: "Location");
+            return RedirectToAction(actionName: "Index");
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(EditLocationViewModel model)
+        public async Task<IActionResult> Edit(EditVehicleBrandViewModel model)
         {
             MessageVM userMessage = new MessageVM();
             if (ModelState.IsValid)
             {
-                if (await _locationServices.EditLocation(model))
+                if (await _brandServices.EditBrand(model))
                 {
                     userMessage = new MessageVM() { CssClassName = "alert alert-success ", Title = "Thành công", Message = "Chỉnh sửa địa điểm thành công" };
                     TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);

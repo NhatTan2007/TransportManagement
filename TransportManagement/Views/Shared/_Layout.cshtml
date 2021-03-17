@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Product Admin - Dashboard HTML Template</title>
+    <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
     <!-- https://fonts.google.com/specimen/Roboto -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
@@ -23,7 +23,7 @@
     <!-- https://select2.org -->
     <link rel="stylesheet" href="~/css/templatemo-style.css">
     <!-- template layout CSS-->
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css"/>
 </head>
 
 <body id="reportsPage">
@@ -99,7 +99,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-controller="Route" asp-action="Index">Quản lý phương tiện</a>
-                                <a class="dropdown-item" asp-controller="Location" asp-action="Index">Quản lý loại</a>
+                                <a class="dropdown-item" asp-controller="VehicleBrand" asp-action="Index">Quản lý hiệu xe</a>
 
                             </div>
                         </li>
@@ -469,7 +469,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="~/js/site.js"></script>
+    <script src="~/scripts/site.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

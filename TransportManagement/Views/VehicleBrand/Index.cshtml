@@ -1,10 +1,11 @@
-﻿@model PaginationViewModel<LocationViewModel>
+﻿@model PaginationViewModel<VehicleBrandViewModel>
 @{
-    List<LocationViewModel> locations = new List<LocationViewModel>();
+    List<VehicleBrandViewModel> brands = new List<VehicleBrandViewModel>();
     if (Model.Items != null)
     {
-        locations = Model.Items.ToList();
+        brands = Model.Items.ToList();
     }
+    ViewBag.Title = "Quản lý nhãn hiệu phương tiện vận tải"
 }
 
 @section Scripts{
@@ -12,7 +13,7 @@
         function confirmDelete(id) {
             bootbox.confirm({
                 size: "small",
-                message: "Bạn muốn xóa địa điểm này?",
+                message: "Bạn muốn nhãn hiệu này?",
                 buttons: {
                     cancel: {
                         label: 'Không',
@@ -25,19 +26,19 @@
                 },
                 callback: async function (result) {
                     if (result) {
-                        window.location.href = `Location/Delete?locationId=${id}`;
+                        window.location.href = `VehicleBrand/Delete?brandId=${id}`;
                     }
                 }
             })
         }
 
-        const editModal = document.getElementById("editLocation");
-        const editLocaId = document.getElementById("LocationId");
-        const editLocaName = document.getElementById("editLocationName");
-        function editLocation({ target }) {
-            editLocaId.value = target.id;
-            editLocaName.value = target.innerText;
-            $("#editLocation").modal();
+        const editModal = document.getElementById("editBrand");
+        const editBrandId = document.getElementById("BrandId");
+        const editBrandName = document.getElementById("editBrandName");
+        function editBrand({ target }) {
+            editBrandId.value = target.id;
+            editBrandName.value = target.innerText;
+            $("#editBrand").modal();
         }
     </script>
 }
@@ -46,10 +47,13 @@
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-12">
-                <h2 class="tm-block-title d-block text-center">QUẢN LÝ ĐỊA ĐIỂM</h2>
+                <h2 class="tm-block-title d-block text-center">QUẢN LÝ NHÃN HIỆU PHƯƠNG TIỆN</h2>
             </div>
             <div>
-                <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3" style="font-size: 1.3rem" data-toggle="modal" data-target="#createLocation"></i>
+                <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3" 
+                   style="font-size: 1.3rem" 
+                   data-toggle="modal" 
+                   data-target="#createBrand"></i>
             </div>
             <div class="w-100 pagination row mx-auto">
                 <!--Search and pagesize-->
@@ -86,19 +90,28 @@
                     <thead class="thead-light text-center text-uppercase">
                         <tr>
                             <th class="p-0 align-middle" style="width: 50px">STT</th>
-                            <th class="pr-1 pl-1 align-middle">Tên địa điểm</th>
+                            <th class="pr-1 pl-1 align-middle">Tên nhãn hiệu</th>
                             <th class="p-0 align-middle" style="width:50px"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < locations.Count; i++)
+                        @for (int i = 0; i < brands.Count; i++)
                         {
                             int stt = i + 1;
                             <tr>
                                 <td class="p-0 text-center" style="width: 50px">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3"><a class="text-decoration-none text-white edit-toggle" href="javascript:;" id="@locations[i].LocationId" onclick="editLocation(event)">@locations[i].LocationName</a></td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    <a class="text-decoration-none text-white edit-toggle" 
+                                       href="javascript:;" id="@brands[i].BrandId" 
+                                       onclick="editBrand(event)">
+                                        @brands[i].BrandName
+                                    </a>
+                                </td>
                                 <td class="p-0 text-center" style="width: 50px">
-                                    <a class="delete-confirm" onclick="confirmDelete('@locations[i].LocationId')"><i class="fas fa-trash"></i></a>
+                                    <a class="delete-confirm" 
+                                       onclick="confirmDelete('@brands[i].BrandId')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -107,14 +120,14 @@
                 <!--Footer of pagination-->
                 <div class="col-12 mt-2">
                     <ul class="pagination col-12 justify-content-center" id="pagination">
-                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="VehicleBrand" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="VehicleBrand" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
                         @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
                         {
-                            <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                            <li class="page-item"><a class="page-link" asp-controller="VehicleBrand" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
                         }
-                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="VehicleBrand" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="VehicleBrand" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
                     </ul>
                 </div>
             </div>
@@ -124,31 +137,31 @@
 
 
 <!-- Modal -->
-<div id="createLocation" class="modal fade" role="dialog">
+<div id="createBrand" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tạo địa điểm mới</h5>
+                <h5 class="modal-title">Tạo nhãn hiệu mới</h5>
             </div>
-            <form asp-controller="Location" asp-action="Create" method="post">
+            <form asp-controller="VehicleBrand" asp-action="Create" method="post">
                 <div class="modal-body">
                     <div class="input-group col-sm-12 p-0 mb-2">
                         <div class="col-sm-12 d-flex flex-nowrap">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
-                                    Tên địa điểm
+                                    Tên nhãn hiệu
                                 </span>
                             </div>
                             <input class="form-control" type="text"
                                    data-val="true"
-                                   data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự"
-                                   data-val-maxlength-max="200"
+                                   data-val-maxlength="Độ dài tối đa cho phép là 30 ký tự"
+                                   data-val-maxlength-max="30"
                                    data-val-required="Tên địa điểm không được để trống"
-                                   id="LocationName" maxlength="200" name="LocationName">
+                                   id="BrandName" maxlength="30" name="BrandName">
                         </div>
-                        <span class="text-danger field-validation-valid col-sm-12 mt-2" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                        <span class="text-danger field-validation-valid col-sm-12 mt-2" data-valmsg-for="BrandName" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="modal-footer pb-1 pt-1">
@@ -162,33 +175,33 @@
 </div>
 
 <!-- Edit Modal -->
-<div id="editLocation" class="modal fade" role="dialog">
+<div id="editBrand" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Chỉnh sửa địa điểm</h5>
+                <h5 class="modal-title">Chỉnh sửa nhãn hiệu</h5>
             </div>
-            <form asp-controller="Location" asp-action="Edit" method="post">
-                <input type="hidden" name="LocationId" value="" id="LocationId"/>
+            <form asp-controller="VehicleBrand" asp-action="Edit" method="post">
+                <input type="hidden" name="BrandId" value="" id="BrandId" />
                 <div class="modal-body">
                     <div class="input-group col-12 p-0 mb-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
-                                Tên địa điểm
+                                Tên nhãn hiệu
                             </span>
                         </div>
-                        <input class="form-control" type="text" 
-                               data-val="true" 
-                               data-val-maxlength="Độ dài tối đa cho phép là 200 ký tự" 
-                               data-val-maxlength-max="200" 
-                               data-val-required="Tên địa điểm không được để trống" 
-                               id="editLocationName" 
-                               maxlength="200" 
-                               name="LocationName">
-                        <span class="text-danger field-validation-valid" 
-                              data-valmsg-for="editLocationName" data-valmsg-replace="true"></span>
+                        <input class="form-control" type="text"
+                               data-val="true"
+                               data-val-maxlength="Độ dài tối đa cho phép là 30 ký tự"
+                               data-val-maxlength-max="30"
+                               data-val-required="Tên nhãn hiệu không được để trống"
+                               id="editBrandName"
+                               maxlength="30"
+                               name="BrandName">
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="editBrandName" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="modal-footer pb-1 pt-1">
@@ -202,5 +215,5 @@
 </div>
 
 <script>
-    
+
 </script>

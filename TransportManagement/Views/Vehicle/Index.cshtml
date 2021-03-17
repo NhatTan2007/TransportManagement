@@ -134,12 +134,12 @@
                                 </td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3">
                                     <span hidden>@routes[i].ArrivalPlaceId</span>
-                                    <a class="text-white" 
+                                    <a class="text-white"
                                        onclick="editRoute(event)"
                                        href="javascript:;">@routes[i].ArrivalPlace</a>
                                 </td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center">
-                                    <a class="text-white" style="width: 150px" 
+                                    <a class="text-white" style="width: 150px"
                                        onclick="editRoute(event)"
                                        href="javascript:;">@routes[i].Distance</a>
                                 </td>
@@ -186,9 +186,9 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="DeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm xuất phát không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm xuất phát không được để trống"
                                     id="DeparturePlaceId" name="DeparturePlaceId">
                                 @if (locations.Count > 0)
                                 {
@@ -203,9 +203,9 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="ArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm đến không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm đến không được để trống"
                                     id="ArrivalPlaceId" name="ArrivalPlaceId">
                                 @if (locations.Count > 0)
                                 {
@@ -220,18 +220,18 @@
                     <div class="form-group">
                         <div class="w-100">
                             <label class="control-label text-dark" for="Distance">Chiều dài tuyến đường</label>
-                            <input class="form-control w-100" 
-                                   type="number" 
-                                   data-val="true" 
-                                   data-val-range="Giá trị không đúng, xin mời nhập lại" 
-                                   data-val-range-max="2147483647" 
-                                   data-val-range-min="0.1" 
-                                   data-val-required="Chiều dài tuyến đường không được để trống" 
+                            <input class="form-control w-100"
+                                   type="number"
+                                   data-val="true"
+                                   data-val-range="Giá trị không đúng, xin mời nhập lại"
+                                   data-val-range-max="2147483647"
+                                   data-val-range-min="0.1"
+                                   data-val-required="Chiều dài tuyến đường không được để trống"
                                    id="Distance" name="Distance" value="">
                         </div>
                         <div class="w-100 d-flex mt-2">
-                            <span class="text-danger field-validation-valid" 
-                                  data-valmsg-for="Distance" 
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Distance"
                                   data-valmsg-replace="true"></span>
                         </div>
 
@@ -261,11 +261,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div>
-                            <label class="control-label text-dark d-block" 
+                            <label class="control-label text-dark d-block"
                                    for="editDeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm xuất phát không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm xuất phát không được để trống"
                                     id="editDeparturePlaceId" name="DeparturePlaceId">
                                 @if (locations.Count > 0)
                                 {
@@ -280,9 +280,9 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="editArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm đến không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm đến không được để trống"
                                     id="editArrivalPlaceId" name="ArrivalPlaceId">
                                 @if (locations.Count > 0)
                                 {
@@ -297,17 +297,17 @@
                     <div class="form-group">
                         <div class="w-100">
                             <label class="control-label text-dark" for="Distance">Chiều dài tuyến đường</label>
-                            <input class="form-control w-100" type="number" 
-                                   data-val="true" data-val-range="Giá trị không đúng, xin mời nhập lại" 
-                                   data-val-range-max="2147483647" 
-                                   data-val-range-min="0.1" 
-                                   data-val-required="Chiều dài tuyến đường không được để trống" 
+                            <input class="form-control w-100" type="number"
+                                   data-val="true" data-val-range="Giá trị không đúng, xin mời nhập lại"
+                                   data-val-range-max="2147483647"
+                                   data-val-range-min="0.1"
+                                   data-val-required="Chiều dài tuyến đường không được để trống"
                                    id="editDistance" name="Distance" value="">
                         </div>
                         <div class="w-100 d-flex mt-2">
                             <label class="control-label text-dark w-25" for="editDistance"></label>
-                            <span class="text-danger field-validation-valid" 
-                                  data-valmsg-for="Distance" 
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Distance"
                                   data-valmsg-replace="true"></span>
                         </div>
 

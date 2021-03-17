@@ -25,7 +25,7 @@ function changePageSize(el) {
 
 //Search function
 
-function searchKeyWord(el) {
+function searchKeyword(el) {
     if (path == "/") {
         window.location.href = `/home/index/${defaultPage}?page=${defaultPageSize}&search=${el.value}`;
     } else if (pathArr[2] == null) {

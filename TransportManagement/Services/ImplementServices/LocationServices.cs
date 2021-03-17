@@ -54,10 +54,17 @@ namespace TransportManagement.Services
             var location = GetLocation(model.LocationId);
             if (location != null)
             {
-                _context.Locations.Attach(location);
-                location.LocationName = model.LocationName;
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                try
+                {
+                    _context.Locations.Attach(location);
+                    location.LocationName = model.LocationName;
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return false;
         }
