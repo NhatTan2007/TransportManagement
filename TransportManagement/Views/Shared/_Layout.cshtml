@@ -63,29 +63,43 @@
                             </div>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="~/User" id="navbarDropdown" role="button" data-toggle="dropdown"
+                            <a class="nav-link dropdown-toggle" asp-action="Index" asp-controller="User" id="navbarDropdown" role="button" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-users"></i>
                                 <span>
-                                    Users <i class="fas fa-angle-down"></i>
+                                    Tài khoản <i class="fas fa-angle-down"></i>
                                 </span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="~/User">Manage users</a>
-                                <a class="dropdown-item" asp-controller="User" asp-action="Create">Create user</a>
+                                <a class="dropdown-item" href="~/User">Quản lý tài khoản</a>
+                                <a class="dropdown-item" asp-controller="User" asp-action="Create">Tạo mới tài khoản</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" asp-controller="Route" asp-action="Index" id="navbarDropdown" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-route"></i>
+                                <span>
+                                    Tuyến đường <i class="fas fa-angle-down"></i>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Route" asp-action="Index">Quản lý tuyến đường</a>
+                                <a class="dropdown-item" asp-controller="Location" asp-action="Index">Quản lý địa điểm</a>
+
                             </div>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" asp-controller="User" asp-action="Index" id="navbarDropdown" role="button" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-users"></i>
+                                <i class="fas fa-truck-moving"></i>
                                 <span>
-                                    Routes <i class="fas fa-angle-down"></i>
+                                    Phương tiện <i class="fas fa-angle-down"></i>
                                 </span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Route" asp-action="Index">Manage routes</a>
-                                <a class="dropdown-item" asp-controller="Location" asp-action="Index">Manage locations</a>
+                                <a class="dropdown-item" asp-controller="Route" asp-action="Index">Quản lý phương tiện</a>
+                                <a class="dropdown-item" asp-controller="Location" asp-action="Index">Quản lý loại</a>
 
                             </div>
                         </li>
