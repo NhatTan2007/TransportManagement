@@ -16,5 +16,7 @@ namespace TransportManagement.Services.IServices
         public Task<bool> CreateRoute(RouteInformation newRoute);
         public Task<bool> DeleteRoute(RouteInformation route);
         public RouteInformation GetRoute(string routeId);
+        public bool IsRouteExists(string departureId, string arrivalId);
+        public Task<bool> EditRoute(EditRouteViewModel model);
     }
 }

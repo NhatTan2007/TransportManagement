@@ -62,7 +62,10 @@ if (pageLinks.length > 0) {
 const notfication = document.getElementById("notification-response");
 if (notfication != null) {
     if (notfication.innerHTML !== "") {
-        setTimeout(function () { notfication.style.display = "none" }, 4000);
+        setTimeout(function () {
+            notfication.style.opacity = "0";
+            setTimeout(function () { notfication.style.display = "none" }, 1500);
+        }, 3000);
     }
 }
 //make active

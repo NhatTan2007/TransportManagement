@@ -6,7 +6,7 @@
     {
         routes = Model.Items.ToList();
     }
-    if(ViewBag.Locations != null)
+    if (ViewBag.Locations != null)
     {
         locations = ViewBag.Locations as List<LocationViewModel>;
     }
@@ -46,6 +46,26 @@
         $(document).ready(function () {
             $('.js-select2-single').select2();
         });
+
+        const editModal = document.getElementById("editRoute");
+        const editRouteId = document.getElementById("editRouteId");
+        const editRouteDepartureId = document.getElementById("editDeparturePlaceId");
+        const editRouteArrivalId = document.getElementById("editArrivalPlaceId");
+        const editRouteDistance = document.getElementById("editDistance");
+        function editRoute({ target }) {
+            let parentTarget = target.parentElement.parentElement;
+            let children = parentTarget.children;
+            //get arrivalId & departureId
+            let departureId = children[1].firstElementChild.innerText;
+            let arrivalId = children[2].firstElementChild.innerText;
+            //set Id
+            editRouteId.value = parentTarget.id;
+            //set Route with current information
+            editRouteDistance.value = children[3].innerText;
+            $('#editDeparturePlaceId').val(`${departureId}`).trigger('change');
+            $('#editArrivalPlaceId').val(`${arrivalId}`).trigger('change');
+            $("#editRoute").modal();;
+        }
     </script>
 }
 
@@ -91,22 +111,36 @@
                             <th class="p-0 align-middle">STT</th>
                             <th class="pr-1 pl-1 align-middle">Địa điểm xuất phát</th>
                             <th class="pr-1 pl-1 align-middle">Địa điểm đến</th>
-                            <th class="pr-1 pl-1 align-middle">Chiều dài tuyến đường</th>
-                            <th class="p-0 align-middle w-25">Chức năng</th>
+                            <th class="pr-1 pl-1 align-middle" style="width: 150px">Chiều dài tuyến đường</th>
+                            <th class="p-0 align-middle" style="width: 50px"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @for (int i = 0; i < routes.Count; i++)
                         {
                             int stt = i + 1;
-                            <tr>
+                            <tr id="@routes[i].RouteId">
                                 <td class="p-0 text-center">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">@routes[i].DeparturePlace</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">@routes[i].ArrivalPlace</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center">@routes[i].Distance</td>
-                                <td class="p-0 text-center w-25">
-                                    <a asp-controller="Location" asp-action="Edit" class="btn-small btn--primary">Edit</a>
-                                    <a class="btn-small btn--danger delete-confirm" onclick="confirmDelete('@routes[i].RouteId')">Delete</a>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    <span hidden>@routes[i].DeparturePlaceId</span>
+                                    <a style="cursor: pointer; text-decoration: none"
+                                       onclick="editRoute(event)">@routes[i].DeparturePlace</a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    <span hidden>@routes[i].ArrivalPlaceId</span>
+                                    <a style="cursor: pointer; text-decoration: none" 
+                                       onclick="editRoute(event)">@routes[i].ArrivalPlace</a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center">
+                                    <a style="cursor: pointer; text-decoration: none; width: 150px" 
+                                       onclick="editRoute(event)">@routes[i].Distance</a>
+                                </td>
+                                <td class="p-0 text-center" style="width: 50px">
+                                    <a class="delete-confirm"
+                                       style="cursor: pointer; font-size: 1.3rem; color: #ff8383"
+                                       onclick="confirmDelete('@routes[i].RouteId')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -145,7 +179,10 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="DeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error" type="text" data-val="true" data-val-required="Địa điểm xuất phát không được để trống" id="DeparturePlaceId" name="DeparturePlaceId">
+                            <select class="js-select2-single form-control input-validation-error" 
+                                    type="text" data-val="true" 
+                                    data-val-required="Địa điểm xuất phát không được để trống" 
+                                    id="DeparturePlaceId" name="DeparturePlaceId">
                                 @if (locations.Count > 0)
                                 {
                                     foreach (var loca in locations)
@@ -159,7 +196,10 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="ArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error" type="text" data-val="true" data-val-required="Địa điểm đến không được để trống" id="ArrivalPlaceId" name="ArrivalPlaceId">
+                            <select class="js-select2-single form-control input-validation-error" 
+                                    type="text" data-val="true" 
+                                    data-val-required="Địa điểm đến không được để trống" 
+                                    id="ArrivalPlaceId" name="ArrivalPlaceId">
                                 @if (locations.Count > 0)
                                 {
                                     foreach (var loca in locations)
@@ -179,7 +219,83 @@
                             <label class="control-label text-dark w-25" for="Distance"></label>
                             <span class="text-danger field-validation-valid" data-valmsg-for="Distance" data-valmsg-replace="true"></span>
                         </div>
-                        
+
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!--Edit Modal -->
+<div id="editRoute" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Điều chỉnh tuyến đường vận chuyển</h5>
+            </div>
+            <form asp-controller="Route" asp-action="Edit" method="post">
+                <input id="editRouteId" type="hidden" name="RouteId" value="" />
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label class="control-label text-dark d-block" 
+                                   for="editDeparturePlaceId">Địa điểm xuất phát</label>
+                            <select class="js-select2-single form-control input-validation-error" 
+                                    type="text" data-val="true" 
+                                    data-val-required="Địa điểm xuất phát không được để trống" 
+                                    id="editDeparturePlaceId" name="DeparturePlaceId">
+                                @if (locations.Count > 0)
+                                {
+                                    foreach (var loca in locations)
+                                    {
+                                        <option value="@loca.LocationId">@loca.LocationName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <label class="control-label text-dark w-25" for="editArrivalPlaceId">Địa điểm đến</label>
+                            <select class="js-select2-single form-control input-validation-error" 
+                                    type="text" data-val="true" 
+                                    data-val-required="Địa điểm đến không được để trống" 
+                                    id="editArrivalPlaceId" name="ArrivalPlaceId">
+                                @if (locations.Count > 0)
+                                {
+                                    foreach (var loca in locations)
+                                    {
+                                        <option value="@loca.LocationId">@loca.LocationName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="w-100">
+                            <label class="control-label text-dark" for="Distance">Chiều dài tuyến đường</label>
+                            <input class="form-control w-100" type="number" 
+                                   data-val="true" data-val-range="Giá trị không đúng, xin mời nhập lại" 
+                                   data-val-range-max="2147483647" 
+                                   data-val-range-min="0.1" 
+                                   data-val-required="Chiều dài tuyến đường không được để trống" 
+                                   id="editDistance" name="Distance" value="">
+                        </div>
+                        <div class="w-100 d-flex mt-2">
+                            <label class="control-label text-dark w-25" for="editDistance"></label>
+                            <span class="text-danger field-validation-valid" 
+                                  data-valmsg-for="Distance" 
+                                  data-valmsg-replace="true"></span>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer pb-1 pt-1">

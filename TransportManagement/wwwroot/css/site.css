@@ -17,5 +17,9 @@ a{
     z-index: 999;
     top: -55px;
     right: 0;
-    transition-duration: 2s; 
+    transition-duration: 1s; 
+}
+
+.select2-container{
+    width: 100%!important;
 }

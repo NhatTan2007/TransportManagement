@@ -10,6 +10,7 @@ using TransportManagement.Models.Pagination;
 using TransportManagement.Models.Route;
 using TransportManagement.Services;
 using TransportManagement.Services.IServices;
+using TransportManagement.Utilities;
 
 namespace TransportManagement.Controllers
 {
@@ -48,19 +49,25 @@ namespace TransportManagement.Controllers
         }
         public async Task<IActionResult> Create(CreateRouteViewModel model)
         {
-            var userMessage = new MessageVM();
+            string message = String.Empty;
             if (ModelState.IsValid)
             {
                 if (model.ArrivalPlaceId == model.DeparturePlaceId)
                 {
-                    userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Địa điểm xuất phát và địa điểm đến không được trùng nhau" };
-                    TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+                    message = "Địa điểm xuất phát và địa điểm đến không được trùng nhau";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
                     return RedirectToAction(actionName: "Index");
                 }
                 if (model.Distance <= 0)
                 {
-                    userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Chiều dài tuyến đường phải lớn hơn 0" };
-                    TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+                    message = "Chiều dài tuyến đường phải lớn hơn 0";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return RedirectToAction(actionName: "Index");
+                }
+                if (_routeServices.IsRouteExists(departureId: model.DeparturePlaceId, arrivalId: model.ArrivalPlaceId))
+                {
+                    message = "Đã tồn tại tuyến đường vận chuyển này";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
                     return RedirectToAction(actionName: "Index");
                 }
                 var arrivalPlace = _locationServices.GetLocation(model.ArrivalPlaceId);
@@ -76,31 +83,47 @@ namespace TransportManagement.Controllers
                 };
                 if (await _routeServices.CreateRoute(newRoute))
                 {
-                    userMessage = new MessageVM() { CssClassName = "alert alert-success", Title = "Thành công", Message = "Tuyến vận chuyển mới được tạo thành công" };
-                    TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+                    message = "Tuyến vận chuyển được tạo thành công";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }
             }
-            userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Lỗi không xác định, xin mời thao tác lại" };
-            TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return RedirectToAction(actionName: "Index");
         }
 
         public async Task<IActionResult> Delete(string routeId)
         {
+            string message = String.Empty;
             var userMessage = new MessageVM();
             var routeDel = _routeServices.GetRoute(routeId);
             if (routeDel != null)
             {
                 if (await _routeServices.DeleteRoute(routeDel))
                 {
-                    userMessage = new MessageVM() { CssClassName = "alert alert-success", Title = "Thành công", Message = "Tuyến vận chuyển đã được xóa" };
-                    TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+                    message = "Tuyến vận chuyển đã được xóa";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }
             }
-            userMessage = new MessageVM() { CssClassName = "alert alert-danger", Title = "Không thành công", Message = "Lỗi không xác định, xin mời thao tác lại" };
-            TempData["UserMessage"] = JsonConvert.SerializeObject(userMessage);
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Index");
+        }
+
+        public async Task<IActionResult> Edit(EditRouteViewModel model)
+        {
+            string message = String.Empty;
+            var userMessage = new MessageVM();
+            if (await _routeServices.EditRoute(model))
+            {
+                message = "Tuyến vận chuyển đã điều chỉnh thông tin";
+                TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                return RedirectToAction(actionName: "Index");
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return RedirectToAction(actionName: "Index");
         }
     }

@@ -12,10 +12,13 @@ namespace TransportManagement.Services.ImplementServices
     public class RouteServices : IRouteServices
     {
         private readonly TransportDbContext _context;
+        private readonly ILocationServices _locationServices;
 
-        public RouteServices(TransportDbContext context)
+        public RouteServices(TransportDbContext context,
+                                ILocationServices locationServices)
         {
             _context = context;
+            _locationServices = locationServices;
         }
         public int CountRoutes()
         {
@@ -48,6 +51,25 @@ namespace TransportManagement.Services.ImplementServices
             {
                 return false;
             }
+        }
+
+        public async Task<bool> EditRoute(EditRouteViewModel model)
+        {
+            var arrivalPlace = _locationServices.GetLocation(model.ArrivalPlaceId);
+            var departurePlace = _locationServices.GetLocation(model.DeparturePlaceId);
+            var routeEdit = GetRoute(model.RouteId);
+            //map new data to route
+            if (arrivalPlace != null && departurePlace != null && routeEdit != null)
+            {
+                _context.Attach(routeEdit);
+                routeEdit.DeparturePlaceId = departurePlace.LocationId;
+                routeEdit.DeparturePlace = departurePlace.LocationName;
+                routeEdit.ArrivalPlaceId = arrivalPlace.LocationId;
+                routeEdit.ArrivalPlace = arrivalPlace.LocationName;
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
         }
 
         public ICollection<RouteViewModel> GetAllRoutes()
@@ -97,6 +119,18 @@ namespace TransportManagement.Services.ImplementServices
         public RouteInformation GetRoute(string routeId)
         {
             return _context.RouteInformations.Where(r => r.RouteId == routeId).SingleOrDefault();
+        }
+
+        public bool IsRouteExists(string departureId, string arrivalId)
+        {
+            var route = _context.RouteInformations
+                        .Where(r => r.DeparturePlaceId == departureId && r.ArrivalPlaceId == arrivalId)
+                        .SingleOrDefault();
+            if (route != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
