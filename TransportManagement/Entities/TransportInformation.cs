@@ -19,6 +19,7 @@ namespace TransportManagement.Entities
         private bool _isCancel;
         private string _reasonCancel;
         private string _dateStart;
+        private string _note;
         [Key]
         public string TransportId { get => _transportId; set => _transportId = value; }
         [Required]
@@ -51,6 +52,7 @@ namespace TransportManagement.Entities
         public string RouteId { get; set; }
         [ForeignKey("RouteId")]
         public RouteInformation Route { get; set; }
-        
+        [MaxLength(1000)]
+        public string Note { get => _note; set => _note = value; }
     }
 }
