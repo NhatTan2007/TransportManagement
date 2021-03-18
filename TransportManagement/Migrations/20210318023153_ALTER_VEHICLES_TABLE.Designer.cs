@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportManagement.DbContexts;
 
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    partial class TransportDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210318023153_ALTER_VEHICLES_TABLE")]
+    partial class ALTER_VEHICLES_TABLE
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,7 +270,7 @@ namespace TransportManagement.Migrations
 
                     b.HasIndex("DriverId");
 
-                    b.ToTable("DayJobs");
+                    b.ToTable("DayJob");
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.Location", b =>
@@ -335,11 +337,6 @@ namespace TransportManagement.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("DateStart")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
                     b.Property<string>("DayJobId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -351,8 +348,7 @@ namespace TransportManagement.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ReasonCancel")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReturnOfAdvances")
                         .HasColumnType("int");
@@ -361,12 +357,12 @@ namespace TransportManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
+                    b.Property<string>("TimeCompleted")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("dateCompleted")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                    b.Property<string>("VehicleLicensePlate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("TransportId");
 
@@ -374,17 +370,15 @@ namespace TransportManagement.Migrations
 
                     b.HasIndex("RouteId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("VehicleLicensePlate");
 
-                    b.ToTable("TransportInformations");
+                    b.ToTable("TransportInformation");
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.Vehicle", b =>
                 {
-                    b.Property<int>("VehicleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("LicensePlate")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("FuelConsumptionPerTone")
                         .HasColumnType("int");
@@ -394,10 +388,6 @@ namespace TransportManagement.Migrations
 
                     b.Property<bool>("IsInUse")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LicensePlate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Specifications")
                         .HasMaxLength(1500)
@@ -419,10 +409,7 @@ namespace TransportManagement.Migrations
                     b.Property<int>("VehiclePayload")
                         .HasColumnType("int");
 
-                    b.HasKey("VehicleId");
-
-                    b.HasIndex("LicensePlate")
-                        .IsUnique();
+                    b.HasKey("LicensePlate");
 
                     b.HasIndex("VehicleBrandId");
 
@@ -537,7 +524,7 @@ namespace TransportManagement.Migrations
 
                     b.HasOne("TransportManagement.Entities.Vehicle", "Vehicle")
                         .WithMany("Transports")
-                        .HasForeignKey("VehicleId")
+                        .HasForeignKey("VehicleLicensePlate")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

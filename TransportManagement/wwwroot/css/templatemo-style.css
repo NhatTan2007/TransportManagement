@@ -90,7 +90,6 @@ button:focus {
   overflow: hidden;
 }
 .tm-block-title {
-  font-size: 1.1rem;
   font-weight: 700;
   color: #fff;
   margin-bottom: 30px;
@@ -358,12 +357,27 @@ thead {
     font-weight: 600;
 }
 
-.btn--danger:active,
-.btn--danger:hover {
-    color: #dc3545;
-    background-color: transparent;
-    border: 2px solid #dc3545;
+    .btn--danger:active,
+    .btn--danger:hover {
+        color: #dc3545;
+        background-color: transparent;
+        border: 2px solid #dc3545;
+    }
+
+.btn--warning {
+    color: #fff;
+    background-color: #54b9c975;
+    border: 2px solid #54b9c975;
+    font-size: 90%;
+    font-weight: 600;
 }
+
+    .btn--warning:active,
+    .btn--warning:hover {
+        color: #f5a623;
+        background-color: transparent;
+        border: 2px solid #54b9c975;
+    }
 .custom-file-input {
   cursor: pointer;
 }
@@ -388,7 +402,7 @@ thead {
   color: #a0c0de;
 }
 .tm-bg-primary-dark {
-  background-color: #435c70;
+  background-color: #6b90ae;
 }
 .tm-bg-gray {
   background-color: rgba(0, 0, 0, 0.05);
@@ -626,9 +640,6 @@ input[type="checkbox"]:focus {
     right: 20px;
     width: 200px;
     z-index: 1000;
-  }
-  .dropdown-menu {
-    text-align: center;
   }
   .nav-link {
     color: #fff;

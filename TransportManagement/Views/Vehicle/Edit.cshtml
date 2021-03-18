@@ -1,0 +1,87 @@
+﻿@model EditVehicleViewModel
+@{
+    ViewBag.Title = "ĐIỀU CHỈNH PHƯƠNG TIỆN";
+}
+@section Scripts{
+}
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-block text-center">ĐIỀU CHỈNH PHƯƠNG TIỆN</h2>
+            </div>
+            <div class="form-group w-100">
+                <form asp-controller="Vehicle" asp-action="Edit" method="post" class="form-group w-100 row m-0">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="col-sm-12">
+                        <input type="hidden" asp-for="VehicleId" value="@Model.VehicleId" />
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="LicensePlate" class="control-label"></label>
+                                <input asp-for="LicensePlate" value="@Model.LicensePlate" class="form-control"/>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="VehicleBrandId" class="control-label"></label>
+                                <select class="form-control" asp-for="VehicleBrandId" style="padding: 0 18px">
+                                    @foreach (var brand in Model.VehicleBrands)
+                                    {
+                                        <option value="@brand.BrandId">@brand.BrandName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="VehicleBrandId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 col-xs-12">
+                            <label asp-for="VehicleName" class="control-label"></label>
+                            <input asp-for="VehicleName" class="form-control" />
+                            <span asp-validation-for="VehicleName" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="FuelConsumptionPerTone" class="control-label"></label>
+                                <input asp-for="FuelConsumptionPerTone" class="form-control" />
+                                <span asp-validation-for="FuelConsumptionPerTone" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="VehiclePayload" class="control-label"></label>
+                                <input asp-for="VehiclePayload" class="form-control" />
+                                <span asp-validation-for="VehiclePayload" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 col-xs-12">
+                            <label asp-for="Specifications" class="control-label"></label>
+                            <textarea asp-for="Specifications" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Specifications" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <div class="d-flex">
+                                    <label asp-for="IsAvailable" class="control-label mr-2"></label>
+                                    <input asp-for="IsAvailable" class="form-control" checked />
+                                </div>
+                                <span asp-validation-for="IsAvailable"></span>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <div class="d-flex">
+                                    <label asp-for="IsInUse" class="control-label mr-2"></label>
+                                    <input asp-for="IsInUse" class="form-control" checked />
+                                </div>
+                                <span asp-validation-for="IsInUse"></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-12 justify-content-center text-center">
+                        <button type="submit" 
+                                class="btn btn--primary text-uppercase mr-2 pr-4 pl-4">ĐIỀU CHỈNH
+                        </button>
+                        <a asp-controller="Vehicle" asp-action="Index"
+                                class="btn btn--warning text-uppercase pr-4 pl-4">TRỞ LẠI
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

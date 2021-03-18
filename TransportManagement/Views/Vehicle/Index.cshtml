@@ -1,15 +1,13 @@
-﻿@model PaginationViewModel<RouteViewModel>
+﻿@model PaginationViewModel<VehicleViewModel>
 @{
-    List<RouteViewModel> routes = new List<RouteViewModel>();
-    List<LocationViewModel> locations = new List<LocationViewModel>();
+    List<VehicleViewModel> vehicles = new List<VehicleViewModel>();
     if (Model.Items != null)
     {
-        routes = Model.Items.ToList();
+        vehicles = Model.Items.ToList();
     }
-    if (ViewBag.Locations != null)
-    {
-        locations = ViewBag.Locations as List<LocationViewModel>;
-    }
+    ViewBag.Title = "Quản lý phương tiện vận tải";
+    string inUseStatus = String.Empty;
+    string avalableStatus = String.Empty;
 }
 
 @section Scripts{
@@ -17,7 +15,7 @@
         function confirmDelete(id) {
             bootbox.confirm({
                 size: "large",
-                message: "Bạn muốn xóa tuyến vận chuyển này?",
+                message: "Bạn muốn xóa phương tiện này?",
                 buttons: {
                     cancel: {
                         label: 'Không',
@@ -30,7 +28,7 @@
                 },
                 callback: async function (result) {
                     if (result) {
-                        window.location.href = `Route/Delete?routeId=${id}`;
+                        window.location.href = `Vehicle/Delete?vehicleId=${id}`;
                         //await $.ajax({
                         //    url: `Location/Delete?locationId=${id}`,
                         //    method: 'GET',
@@ -46,26 +44,6 @@
         $(document).ready(function () {
             $('.js-select2-single').select2();
         });
-
-        const editModal = document.getElementById("editRoute");
-        const editRouteId = document.getElementById("editRouteId");
-        const editRouteDepartureId = document.getElementById("editDeparturePlaceId");
-        const editRouteArrivalId = document.getElementById("editArrivalPlaceId");
-        const editRouteDistance = document.getElementById("editDistance");
-        function editRoute({ target }) {
-            let parentTarget = target.parentElement.parentElement;
-            let children = parentTarget.children;
-            //get arrivalId & departureId
-            let departureId = children[1].firstElementChild.innerText;
-            let arrivalId = children[2].firstElementChild.innerText;
-            //set Id
-            editRouteId.value = parentTarget.id;
-            //set Route with current information
-            editRouteDistance.value = children[3].innerText;
-            $('#editDeparturePlaceId').val(`${departureId}`).trigger('change');
-            $('#editArrivalPlaceId').val(`${arrivalId}`).trigger('change');
-            $("#editRoute").modal();;
-        }
     </script>
 }
 
@@ -74,10 +52,13 @@
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-sm-12 text-danger h5" asp-validation-summary="ModelOnly"></div>
             <div class="col-sm-12">
-                <h2 class="tm-block-title d-block text-center">QUẢN LÝ TUYẾN VẬN CHUYỂN</h2>
+                <h2 class="tm-block-title d-block text-center">QUẢN LÝ PHƯƠNG TIỆN</h2>
             </div>
             <div>
-                <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3" style="font-size: 1.3rem" data-toggle="modal" data-target="#createRoute"></i>
+                <a class="text-decoration-none" asp-controller="Vehicle" asp-action="Create">
+                    <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
+                       style="font-size: 1.3rem"></i>
+                </a>
             </div>
             <div class="w-100 pagination row mx-auto">
                 <!--Search and pagesize-->
@@ -114,42 +95,70 @@
                     <thead class="thead-light text-center text-uppercase">
                         <tr>
                             <th class="p-0 align-middle">STT</th>
-                            <th class="pr-1 pl-1 align-middle">Địa điểm xuất phát</th>
-                            <th class="pr-1 pl-1 align-middle">Địa điểm đến</th>
-                            <th class="pr-1 pl-1 align-middle" style="width: 150px">Chiều dài tuyến đường</th>
-                            <th class="p-0 align-middle" style="width: 50px"></th>
+                            <th class="pr-1 pl-1 align-middle">Biển kiểm soát</th>
+                            <th class="pr-1 pl-1 align-middle">Tên phương tiện</th>
+                            <th class="pr-1 pl-1 align-middle">Nhãn hiệu</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Trọng tải (tấn)</th>
+                            <th class="pr-1 pl-1 align-middle">Trạng thái</th>
+                            <th class="pr-1 pl-1 align-middle">Tình trạng</th>
+                            <th class="p-0 align-middle" style="width: 60px"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < routes.Count; i++)
+                        @for (int i = 0; i < vehicles.Count; i++)
                         {
                             int stt = i + 1;
-                            <tr id="@routes[i].RouteId">
-                                <td class="p-0 text-center">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
-                                    <span hidden>@routes[i].DeparturePlaceId</span>
-                                    <a class="text-white"
-                                       onclick="editRoute(event)"
-                                       href="javascript:;">@routes[i].DeparturePlace</a>
-                                </td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
-                                    <span hidden>@routes[i].ArrivalPlaceId</span>
-                                    <a class="text-white"
-                                       onclick="editRoute(event)"
-                                       href="javascript:;">@routes[i].ArrivalPlace</a>
-                                </td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center">
-                                    <a class="text-white" style="width: 150px"
-                                       onclick="editRoute(event)"
-                                       href="javascript:;">@routes[i].Distance</a>
-                                </td>
-                                <td class="p-0 text-center" style="width: 50px">
-                                    <a class="delete-confirm"
-                                       onclick="confirmDelete('@routes[i].RouteId')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                        <tr class="text-center">
+                            <td class="p-0 text-center">@stt</td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left">
+                                <a class="text-white"
+                                   asp-action="Edit" asp-controller="Vehicle"
+                                   asp-route-vehicleId="@vehicles[i].VehicleId">
+                                    @vehicles[i].LicensePlate
+                                </a>
+                            </td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left">
+                                @vehicles[i].VehicleName
+                            </td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                @vehicles[i].BrandName
+                            </td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                @vehicles[i].VehiclePayload
+                            </td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                @if (@vehicles[i].IsInUse)
+                                {
+                                    inUseStatus = "Đang sử dụng";
+                                }
+                                else
+                                {
+                                    inUseStatus = "Sẵn sàng";
+                                }
+                                @inUseStatus
+                            </td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                @if (@vehicles[i].IsAvailable)
+                                {
+                                    avalableStatus = "Khả dụng";
+                                }
+                                else
+                                {
+                                    avalableStatus = "Không khả dụng";
+                                }
+                                @avalableStatus
+                            </td>
+                            <td class="p-0 text-center" style="width: 60px">
+                                <a class="button--edit mr-2" 
+                                   asp-controller="Vehicle" 
+                                   asp-action="Edit" 
+                                   asp-route-vehicleId="@vehicles[i].VehicleId"><i class="fas fa-pen-square"></i></a>
+                                <a class="delete-confirm"
+                                   onclick="confirmDelete('@vehicles[i].VehicleId')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -168,157 +177,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-
-<!-- Modal -->
-<div id="createRoute" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tạo tuyến đường vận chuyển mới</h5>
-            </div>
-            <form asp-controller="Route" asp-action="Create" method="post">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <div>
-                            <label class="control-label text-dark w-25" for="DeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error"
-                                    type="text" data-val="true"
-                                    data-val-required="Địa điểm xuất phát không được để trống"
-                                    id="DeparturePlaceId" name="DeparturePlaceId">
-                                @if (locations.Count > 0)
-                                {
-                                    foreach (var loca in locations)
-                                    {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div>
-                            <label class="control-label text-dark w-25" for="ArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error"
-                                    type="text" data-val="true"
-                                    data-val-required="Địa điểm đến không được để trống"
-                                    id="ArrivalPlaceId" name="ArrivalPlaceId">
-                                @if (locations.Count > 0)
-                                {
-                                    foreach (var loca in locations)
-                                    {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="w-100">
-                            <label class="control-label text-dark" for="Distance">Chiều dài tuyến đường</label>
-                            <input class="form-control w-100"
-                                   type="number"
-                                   data-val="true"
-                                   data-val-range="Giá trị không đúng, xin mời nhập lại"
-                                   data-val-range-max="2147483647"
-                                   data-val-range-min="0.1"
-                                   data-val-required="Chiều dài tuyến đường không được để trống"
-                                   id="Distance" name="Distance" value="">
-                        </div>
-                        <div class="w-100 d-flex mt-2">
-                            <span class="text-danger field-validation-valid"
-                                  data-valmsg-for="Distance"
-                                  data-valmsg-replace="true"></span>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer pb-1 pt-1">
-                    <button class="btn btn--radius btn--primary">Confirm</button>
-                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
-                </div>
-            </form>
-        </div>
-
-    </div>
-</div>
-
-<!--Edit Modal -->
-<div id="editRoute" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Điều chỉnh tuyến đường vận chuyển</h5>
-            </div>
-            <form asp-controller="Route" asp-action="Edit" method="post">
-                <input id="editRouteId" type="hidden" name="RouteId" value="" />
-                <div class="modal-body">
-                    <div class="form-group">
-                        <div>
-                            <label class="control-label text-dark d-block"
-                                   for="editDeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error"
-                                    type="text" data-val="true"
-                                    data-val-required="Địa điểm xuất phát không được để trống"
-                                    id="editDeparturePlaceId" name="DeparturePlaceId">
-                                @if (locations.Count > 0)
-                                {
-                                    foreach (var loca in locations)
-                                    {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div>
-                            <label class="control-label text-dark w-25" for="editArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error"
-                                    type="text" data-val="true"
-                                    data-val-required="Địa điểm đến không được để trống"
-                                    id="editArrivalPlaceId" name="ArrivalPlaceId">
-                                @if (locations.Count > 0)
-                                {
-                                    foreach (var loca in locations)
-                                    {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="w-100">
-                            <label class="control-label text-dark" for="Distance">Chiều dài tuyến đường</label>
-                            <input class="form-control w-100" type="number"
-                                   data-val="true" data-val-range="Giá trị không đúng, xin mời nhập lại"
-                                   data-val-range-max="2147483647"
-                                   data-val-range-min="0.1"
-                                   data-val-required="Chiều dài tuyến đường không được để trống"
-                                   id="editDistance" name="Distance" value="">
-                        </div>
-                        <div class="w-100 d-flex mt-2">
-                            <label class="control-label text-dark w-25" for="editDistance"></label>
-                            <span class="text-danger field-validation-valid"
-                                  data-valmsg-for="Distance"
-                                  data-valmsg-replace="true"></span>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer pb-1 pt-1">
-                    <button class="btn btn--radius btn--primary">Confirm</button>
-                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
-                </div>
-            </form>
-        </div>
-
     </div>
 </div>

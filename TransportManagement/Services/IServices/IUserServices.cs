@@ -10,7 +10,7 @@ namespace TransportManagement.Services
     public interface IUserServices
     {
         public ICollection<UserViewModel> GetAllUsers();
-        public ICollection<UserViewModel> GetAllUsers(int page, int pageSize, string? search);
+        public ICollection<UserViewModel> GetAllUsers(int page, int pageSize, string search);
         public ICollection<UserViewModel> GetAllUsers(int page, int pageSize);
         public int CountUsers();
         public int CountActiveUsers();

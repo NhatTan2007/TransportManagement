@@ -15,9 +15,10 @@ namespace TransportManagement.Entities
         private int _advanceMoney;
         private int _returnOfAdvances;
         private bool _isCompleted;
-        private string _timeCompleted;
+        private string _dateCompleted;
         private bool _isCancel;
         private string _reasonCancel;
+        private string _dateStart;
         [Key]
         public string TransportId { get => _transportId; set => _transportId = value; }
         [Required]
@@ -30,20 +31,26 @@ namespace TransportManagement.Entities
         [Range(0, Int32.MaxValue)]
         public int ReturnOfAdvances { get => _returnOfAdvances; set => _returnOfAdvances = value; }
         public bool IsCompleted { get => _isCompleted; set => _isCompleted = value; }
-        public string TimeCompleted { get => _timeCompleted; set => _timeCompleted = value; }
+        [MaxLength(12)]
+        public string dateCompleted { get => _dateCompleted; set => _dateCompleted = value; }
         public bool IsCancel { get => _isCancel; set => _isCancel = value; }
+        [MaxLength(200)]
         public string ReasonCancel { get => _reasonCancel; set => _reasonCancel = value; }
+        [Required]
+        [MaxLength(12)]
+        public string DateStart { get => _dateStart; set => _dateStart = value; }
         [Required]
         public string DayJobId { get; set; }
         [ForeignKey("DayJobId")]
         public DayJob DayJob { get; set; }
         [Required]
-        public string VehicleLicensePlate { get; set; }
-        [ForeignKey("VehicleLicensePlate")]
+        public int VehicleId { get; set; }
+        [ForeignKey("VehicleId")]
         public Vehicle Vehicle { get; set; }
         [Required]
         public string RouteId { get; set; }
         [ForeignKey("RouteId")]
         public RouteInformation Route { get; set; }
+        
     }
 }

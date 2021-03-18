@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportManagement.DbContexts;
 
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    partial class TransportDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210318045903_ALTER_VEHICLES_TABLE_Add_Unique_LicensePlate")]
+    partial class ALTER_VEHICLES_TABLE_Add_Unique_LicensePlate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,11 +337,6 @@ namespace TransportManagement.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("DateStart")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
                     b.Property<string>("DayJobId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -351,8 +348,7 @@ namespace TransportManagement.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ReasonCancel")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReturnOfAdvances")
                         .HasColumnType("int");
@@ -361,12 +357,11 @@ namespace TransportManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("TimeCompleted")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
-
-                    b.Property<string>("dateCompleted")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
 
                     b.HasKey("TransportId");
 

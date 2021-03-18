@@ -20,10 +20,13 @@ namespace TransportManagement.DbContexts
         public DbSet<RouteInformation> RouteInformations { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<DayJob> DayJobs { get; set; }
-        public DbSet<DayJob> TransportInformations { get; set; }
+        public DbSet<TransportInformation> TransportInformations { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<Vehicle>()
+                    .HasIndex(v => v.LicensePlate)
+                    .IsUnique();
         }
     }
 }

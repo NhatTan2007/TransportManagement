@@ -5,7 +5,7 @@
     {
         brands = Model.Items.ToList();
     }
-    ViewBag.Title = "Quản lý nhãn hiệu phương tiện vận tải"
+    ViewBag.Title = "Quản lý nhãn hiệu phương tiện vận tải";
 }
 
 @section Scripts{
@@ -49,13 +49,13 @@
             <div class="col-12">
                 <h2 class="tm-block-title d-block text-center">QUẢN LÝ NHÃN HIỆU PHƯƠNG TIỆN</h2>
             </div>
-            <div>
-                <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3" 
-                   style="font-size: 1.3rem" 
-                   data-toggle="modal" 
-                   data-target="#createBrand"></i>
-            </div>
-            <div class="w-100 pagination row mx-auto">
+            <div class="col-sm-12 col-lg-6 pagination row mx-auto">
+                <div class="w-100">
+                    <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
+                       style="font-size: 1.3rem"
+                       data-toggle="modal"
+                       data-target="#createBrand"></i>
+                </div>
                 <!--Search and pagesize-->
                 <div class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12 flex-nowrap align-items-center justify-content-between">
                     <div>
@@ -91,7 +91,7 @@
                         <tr>
                             <th class="p-0 align-middle" style="width: 50px">STT</th>
                             <th class="pr-1 pl-1 align-middle">Tên nhãn hiệu</th>
-                            <th class="p-0 align-middle" style="width:50px"></th>
+                            <th class="p-0 align-middle" style="width:20px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,14 +101,14 @@
                             <tr>
                                 <td class="p-0 text-center" style="width: 50px">@stt</td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3">
-                                    <a class="text-decoration-none text-white edit-toggle" 
-                                       href="javascript:;" id="@brands[i].BrandId" 
+                                    <a class="text-decoration-none text-white edit-toggle"
+                                       href="javascript:;" id="@brands[i].BrandId"
                                        onclick="editBrand(event)">
                                         @brands[i].BrandName
                                     </a>
                                 </td>
-                                <td class="p-0 text-center" style="width: 50px">
-                                    <a class="delete-confirm" 
+                                <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
+                                    <a class="delete-confirm"
                                        onclick="confirmDelete('@brands[i].BrandId')">
                                         <i class="fas fa-trash"></i>
                                     </a>
