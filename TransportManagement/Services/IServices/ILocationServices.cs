@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using TransportManagement.Entities;
 using TransportManagement.Models.Location;
 
-namespace TransportManagement.Services
+namespace TransportManagement.Services.IServices
 {
     public interface ILocationServices
     {

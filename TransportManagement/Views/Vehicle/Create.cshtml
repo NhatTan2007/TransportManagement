@@ -1,6 +1,6 @@
 ﻿@model CreateVehicleViewModel
 @{
-    ViewBag.Title = "TẠO MỚI PHƯƠNG TIỆN";
+    ViewBag.Title = "Tạo mới phương tiện";
 }
 @section Scripts{
 }
@@ -23,9 +23,15 @@
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="VehicleBrandId" class="control-label"></label>
                                 <select class="form-control" asp-for="VehicleBrandId" style="padding: 0 18px">
-                                    @foreach (var brand in Model.VehicleBrands)
+                                    @if (Model.VehicleBrands != null)
                                     {
-                                        <option value="@brand.BrandId">@brand.BrandName</option>
+                                        if (Model.VehicleBrands.Any())
+                                        {
+                                            @foreach (var brand in Model.VehicleBrands)
+                                            {
+                                                <option value="@brand.BrandId">@brand.BrandName</option>
+                                            }
+                                        }
                                     }
                                 </select>
                                 <span asp-validation-for="VehicleBrandId" class="text-danger"></span>

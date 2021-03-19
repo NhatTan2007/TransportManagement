@@ -49,6 +49,20 @@ a{
     background-color: #4e4c9b;
     cursor:default;
 }
+
+.form-control, select, i.fas {
+    border-radius: 5px;
+}
+.select2-selection--single {
+    height: calc(1.5em + .75rem + 2px) !important;
+    background-color: #54657d !important;
+    border: 0 !important;
+    display: flex !important;
+    align-items: center;
+}
+.select2-selection__rendered{
+    color: #fff!important;
+}
 /* typical phone screen resolution */
 @media only screen and (max-width : 667px) {
     .page-item {

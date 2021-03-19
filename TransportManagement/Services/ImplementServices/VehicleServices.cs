@@ -13,10 +13,13 @@ namespace TransportManagement.Services.ImplementServices
     public class VehicleServices : IVehicleServices
     {
         private readonly TransportDbContext _context;
+        private readonly ITransInfoServices _transInfoServices;
 
-        public VehicleServices(TransportDbContext context)
+        public VehicleServices(TransportDbContext context,
+                                ITransInfoServices transInfoServices)
         {
             _context = context;
+            _transInfoServices = transInfoServices;
         }
         public int CountVehicles()
         {
@@ -154,6 +157,7 @@ namespace TransportManagement.Services.ImplementServices
                                                                 IsAvailable = v.IsAvailable,
                                                                 BrandName = v.Brand.BrandName,
                                                                 IsInUse = v.IsInUse,
+                                                                BrandId = v.VehicleBrandId,
                                                                 VehicleName = v.VehicleName,
                                                                 VehiclePayload = v.VehiclePayload
                                                             }).ToList();
@@ -164,6 +168,22 @@ namespace TransportManagement.Services.ImplementServices
             return _context.Vehicles.Include(v => v.Brand)
                                     .Where(v => v.VehicleId == vehicleId)
                                     .SingleOrDefault();
+        }
+
+        public string IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday)
+        {
+            var transportsByVehicleToday = _transInfoServices.GetTransportsByVehicleToday(vehicleId, TStoday).ToList();
+            if (transportsByVehicleToday != null)
+            {
+                foreach (var trans in transportsByVehicleToday)
+                {
+                    if (trans.DayJob.DriverId != driverId)
+                    {
+                        return trans.DayJob.DriverId;
+                    }
+                }
+            }
+            return String.Empty;
         }
     }
 }

@@ -10,7 +10,7 @@ using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models.Pagination;
 using TransportManagement.Models.User;
-using TransportManagement.Services;
+using TransportManagement.Services.IServices;
 
 namespace TransportManagement.Controllers
 {

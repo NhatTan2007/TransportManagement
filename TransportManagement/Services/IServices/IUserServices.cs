@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransportManagement.Entities;
 using TransportManagement.Models.User;
 
-namespace TransportManagement.Services
+namespace TransportManagement.Services.IServices
 {
     public interface IUserServices
     {
@@ -16,5 +17,7 @@ namespace TransportManagement.Services
         public int CountActiveUsers();
         public int CountAvailableUsers();
         public int CountActiveAndAvailableUsers();
+        public ICollection<AppIdentityUser> GetAvailableUsers();
+        public UserViewModel GetUser(string userId);
     }
 }

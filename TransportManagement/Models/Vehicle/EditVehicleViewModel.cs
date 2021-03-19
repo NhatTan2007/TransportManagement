@@ -32,7 +32,7 @@ namespace TransportManagement.Models.Vehicle
         public int FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
         [Required(ErrorMessage = "Trọng tải hàng hóa tối đa không được bỏ trống")]
         [Range(0.1, Int16.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
-        [Display(Name = "Trọng tải hàng hóa tối đa")]
+        [Display(Name = "Trọng tải hàng hóa tối đa (tấn)")]
         public int VehiclePayload { get => _vehiclePayload; set => _vehiclePayload = value; }
         [Required(ErrorMessage = "Nhãn hiệu phương tiện không được để trống")]
         [Display(Name = "Nhãn hiệu phương tiện")]

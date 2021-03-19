@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.DbContexts;
+using TransportManagement.Entities;
 using TransportManagement.Models.User;
+using TransportManagement.Services.IServices;
 
-namespace TransportManagement.Services
+namespace TransportManagement.Services.ImplementServices
 {
     public class UserServices : IUserServices
     {
@@ -52,13 +54,13 @@ namespace TransportManagement.Services
             return _context.Users.Where(u => u.FirstName.Contains(search) || u.LastName.Contains(search))
                                     .Skip((page - 1) * pageSize)
                                         .Take(pageSize)
-                                            .Select(e => new UserViewModel
+                                            .Select(u => new UserViewModel
                                                                 {
-                                                                    FullName = $"{e.LastName} {e.FirstName}",
-                                                                    IsAvalable = e.IsAvailable,
-                                                                    JobTitle = e.JobTitle,
-                                                                    PhoneNumber = e.PhoneNumber,
-                                                                    UserId = e.Id
+                                                                    FullName = $"{u.LastName} {u.FirstName}",
+                                                                    IsAvalable = u.IsAvailable,
+                                                                    JobTitle = u.JobTitle,
+                                                                    PhoneNumber = u.PhoneNumber,
+                                                                    UserId = u.Id
                                                                 }).ToList();
         }
 
@@ -74,6 +76,24 @@ namespace TransportManagement.Services
                                             PhoneNumber = e.PhoneNumber,
                                             UserId = e.Id
                                         }).ToList();
+        }
+
+        public ICollection<AppIdentityUser> GetAvailableUsers()
+        {
+            return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true).ToList();
+        }
+
+        public UserViewModel GetUser(string userId)
+        {
+            return _context.Users.Where(u => u.Id == userId)
+                                    .Select(u => new UserViewModel
+                                                        {
+                                                            FullName = $"{u.LastName} {u.FirstName}",
+                                                            IsAvalable = u.IsAvailable,
+                                                            JobTitle = u.JobTitle,
+                                                            PhoneNumber = u.PhoneNumber,
+                                                            UserId = u.Id
+                                                        }).SingleOrDefault();
         }
     }
 }

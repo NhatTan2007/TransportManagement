@@ -10,12 +10,11 @@ namespace TransportManagement.Entities
     public class DayJob
     {
         private string _dayJobId;
-        private string _date;
+        private double _date;
         [Key]
         public string DayJobId { get => _dayJobId; set => _dayJobId = value; }
         [Required]
-        [MaxLength(50)]
-        public string Date { get => _date; set => _date = value; }
+        public double Date { get => _date; set => _date = value; }
         [Required]
         public string DriverId { get; set; }
         [ForeignKey("DriverId")]

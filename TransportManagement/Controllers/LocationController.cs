@@ -9,7 +9,7 @@ using TransportManagement.Entities;
 using TransportManagement.Models;
 using TransportManagement.Models.Location;
 using TransportManagement.Models.Pagination;
-using TransportManagement.Services;
+using TransportManagement.Services.IServices;
 
 namespace TransportManagement.Controllers
 {

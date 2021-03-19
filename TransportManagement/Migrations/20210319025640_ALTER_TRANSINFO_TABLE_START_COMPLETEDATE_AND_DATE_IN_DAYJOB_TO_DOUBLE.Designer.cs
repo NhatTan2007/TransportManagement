@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportManagement.DbContexts;
 
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    partial class TransportDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210319025640_ALTER_TRANSINFO_TABLE_START_COMPLETEDATE_AND_DATE_IN_DAYJOB_TO_DOUBLE")]
+    partial class ALTER_TRANSINFO_TABLE_START_COMPLETEDATE_AND_DATE_IN_DAYJOB_TO_DOUBLE
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -332,16 +334,10 @@ namespace TransportManagement.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal>("DateCompletedLocal")
+                    b.Property<decimal>("DateCompleted")
                         .HasColumnType("decimal(18,0)");
 
-                    b.Property<decimal>("DateCompletedUTC")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<decimal>("DateStartLocal")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<decimal>("DateStartUTC")
+                    b.Property<decimal>("DateStart")
                         .HasColumnType("decimal(18,0)");
 
                     b.Property<string>("DayJobId")
@@ -368,10 +364,6 @@ namespace TransportManagement.Migrations
                     b.Property<string>("RouteId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TimeZone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");

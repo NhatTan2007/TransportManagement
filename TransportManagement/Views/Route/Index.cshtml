@@ -263,15 +263,18 @@
                         <div>
                             <label class="control-label text-dark d-block" 
                                    for="editDeparturePlaceId">Địa điểm xuất phát</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm xuất phát không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm xuất phát không được để trống"
                                     id="editDeparturePlaceId" name="DeparturePlaceId">
-                                @if (locations.Count > 0)
+                                @if (locations != null)
                                 {
-                                    foreach (var loca in locations)
+                                    @if (locations.Any())
                                     {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
+                                        foreach (var loca in locations)
+                                        {
+                                            <option value="@loca.LocationId">@loca.LocationName</option>
+                                        }
                                     }
                                 }
                             </select>
@@ -280,15 +283,18 @@
                     <div class="form-group">
                         <div>
                             <label class="control-label text-dark w-25" for="editArrivalPlaceId">Địa điểm đến</label>
-                            <select class="js-select2-single form-control input-validation-error" 
-                                    type="text" data-val="true" 
-                                    data-val-required="Địa điểm đến không được để trống" 
+                            <select class="js-select2-single form-control input-validation-error"
+                                    type="text" data-val="true"
+                                    data-val-required="Địa điểm đến không được để trống"
                                     id="editArrivalPlaceId" name="ArrivalPlaceId">
-                                @if (locations.Count > 0)
+                                @if (locations != null)
                                 {
-                                    foreach (var loca in locations)
+                                    @if (locations.Any())
                                     {
-                                        <option value="@loca.LocationId">@loca.LocationName</option>
+                                        foreach (var loca in locations)
+                                        {
+                                            <option value="@loca.LocationId">@loca.LocationName</option>
+                                        }
                                     }
                                 }
                             </select>

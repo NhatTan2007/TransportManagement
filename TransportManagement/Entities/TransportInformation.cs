@@ -12,34 +12,43 @@ namespace TransportManagement.Entities
         private string _transportId;
         private string _cargoTypes;
         private int _cargoTonnage;
-        private int _advanceMoney;
-        private int _returnOfAdvances;
+        private decimal _advanceMoney;
+        private decimal _returnOfAdvances;
         private bool _isCompleted;
-        private string _dateCompleted;
+        private double _dateCompletedUTC;
+        private double _dateCompletedLocal;
         private bool _isCancel;
         private string _reasonCancel;
-        private string _dateStart;
+        private double _dateStartUTC;
+        private double _dateStartLocal;
         private string _note;
+        private string _timeZone;
         [Key]
         public string TransportId { get => _transportId; set => _transportId = value; }
-        [Required]
         [MaxLength(200)]
         public string CargoTypes { get => _cargoTypes; set => _cargoTypes = value; }
         [Range(0, Int16.MaxValue)]
         public int CargoTonnage { get => _cargoTonnage; set => _cargoTonnage = value; }
+        [Column(TypeName = "decimal(18, 6)")]
         [Range(0, Int32.MaxValue)]
-        public int AdvanceMoney { get => _advanceMoney; set => _advanceMoney = value; }
+        public decimal AdvanceMoney { get => _advanceMoney; set => _advanceMoney = value; }
         [Range(0, Int32.MaxValue)]
-        public int ReturnOfAdvances { get => _returnOfAdvances; set => _returnOfAdvances = value; }
+        [Column(TypeName = "decimal(18, 6)")]
+        public decimal ReturnOfAdvances { get => _returnOfAdvances; set => _returnOfAdvances = value; }
         public bool IsCompleted { get => _isCompleted; set => _isCompleted = value; }
-        [MaxLength(12)]
-        public string dateCompleted { get => _dateCompleted; set => _dateCompleted = value; }
+        [Column(TypeName = "decimal(18, 0)")]
+        public double DateCompletedUTC { get => _dateCompletedUTC; set => _dateCompletedUTC = value; }
+        [Column(TypeName = "decimal(18, 0)")]
+        public double DateCompletedLocal { get => _dateCompletedLocal; set => _dateCompletedLocal = value; }
         public bool IsCancel { get => _isCancel; set => _isCancel = value; }
         [MaxLength(200)]
         public string ReasonCancel { get => _reasonCancel; set => _reasonCancel = value; }
         [Required]
-        [MaxLength(12)]
-        public string DateStart { get => _dateStart; set => _dateStart = value; }
+        [Column(TypeName = "decimal(18, 0)")]
+        public double DateStartUTC { get => _dateStartUTC; set => _dateStartUTC = value; }
+        [Required]
+        [Column(TypeName = "decimal(18, 0)")]
+        public double DateStartLocal { get => _dateStartLocal; set => _dateStartLocal = value; }
         [Required]
         public string DayJobId { get; set; }
         [ForeignKey("DayJobId")]
@@ -54,5 +63,7 @@ namespace TransportManagement.Entities
         public RouteInformation Route { get; set; }
         [MaxLength(1000)]
         public string Note { get => _note; set => _note = value; }
+        [Required]
+        public string TimeZone { get => _timeZone; set => _timeZone = value; }
     }
 }

@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.DbContexts;
 using TransportManagement.Entities;
-using TransportManagement.Services;
 using TransportManagement.Services.ImplementServices;
 using TransportManagement.Services.IServices;
 
@@ -42,6 +41,8 @@ namespace TransportManagement
             services.AddTransient<IRouteServices, RouteServices>();
             services.AddTransient<IVehicleBrandServices, VehicleBrandServices>();
             services.AddTransient<IVehicleServices, VehicleServices>();
+            services.AddTransient<ITransInfoServices, TransInfoServices>();
+            services.AddTransient<IDayJobServices, DayJobServices>();
             services.AddDbContext<TransportDbContext>(opt =>
                 opt.UseSqlServer(_config.GetConnectionString("Dbconection")));
             services.AddIdentity<AppIdentityUser, AppIdentityRole>(opt =>

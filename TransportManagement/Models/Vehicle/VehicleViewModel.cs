@@ -10,6 +10,7 @@ namespace TransportManagement.Models.Vehicle
         private int _vehicleId;
         private string _licensePlate;
         private string _vehicleName;
+        private string _brandId;
         private string _brandName;
         private int _vehiclePayload;
         private bool _isInUse;
@@ -22,5 +23,6 @@ namespace TransportManagement.Models.Vehicle
         public bool IsInUse { get => _isInUse; set => _isInUse = value; }
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
         public string BrandName { get => _brandName; set => _brandName = value; }
+        public string BrandId { get => _brandId; set => _brandId = value; }
     }
 }

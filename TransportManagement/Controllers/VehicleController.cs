@@ -69,7 +69,7 @@ namespace TransportManagement.Controllers
                     IsInUse = model.IsInUse,
                     VehicleBrandId = model.VehicleBrandId,
                     Specifications = model.Specifications,
-                    VehiclePayload = model.VehiclePayload
+                    VehiclePayload = model.VehiclePayload,
                 };
                 if (await _vehicleServices.CreateVehicle(newVehicle))
                 {

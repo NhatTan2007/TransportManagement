@@ -1,0 +1,124 @@
+﻿@model CreateTransInfoViewModel
+@{
+    ViewBag.Title = "Tạo mới chuyến vận chuyển";
+}
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('.js-select2-single').select2();
+        });
+        const formartter = new Intl.NumberFormat('vi-VN');
+        const advanceMoney = document.getElementById("AdvanceMoney");
+        function formartCurrency({ target }) {
+            target.value = target.value.replace(/[^\d]/, '');
+            let number = +target.value.replaceAll('.', '');
+            target.value = formartter.format(number);
+            advanceMoney.value = number;
+        }
+    </script>
+}
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-block text-center">TẠO MỚI CHUYẾN VẬN TẢI</h2>
+            </div>
+            <div class="form-group w-100">
+                <form asp-controller="TransInfo" asp-action="Create" method="post" class="form-group w-100 row m-0">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="DriverId" class="control-label"></label>
+                                <select asp-for="DriverId" class="js-select2-single form-control input-validation-error">
+                                    @if (Model.Drivers != null)
+                                    {
+                                        if (Model.Drivers.Any())
+                                        {
+                                            foreach (var driver in Model.Drivers)
+                                            {
+                                                <option value="@driver.Id">@driver.FullName</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="DriverId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="VehicleId" class="control-label"></label>
+                                <select asp-for="VehicleId" class="js-select2-single form-control input-validation-error">
+                                    @if (Model.Vehicles != null)
+                                    {
+                                        if (Model.Vehicles.Any())
+                                        {
+                                            foreach (var vehicle in Model.Vehicles)
+                                            {
+                                                string vehicleData = $"{vehicle.LicensePlate} - {vehicle.BrandName} - Trọng tải: {vehicle.VehiclePayload} (tấn)";
+                                                <option value="@vehicle.VehicleId">
+                                                    @vehicleData
+                                                </option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="VehicleId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 col-xs-12">
+                            <label asp-for="RouteId" class="control-label"></label>
+                            <select asp-for="RouteId" class="js-select2-single form-control input-validation-error">
+                                @if (Model.Routes != null)
+                                {
+                                    if (Model.Routes.Any())
+                                    {
+                                        foreach (var route in Model.Routes)
+                                        {
+                                            string routeData = $"{route.DeparturePlace} - {route.ArrivalPlace}";
+                                            <option value="@route.RouteId">
+                                                @routeData
+                                            </option>
+                                        }
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="RouteId" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="CargoTypes" class="control-label"></label>
+                                <input asp-for="CargoTypes" class="form-control" />
+                                <span asp-validation-for="CargoTypes" class="text-danger"></span>
+                            </div>
+                            @*<div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="DateStart" class="control-label"></label>
+                                <input asp-for="DateStart" type="datetime-local" value="" class="form-control" />
+                                <span asp-validation-for="DateStart" class="text-danger"></span>
+                            </div>*@
+                        </div>
+                        <div class="form-group mb-3 col-xs-12">
+                            <label asp-for="AdvanceMoney" class="control-label"></label>
+                            <input asp-for="AdvanceMoney" hidden/>
+                            <input type="text" oninput="formartCurrency(event)" class="form-control"/>
+                            <span asp-validation-for="AdvanceMoney" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3 col-xs-12">
+                            <label asp-for="Note" class="control-label"></label>
+                            <textarea asp-for="Note" class="form-control"></textarea>
+                            <span asp-validation-for="Note" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 justify-content-center text-center">
+                        <button type="submit"
+                                class="btn btn--primary text-uppercase mr-2 pr-4 pl-4">
+                            TẠO MỚI
+                        </button>
+                        <button type="reset"
+                                class="btn btn--warning text-uppercase pr-4 pl-4">
+                            RESET
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

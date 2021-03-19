@@ -19,5 +19,7 @@ namespace TransportManagement.Services.IServices
         public Task<bool> DeleteVehicle(Vehicle vehicle);
         public Vehicle GetVehicle(int vehicleId);
         public Task<bool> EditVehicle(EditVehicleViewModel model);
+
+        string IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday);
     }
 }

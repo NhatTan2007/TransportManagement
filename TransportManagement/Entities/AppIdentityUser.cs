@@ -22,6 +22,7 @@ namespace TransportManagement.Entities
         public string MiddleName { get => _middleName; set => _middleName = value; }
         [Required]
         public string LastName { get => _lastName; set => _lastName = value; }
+        public string FullName => $"{LastName} {FirstName}";
         [Required]
         public string Avatar { get => _avatar; set => _avatar = value; }
         [Required]

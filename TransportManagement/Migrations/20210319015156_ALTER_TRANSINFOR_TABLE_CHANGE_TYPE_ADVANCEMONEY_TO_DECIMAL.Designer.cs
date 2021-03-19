@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportManagement.DbContexts;
 
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    partial class TransportDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210319015156_ALTER_TRANSINFOR_TABLE_CHANGE_TYPE_ADVANCEMONEY_TO_DECIMAL")]
+    partial class ALTER_TRANSINFOR_TABLE_CHANGE_TYPE_ADVANCEMONEY_TO_DECIMAL
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,8 +257,10 @@ namespace TransportManagement.Migrations
                     b.Property<string>("DayJobId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Date")
-                        .HasColumnType("float");
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("DriverId")
                         .IsRequired()
@@ -329,20 +333,18 @@ namespace TransportManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CargoTypes")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal>("DateCompletedLocal")
-                        .HasColumnType("decimal(18,0)");
+                    b.Property<string>("DateCompleted")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
-                    b.Property<decimal>("DateCompletedUTC")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<decimal>("DateStartLocal")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<decimal>("DateStartUTC")
-                        .HasColumnType("decimal(18,0)");
+                    b.Property<string>("DateStart")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("DayJobId")
                         .IsRequired()
@@ -368,10 +370,6 @@ namespace TransportManagement.Migrations
                     b.Property<string>("RouteId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TimeZone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");

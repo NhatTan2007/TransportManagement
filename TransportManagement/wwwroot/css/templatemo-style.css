@@ -403,6 +403,7 @@ thead {
 }
 .tm-bg-primary-dark {
   background-color: #6b90ae;
+  border-radius: 10px;
 }
 .tm-bg-gray {
   background-color: rgba(0, 0, 0, 0.05);

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models.Location;
+using TransportManagement.Services.IServices;
 
-namespace TransportManagement.Services
+namespace TransportManagement.Services.ImplementServices
 {
     public class LocationServices : ILocationServices
     {
