@@ -378,6 +378,20 @@ thead {
         background-color: transparent;
         border: 2px solid #54b9c975;
     }
+.btn--cancel {
+    color: #fff;
+    background-color: #00000075;
+    border: 2px solid #00000075;
+    font-size: 90%;
+    font-weight: 600;
+}
+
+    .btn--cancel:active,
+    .btn--cancel:hover {
+        color: #00000075;
+        background-color: transparent;
+        border: 2px solid #00000075;
+    }
 .custom-file-input {
   cursor: pointer;
 }

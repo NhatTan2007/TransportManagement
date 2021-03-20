@@ -29,8 +29,11 @@ namespace TransportManagement.Entities
         public bool IsActive { get => _isActive; set => _isActive = value; }
         [Required]
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
-        public ICollection<DayJob> DayJobs { get; set; }
         public string JobTitle { get => _jobTitle; set => _jobTitle = value; }
         public string Department { get => _department; set => _department = value; }
+
+        //Foreign Key area
+        public ICollection<DayJob> DayJobs { get; set; }
+        public ICollection<EditTransportInformation> ListEdit { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace TransportManagement.Entities
         [Required]
         [Range(0, Int16.MaxValue)]
         public int Distance { get => _distance; set => _distance = value; }
+
+        //Foreign Key area
         public string DeparturePlaceId { get; set; }
         [ForeignKey("DeparturePlaceId")]
         public Location Departure { get; set; }

@@ -39,11 +39,12 @@ namespace TransportManagement.Entities
         public bool IsInUse { get => _isInUse; set => _isInUse = value; }
         [Required]
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
-        public ICollection<TransportInformation> Transports { get; set; }
         [MaxLength(1500)]
         public string Specifications { get => _specifications; set => _specifications = value; }
         [MaxLength(10)]
         public string UsingFrom { get => _usingFrom; set => _usingFrom = value; }
+        //Foreign key area
+        public ICollection<TransportInformation> Transports { get; set; }
         
     }
 }

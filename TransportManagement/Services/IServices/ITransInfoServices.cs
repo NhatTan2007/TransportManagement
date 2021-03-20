@@ -10,7 +10,7 @@ namespace TransportManagement.Services.IServices
     public interface ITransInfoServices
     {
         Task<bool> CreateNewTransInfo(TransportInformation newTransInfo);
-        Task<bool> EditTransInfo(EditTransInfoViewModel transEdit);
+        Task<bool> EditTransInfo(EditTransInfoViewModel transEdit, string userId);
         Task<bool> DeleteTransInfo(TransportInformation transDel);
         TransportInformation GetTransport(string transportId);
         ICollection<TransportInformation> GetTransportsToday(double todayTS);

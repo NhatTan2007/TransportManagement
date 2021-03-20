@@ -21,6 +21,7 @@ namespace TransportManagement.Entities
         private string _reasonCancel;
         private double _dateStartUTC;
         private double _dateStartLocal;
+        private string _userCreateId;
         private string _note;
         private string _timeZone;
         [Key]
@@ -50,6 +51,12 @@ namespace TransportManagement.Entities
         [Column(TypeName = "decimal(18, 0)")]
         public double DateStartLocal { get => _dateStartLocal; set => _dateStartLocal = value; }
         [Required]
+        public string TimeZone { get => _timeZone; set => _timeZone = value; }
+        [MaxLength(1000)]
+        public string Note { get => _note; set => _note = value; }
+
+        //Foregin Key area
+        [Required]
         public string DayJobId { get; set; }
         [ForeignKey("DayJobId")]
         public DayJob DayJob { get; set; }
@@ -61,9 +68,9 @@ namespace TransportManagement.Entities
         public string RouteId { get; set; }
         [ForeignKey("RouteId")]
         public RouteInformation Route { get; set; }
-        [MaxLength(1000)]
-        public string Note { get => _note; set => _note = value; }
-        [Required]
-        public string TimeZone { get => _timeZone; set => _timeZone = value; }
+        public ICollection<EditTransportInformation> ListEdit { get; set; }
+        public string UserCreateId { get => _userCreateId; set => _userCreateId = value; }
+        [ForeignKey("UserCreateId")]
+        public AppIdentityUser UserCreate { get; set; }
     }
 }

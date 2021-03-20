@@ -60,8 +60,14 @@ a{
     display: flex !important;
     align-items: center;
 }
-.select2-selection__rendered{
-    color: #fff!important;
+    .select2-container--disabled .select2-selection--single {
+        background-color: #ffa64a91 !important;
+    }
+.select2-selection__rendered {
+    color: #fff !important;
+}
+.text-danger {
+    color: #ffabb3!important;
 }
 /* typical phone screen resolution */
 @media only screen and (max-width : 667px) {

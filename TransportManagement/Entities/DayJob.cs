@@ -15,6 +15,8 @@ namespace TransportManagement.Entities
         public string DayJobId { get => _dayJobId; set => _dayJobId = value; }
         [Required]
         public double Date { get => _date; set => _date = value; }
+
+        //Foreign Key area
         [Required]
         public string DriverId { get; set; }
         [ForeignKey("DriverId")]

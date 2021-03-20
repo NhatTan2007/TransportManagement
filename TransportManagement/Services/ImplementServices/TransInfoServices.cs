@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,20 @@ using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models.TransportInformation;
 using TransportManagement.Services.IServices;
+using TransportManagement.Utilities;
 
 namespace TransportManagement.Services.ImplementServices
 {
     public class TransInfoServices : ITransInfoServices
     {
         private readonly TransportDbContext _context;
+        private readonly UserManager<AppIdentityUser> _userManager;
 
-        public TransInfoServices(TransportDbContext context)
+        public TransInfoServices(TransportDbContext context,
+                                    UserManager<AppIdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<bool> CreateNewTransInfo(TransportInformation newTransInfo)
         {
@@ -46,9 +51,75 @@ namespace TransportManagement.Services.ImplementServices
             }
         }
 
-        public Task<bool> EditTransInfo(EditTransInfoViewModel transEdit)
+        public async Task<bool> EditTransInfo(EditTransInfoViewModel transEdit, string userId)
         {
-            throw new NotImplementedException();
+            var transInfo = GetTransport(transEdit.TransportId);
+            if (transInfo != null)
+            {
+                string editContent = String.Empty;
+                _context.TransportInformations.Attach(transInfo);
+                if (transInfo.AdvanceMoney != transEdit.AdvanceMoney)
+                {
+                    transInfo.AdvanceMoney = transEdit.AdvanceMoney;
+                    editContent += $" Sửa tiền tạm ứng từ {transInfo.AdvanceMoney} thành {transEdit.AdvanceMoney} |";
+                }
+                if (transInfo.CargoTonnage != transEdit.CargoTonnage)
+                {
+                    transInfo.CargoTonnage = transEdit.CargoTonnage;
+                    editContent += $" Sửa khối lượng hàng hóa từ {transInfo.CargoTonnage} thành {transEdit.CargoTonnage} |";
+                }
+                if (transInfo.CargoTypes != transEdit.CargoTypes)
+                {
+                    transInfo.CargoTypes = transEdit.CargoTypes;
+                    editContent += $" Sửa khối lượng hàng hóa từ {transInfo.CargoTypes} thành {transEdit.CargoTypes} |";
+                }
+                if (transInfo.IsCancel != transEdit.IsCancel)
+                {
+                    transInfo.IsCancel = transEdit.IsCancel;
+                    editContent += $" Sửa trạng thái hủy từ {transInfo.IsCancel} thành {transEdit.IsCancel} |";
+                }
+                if (transInfo.Note != transEdit.Note)
+                {
+                    transInfo.Note = transEdit.Note;
+                    editContent += $" Sửa ghi chú từ {transInfo.Note} thành {transEdit.Note} |";
+                }
+                if (transInfo.ReasonCancel != transEdit.ReasonCancel)
+                {
+                    transInfo.ReasonCancel = transEdit.ReasonCancel;
+                    editContent += $" Sửa lý do hủy từ {transInfo.ReasonCancel} thành {transEdit.ReasonCancel} |";
+                }
+                if (transInfo.ReturnOfAdvances != transEdit.ReturnOfAdvances)
+                {
+                    transInfo.ReturnOfAdvances = transEdit.ReturnOfAdvances;
+                    editContent += $" Sửa tiền hoàn ứng từ {transInfo.ReturnOfAdvances} thành {transEdit.ReturnOfAdvances} |";
+                }
+                if (transInfo.DateCompletedUTC != transEdit.DateCompletedUTC)
+                {
+                    transInfo.DateCompletedUTC = transEdit.DateCompletedUTC;
+                }
+                if (transInfo.DateCompletedLocal != transEdit.DateCompletedLocal)
+                {
+                    transInfo.DateCompletedLocal = transEdit.DateCompletedLocal;
+                }
+                if (!String.IsNullOrEmpty(editContent))
+                {
+                    DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
+                    EditTransportInformation newEdit = new EditTransportInformation()
+                    {
+                        DateEditLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7),
+                        DateEditUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow),
+                        EditContent = editContent,
+                        EditId = Guid.NewGuid().ToString(),
+                        TimeZone = "SE Asia Standard Time",
+                        TransportId = transEdit.TransportId,
+                        UserEditId = userId
+                    };
+                    _context.EditTransportInformations.Add(newEdit);
+                }
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
         }
 
         public TransportInformation GetTransport(string transportId)

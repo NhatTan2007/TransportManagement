@@ -15,5 +15,6 @@ namespace TransportManagement.Entities
         [Required]
         [MaxLength(200)]
         public string LocationName { get => _locationName; set => _locationName = value; }
+
     }
 }

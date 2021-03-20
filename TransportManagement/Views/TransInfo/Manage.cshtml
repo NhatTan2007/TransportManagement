@@ -52,10 +52,10 @@
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-sm-12 text-danger h5" asp-validation-summary="ModelOnly"></div>
             <div class="col-sm-12">
-                <h2 class="tm-block-title d-block text-center">QUẢN LÝ CHUYẾN VẬN CHUYỂN</h2>
+                <h3 class="tm-block-title d-block text-center">QUẢN LÝ CHUYẾN VẬN CHUYỂN</h3>
             </div>
             <div>
-                <a class="text-decoration-none" asp-controller="TransInfo" asp-action="Manage">
+                <a class="text-decoration-none" asp-controller="TransInfo" asp-action="Create">
                     <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
                        style="font-size: 1.3rem"></i>
                 </a>
@@ -98,9 +98,9 @@
                     <thead class="thead-light text-center text-uppercase">
                         <tr>
                             <th class="p-0 align-middle">STT</th>
-                            <th class="pr-1 pl-1 align-middle">Biển kiểm soát</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Biển kiểm soát</th>
                             <th class="pr-1 pl-1 align-middle">Tên tài xế</th>
-                            <th class="pr-1 pl-1 align-middle">Khối lượng hàng hóa(tấn)</th>
+                            <th class="pr-1 pl-1 align-middle" style="width: 130px">Khối lượng hàng hóa(tấn)</th>
                             <th class="pr-1 pl-1 align-middle">Ngày bắt đầu</th>
                             <th class="pr-1 pl-1 align-middle">Trạng thái</th>
                             <th class="p-0 align-middle" style="width: 60px"></th>
@@ -112,10 +112,10 @@
                             int stt = i + 1;
                             <tr class="text-center">
                                 <td class="p-0 text-center">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left">
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left" style="max-width: 100px">
                                     <a class="text-white"
-                                       asp-action="Edit" asp-controller="TransportId"
-                                       asp-route-vehicleId="@transports[i].TransportId">
+                                       asp-action="Edit" asp-controller="TransInfo"
+                                       asp-route-transId="@transports[i].TransportId">
                                         @transports[i].VehicleLicensePlate
                                     </a>
                                 </td>
@@ -126,7 +126,7 @@
                                     @transports[i].CargoTonnage
                                 </td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3">
-                                    @SystemUtilites.GetDateTimeFromTimeStamp(transports[i].DateStartLocal);
+                                    @SystemUtilites.GetDateTimeFromTimeStamp(transports[i].DateStartLocal).ToString("dd/MM/yyyy")
                                 </td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3">
                                     @if (transports[i].IsCompleted)
@@ -150,12 +150,17 @@
                                 </td>
                                 <td class="p-0 text-center" style="width: 60px">
                                     <a class="button--edit mr-2"
-                                       asp-controller="Vehicle"
+                                       asp-controller="TransInfo"
                                        asp-action="Edit"
-                                       asp-route-vehicleId="@transports[i].TransportId"><i class="fas fa-pen-square"></i></a>
+                                       asp-route-transId="@transports[i].TransportId"
+                                       title="Chỉnh sửa">
+                                    <i class="fas fa-pen-square"></i></a>
                                     <a class="done-confirm"
-                                       onclick="confirmDone('@transports[i].TransportId')">
-                                        <i class="fas fa-flag-checkered text-primary" title="Hoàn thành"></i>
+                                       href="javascript:;"
+                                       onclick="confirmDone('@transports[i].TransportId')"
+                                       style="font-size: 1.3rem">
+                                        <i class="fas fa-flag-checkered text-light" 
+                                           title="Hoàn thành"></i>
                                     </a>
                                 </td>
                             </tr>

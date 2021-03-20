@@ -16,6 +16,7 @@ namespace TransportManagement.Entities
         [MaxLength(30)]
         public string BrandName { get => _brandName; set => _brandName = value; }
 
+        //Foregin Key area
         public ICollection<Vehicle> Vehicles { get; set; }
     }
 }

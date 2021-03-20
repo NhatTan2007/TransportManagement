@@ -1,6 +1,6 @@
-﻿@model CreateTransInfoViewModel
+﻿@model EditTransInfoViewModel
 @{
-    ViewBag.Title = "Tạo mới chuyến vận chuyển";
+    ViewBag.Title = "Chỉnh sửa chuyến vận chuyển";
 }
 @section Scripts{
     <script>
@@ -15,38 +15,63 @@
             target.value = formartter.format(number);
             advanceMoney.value = number;
         }
+        const reasonCancel = document.getElementById("reason-cancel");
+        const isCancel = document.getElementById("IsCancel");
+        $(document).ready(function () {
+            if (isCancel.checked) {
+                reasonCancel.classList.remove("d-none");
+                reasonCancel.classList.add("d-flex");
+            }
+        });
+        function showCancelReason({ target }) {
+            if (target.checked) {
+                reasonCancel.classList.remove("d-none");
+                reasonCancel.classList.add("d-flex");
+            }
+            else
+            {
+                if (reasonCancel.classList.contains("d-flex")) {
+                    reasonCancel.classList.remove("d-flex");
+                    reasonCancel.classList.add("d-none");
+                }
+            }
+        }
     </script>
 }
 <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-12">
-                <h3 class="tm-block-title d-block text-center">TẠO MỚI CHUYẾN VẬN TẢI</h3>
+                <h3 class="tm-block-title d-block text-center">CHỈNH SỬA CHUYẾN VẬN TẢI</h3>
             </div>
             <div class="form-group w-100">
-                <form asp-controller="TransInfo" asp-action="Create" method="post" class="form-group w-100 row m-0">
+                <form asp-controller="TransInfo" asp-action="Edit" method="post" class="form-group w-100 row m-0">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="DriverId" class="control-label"></label>
-                                <select asp-for="DriverId" class="js-select2-single form-control input-validation-error">
+                                <select class="js-select2-single form-control input-validation-error" disabled>
                                     @if (Model.Drivers != null)
                                     {
                                         if (Model.Drivers.Any())
                                         {
                                             foreach (var driver in Model.Drivers)
                                             {
-                                                <option value="@driver.Id">@driver.FullName</option>
+                                                if (Model.DriverId == driver.Id)
+                                                {
+                                                    <option value="@driver.Id">@driver.FullName</option>
+                                                }
                                             }
                                         }
                                     }
                                 </select>
+                                <input asp-for="DriverId" value="@Model.DriverId" hidden />
                                 <span asp-validation-for="DriverId" class="text-danger"></span>
                             </div>
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="VehicleId" class="control-label"></label>
-                                <select asp-for="VehicleId" class="js-select2-single form-control input-validation-error">
+                                <select class="js-select2-single form-control input-validation-error" disabled>
                                     @if (Model.Vehicles != null)
                                     {
                                         if (Model.Vehicles.Any())
@@ -54,19 +79,23 @@
                                             foreach (var vehicle in Model.Vehicles)
                                             {
                                                 string vehicleData = $"{vehicle.LicensePlate} - {vehicle.BrandName} - Trọng tải: {vehicle.VehiclePayload} (tấn)";
-                                                <option value="@vehicle.VehicleId">
-                                                    @vehicleData
-                                                </option>
+                                                if (Model.VehicleId == vehicle.VehicleId)
+                                                {
+                                                    <option value="@vehicle.VehicleId">
+                                                        @vehicleData
+                                                    </option>
+                                                }
                                             }
                                         }
                                     }
                                 </select>
+                                <input asp-for="VehicleId" value="@Model.VehicleId" hidden />
                                 <span asp-validation-for="VehicleId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="form-group mb-3 col-xs-12">
                             <label asp-for="RouteId" class="control-label"></label>
-                            <select asp-for="RouteId" class="js-select2-single form-control input-validation-error">
+                            <select class="js-select2-single form-control input-validation-error" disabled>
                                 @if (Model.Routes != null)
                                 {
                                     if (Model.Routes.Any())
@@ -74,13 +103,17 @@
                                         foreach (var route in Model.Routes)
                                         {
                                             string routeData = $"{route.DeparturePlace} - {route.ArrivalPlace}";
-                                            <option value="@route.RouteId">
-                                                @routeData
-                                            </option>
+                                            if (true)
+                                            {
+                                                <option value="@route.RouteId">
+                                                    @routeData
+                                                </option>
+                                            }
                                         }
                                     }
                                 }
                             </select>
+                            <input asp-for="RouteId" value="@Model.RouteId" hidden/>
                             <span asp-validation-for="RouteId" class="text-danger"></span>
                         </div>
                         <div class="row">
@@ -91,7 +124,7 @@
                             </div>
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="AdvanceMoney" class="control-label"></label>
-                                <input asp-for="AdvanceMoney" hidden/>
+                                <input asp-for="AdvanceMoney" hidden />
                                 <input type="text" oninput="formartCurrency(event)" value="0" class="form-control" />
                                 <span asp-validation-for="AdvanceMoney" class="text-danger"></span>
                             </div>
@@ -107,16 +140,41 @@
                             <textarea asp-for="Note" class="form-control"></textarea>
                             <span asp-validation-for="Note" class="text-danger"></span>
                         </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <div class="d-flex">
+                                    <div class="d-inline-flex align-items-center">
+                                        <label asp-for="IsCancel" class="control-label m-0 mr-2"></label>
+                                        <input asp-for="IsCancel" class="form-control mr-2" onclick="showCancelReason(event)"/>
+                                    </div>
+                                    <div id="reason-cancel" class="d-none w-100 align-items-center">
+                                        <label asp-for="ReasonCancel" class="control-label m-0 w-25"></label>
+                                        <input asp-for="ReasonCancel" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <span asp-validation-for="IsCancel" class="text-danger"></span>
+                                    <span asp-validation-for="ReasonCancel" class="text-danger"></span>
+                                </div>
+                                
+                            </div>
+                            @*<div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="DateStart" class="control-label"></label>
+                                <input asp-for="DateStart" type="datetime-local" value="" class="form-control" />
+                                <span asp-validation-for="DateStart" class="text-danger"></span>
+                            </div>*@
+                        </div>
                     </div>
+                    <input asp-for="TransportId" value="@Model.TransportId" hidden/>
                     <div class="col-sm-12 justify-content-center text-center">
                         <button type="submit"
                                 class="btn btn--primary text-uppercase mr-2 pr-4 pl-4">
-                            TẠO MỚI
+                            CHỈNH SỬA
                         </button>
-                        <button type="reset"
-                                class="btn btn--warning text-uppercase pr-4 pl-4">
-                            RESET
-                        </button>
+                        <a asp-controller="TransInfo" asp-action="Manage" role="button"
+                                class="btn btn--cancel text-uppercase pr-4 pl-4">
+                            QUAY VỀ
+                        </a>
                     </div>
                 </form>
             </div>

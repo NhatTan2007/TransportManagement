@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,21 +21,24 @@ namespace TransportManagement.Controllers
         private readonly IVehicleServices _vehicleServices;
         private readonly ITransInfoServices _transInfoServices;
         private readonly IDayJobServices _dayJobServices;
+        private readonly UserManager<AppIdentityUser> _userManager;
 
         public TransInfoController(IUserServices userServices,
                                     IVehicleServices vehicleServices,
                                     IRouteServices routeServices,
                                     ITransInfoServices transInfoServices,
-                                    IDayJobServices dayJobServices)
+                                    IDayJobServices dayJobServices,
+                                    UserManager<AppIdentityUser> userManager)
         {
             _userServices = userServices;
             _routeServices = routeServices;
             _vehicleServices = vehicleServices;
             _transInfoServices = transInfoServices;
             _dayJobServices = dayJobServices;
+            _userManager = userManager;
         }
 
-        public IActionResult Manage(int page, int pageSize, string search, string timeShow)
+        public IActionResult Manage(int page, int pageSize, string search, string timeShow = "today")
         {
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
@@ -49,7 +53,7 @@ namespace TransportManagement.Controllers
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
             if (String.IsNullOrEmpty(search))
             {
-                if (timeShow == "month")
+                if (timeShow == "today")
                 {
                     model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize);
                 }
@@ -60,7 +64,7 @@ namespace TransportManagement.Controllers
             }
             else
             {
-                if (timeShow == "month")
+                if (timeShow == "today")
                 {
                     model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize, search);
                 }
@@ -77,12 +81,15 @@ namespace TransportManagement.Controllers
                     countItems = model.Items.Count();
                 }
             }
-            var Pager = new Pager(countItems, page, pageSize);
+
+            model.Items = model.Items.Skip((page - 1) * pageSize).Take(pageSize);
+            model.Pager = new Pager(countItems, page, pageSize);
             ViewBag.Search = search;
             return View(model);
         }
-        public IActionResult Details()
+        public IActionResult Details(string transportId)
         {
+
             return View();
         }
         [HttpGet]
@@ -102,19 +109,18 @@ namespace TransportManagement.Controllers
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
             //get timestamp of day at 0 AM
-            double TStodayUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7.Date);
+            double TStodayUTC7At0Am = SystemUtilites.ConvertToTimeStamp(localTimeUTC7.Date);
             //get timestamp now at utc
             double TSUTCNow = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
-            //send data to select elements
+            //get data for select elements
             model.Drivers = _userServices.GetAvailableUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
             model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
-
             string message = String.Empty;
             if (ModelState.IsValid)
             {
                 //check the vehicle is used
-                string driverIdUseVehicle = _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7);
+                string driverIdUseVehicle = _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7At0Am);
                 if (!String.IsNullOrEmpty(driverIdUseVehicle))
                 {
                     var driverUseVehicle = _userServices.GetUser(driverIdUseVehicle);
@@ -122,8 +128,9 @@ namespace TransportManagement.Controllers
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
                     return View(model);
                 }
-                //convert dateStart to timeStamp
+
                 //create new TransportInformation
+                var user = await _userManager.GetUserAsync(User);
                 TransportInformation newTrans = new TransportInformation()
                 {
                     TransportId = Guid.NewGuid().ToString(),
@@ -135,16 +142,17 @@ namespace TransportManagement.Controllers
                     Note = model.Note,
                     VehicleId = model.VehicleId,
                     RouteId = model.RouteId,
+                    UserCreateId = user.Id
                 };
                 //get or create if not dayjob has date match today timeStamp
-                DayJob driverDayJob = _dayJobServices.GetDayJob(model.DriverId, TStodayUTC7);
+                DayJob driverDayJob = _dayJobServices.GetDayJob(model.DriverId, TStodayUTC7At0Am);
                 if (driverDayJob == null)
                 {
                     driverDayJob = new DayJob()
                     {
                         DayJobId = Guid.NewGuid().ToString(),
                         DriverId = model.DriverId,
-                        Date = TStodayUTC7
+                        Date = TStodayUTC7At0Am
                     };
                     if (!(await _dayJobServices.Create(driverDayJob)))
                     {
@@ -159,7 +167,88 @@ namespace TransportManagement.Controllers
                 {
                     message = "Đơn vận chuyển đã được tạo thành công";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                    return RedirectToAction(actionName: "Manage");
+                }
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult Edit(string transId)
+        {
+            string message = String.Empty;
+            var transInfo = _transInfoServices.GetTransport(transId);
+            if (transInfo != null)
+            {
+                EditTransInfoViewModel model = new EditTransInfoViewModel()
+                {
+                    AdvanceMoney = transInfo.AdvanceMoney,
+                    CargoTonnage = transInfo.CargoTonnage,
+                    CargoTypes = transInfo.CargoTypes,
+                    DriverId = transInfo.DayJob.DriverId,
+                    IsCancel = transInfo.IsCancel,
+                    IsCompleted = transInfo.IsCompleted,
+                    Note = transInfo.Note,
+                    ReasonCancel = transInfo.ReasonCancel,
+                    ReturnOfAdvances = transInfo.ReturnOfAdvances,
+                    RouteId = transInfo.RouteId,
+                    TransportId = transInfo.TransportId,
+                    VehicleId = transInfo.VehicleId,
+                    Drivers = _userServices.GetAvailableUsers().ToList(),
+                    Routes = _routeServices.GetAllRoutes().ToList(),
+                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                };
+                return View(model);
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Manage");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditTransInfoViewModel model)
+        {
+            //get data for select elements if error
+            model.Drivers = _userServices.GetAvailableUsers().ToList();
+            model.Routes = _routeServices.GetAllRoutes().ToList();
+            model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
+            string message = String.Empty;
+            if (ModelState.IsValid)
+            {
+                //check cancel option and reason cancel
+                if (model.IsCancel && String.IsNullOrEmpty(model.ReasonCancel))
+                {
+                    message = "Không thể để trống lý do hủy khi chọn hủy";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
                     return View(model);
+                }
+                if (!model.IsCancel && !String.IsNullOrEmpty(model.ReasonCancel))
+                {
+                    message = "Không thể điền lý do hủy nếu chưa chọn hủy";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return View(model);
+                }
+                //if cancel and have reason cancel, write date complete transport
+                if (model.IsCancel && !String.IsNullOrEmpty(model.ReasonCancel))
+                {
+                    DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
+                    model.DateCompletedLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7);
+                    model.DateCompletedUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
+                }
+                var transInfo = _transInfoServices.GetTransport(model.TransportId);
+                if (transInfo != null)
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        if (await _transInfoServices.EditTransInfo(model, user.Id))
+                        {
+                            message = "Đơn vận chuyển đã được điều chỉnh thông tin";
+                            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                            return RedirectToAction(actionName: "Manage");
+                        }
+                    }
                 }
             }
             message = "Lỗi không xác định, xin mời thao tác lại";

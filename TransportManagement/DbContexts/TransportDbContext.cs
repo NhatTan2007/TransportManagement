@@ -21,6 +21,7 @@ namespace TransportManagement.DbContexts
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<DayJob> DayJobs { get; set; }
         public DbSet<TransportInformation> TransportInformations { get; set; }
+        public DbSet<EditTransportInformation> EditTransportInformations { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
