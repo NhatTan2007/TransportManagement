@@ -1,0 +1,209 @@
+﻿@model PaginationViewModel<RoleViewModel>
+@{
+    List<RoleViewModel> roles = new List<RoleViewModel>();
+    if (Model.Items != null)
+    {
+        roles = Model.Items.ToList();
+    }
+}
+
+@section Scripts{
+    <script src="~/scripts/role.js"></script>
+}
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h3 class="tm-block-title d-block text-center">QUẢN LÝ PHÂN QUYỀN</h3>
+            </div>
+            <div class="col-lg-8 col-sm-12 pagination row mx-auto">
+                <div>
+                    <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
+                       style="font-size: 1.3rem; cursor: pointer"
+                       data-toggle="modal"
+                       data-target="#createRole"></i>
+                </div>
+                <!--Search and pagesize-->
+                <div class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12 flex-nowrap align-items-center justify-content-between">
+                    <div>
+                        <span class="text-white">Show</span>
+                        <select class="ml-2 mr-2 text-center"
+                                style="min-width:5rem; height: 38px;"
+                                id="pageSize" onchange="changePageSize(this)">
+                            @foreach (var item in Model.PageSizeItem)
+                            {
+                                if (Model.Pager.PageSize == item)
+                                {
+                                    <option name="pageSize" selected value="@item">@item</option>
+                                }
+                                else
+                                {
+                                    <option name="pageSize" value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle" style="width: 30px">STT</th>
+                            <th class="pr-1 pl-1 align-middle">Tên phân quyền</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 40px">Cấp bậc phân quyền</th>
+                            <th class="p-0 align-middle" style="width: 20px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < roles.Count; i++)
+                        {
+                            int stt = i + 1;
+                            <tr>
+                                <td class="p-0 text-center" style="width: 30px">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3"><a class="text-decoration-none text-white edit-toggle" href="javascript:;" id="@roles[i].RoleId" onclick="role.edit(event)">@roles[i].RoleName</a></td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center" style="max-width: 40px">@roles[i].RolePriority</td>
+                                <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
+                                    <a class="delete-confirm" onclick="confirmDelete('@roles[i].RoleId')"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!--Footer of pagination-->
+                <div class="col-12 mt-2">
+                    <ul class="pagination col-12 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link" asp-controller="Role" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Role" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="Role" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="Role" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Role" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="createRole" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo phân quyền mới</h5>
+            </div>
+            <form asp-controller="Role" asp-action="Create" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 170px">
+                                    Tên phân quyền
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="text" data-val="true"
+                                   data-val-maxlength="Tên phân quyền không được quá 30 ký tự"
+                                   data-val-maxlength-max="30"
+                                   data-val-required="Tên phân quyền không được bỏ trống"
+                                   id="RoleName" maxlength="30" name="RoleName" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="RoleName"
+                              data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 170px">
+                                    Cấp bậc phân quyền
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="number" data-val="true"
+                                   data-val-range="Cấp bậc phân quyền không được quá 20"
+                                   data-val-range-max="20"
+                                   data-val-range-min="0"
+                                   data-val-required="Cấp bậc phân quyền không được bỏ trống"
+                                   id="RolePriority" name="RolePriority" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="RolePriority"
+                              data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editRole" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa phân quyền</h5>
+            </div>
+            <form asp-controller="Role" asp-action="Edit" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 170px">
+                                    Tên phân quyền
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="text" data-val="true"
+                                   data-val-maxlength="Tên phân quyền không được quá 30 ký tự"
+                                   data-val-maxlength-max="30"
+                                   data-val-required="Tên phân quyền không được bỏ trống"
+                                   id="EditRoleName" maxlength="30" name="RoleName" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="EditRoleName"
+                              data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 170px">
+                                    Cấp bậc phân quyền
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="number" data-val="true"
+                                   data-val-range="Cấp bậc phân quyền không được quá 20"
+                                   data-val-range-max="20"
+                                   data-val-range-min="0"
+                                   data-val-required="Cấp bậc phân quyền không được bỏ trống"
+                                   id="EditRolePriority" name="RolePriority" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="EditRolePriority"
+                              data-valmsg-replace="true"></span>
+                    </div>
+                    <input type="text" id="EditRoleId" name="RoleId" value="" hidden/>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+</script>

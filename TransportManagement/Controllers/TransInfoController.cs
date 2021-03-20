@@ -165,7 +165,7 @@ namespace TransportManagement.Controllers
                 //create new TransInfo in SQL
                 if (await _transInfoServices.CreateNewTransInfo(newTrans))
                 {
-                    message = "Đơn vận chuyển đã được tạo thành công";
+                    message = "Chuyến vận chuyển đã được tạo";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Manage");
                 }

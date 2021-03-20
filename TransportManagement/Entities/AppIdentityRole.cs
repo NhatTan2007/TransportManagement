@@ -9,9 +9,9 @@ namespace TransportManagement.Entities
 {
     public class AppIdentityRole : IdentityRole
     {
-        private string _rolePriority;
+        private byte _rolePriority;
 
         [Required]
-        public string RolePriority { get => _rolePriority; set => _rolePriority = value; }
+        public byte RolePriority { get => _rolePriority; set => _rolePriority = value; }
     }
 }

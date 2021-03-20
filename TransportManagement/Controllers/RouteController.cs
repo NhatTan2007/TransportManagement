@@ -83,7 +83,7 @@ namespace TransportManagement.Controllers
                 };
                 if (await _routeServices.CreateRoute(newRoute))
                 {
-                    message = "Tuyến vận chuyển được tạo thành công";
+                    message = "Tuyến vận chuyển được tạo";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }

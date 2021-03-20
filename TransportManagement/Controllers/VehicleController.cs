@@ -73,7 +73,7 @@ namespace TransportManagement.Controllers
                 };
                 if (await _vehicleServices.CreateVehicle(newVehicle))
                 {
-                    message = "Phương tiện mới đã được tạo thành công";
+                    message = "Phương tiện mới đã được tạo";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }
@@ -117,7 +117,7 @@ namespace TransportManagement.Controllers
             {
                 if (await _vehicleServices.EditVehicle(model))
                 {
-                    message = "Điều chỉnh phương tiện thành công";
+                    message = "Thông tin phương tiện đã được điều chỉnh";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }
@@ -136,7 +136,7 @@ namespace TransportManagement.Controllers
             {
                 if (await _vehicleServices.DeleteVehicle(vehicleDel))
                 {
-                    message = "Xóa phương tiện thành công";
+                    message = $"Đã xóa phương tiện {vehicleDel.LicensePlate}";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Index");
                 }
