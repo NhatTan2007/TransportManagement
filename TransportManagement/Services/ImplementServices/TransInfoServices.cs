@@ -15,13 +15,11 @@ namespace TransportManagement.Services.ImplementServices
     public class TransInfoServices : ITransInfoServices
     {
         private readonly TransportDbContext _context;
-        private readonly UserManager<AppIdentityUser> _userManager;
 
         public TransInfoServices(TransportDbContext context,
                                     UserManager<AppIdentityUser> userManager)
         {
             _context = context;
-            _userManager = userManager;
         }
         public async Task<bool> CreateNewTransInfo(TransportInformation newTransInfo)
         {
@@ -101,23 +99,30 @@ namespace TransportManagement.Services.ImplementServices
                 {
                     transInfo.DateCompletedLocal = transEdit.DateCompletedLocal;
                 }
-                if (!String.IsNullOrEmpty(editContent))
+                try
                 {
-                    DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
-                    EditTransportInformation newEdit = new EditTransportInformation()
+                    if (!String.IsNullOrEmpty(editContent))
                     {
-                        DateEditLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7),
-                        DateEditUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow),
-                        EditContent = editContent,
-                        EditId = Guid.NewGuid().ToString(),
-                        TimeZone = "SE Asia Standard Time",
-                        TransportId = transEdit.TransportId,
-                        UserEditId = userId
-                    };
-                    _context.EditTransportInformations.Add(newEdit);
+                        DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
+                        EditTransportInformation newEdit = new EditTransportInformation()
+                        {
+                            DateEditLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7),
+                            DateEditUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow),
+                            EditContent = editContent,
+                            EditId = Guid.NewGuid().ToString(),
+                            TimeZone = "SE Asia Standard Time",
+                            TransportId = transEdit.TransportId,
+                            UserEditId = userId
+                        };
+                        _context.EditTransportInformations.Add(newEdit);
+                    }
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
                 }
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return false;
         }
