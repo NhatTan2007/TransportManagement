@@ -16,8 +16,9 @@ namespace TransportManagement.Services.IServices
         public ICollection<VehicleViewModel> GetAllVehicles(int page, int pageSize);
         public int CountVehicles();
         public Task<bool> CreateVehicle (Vehicle newVehicle);
-        public Task<bool> DeleteVehicle(Vehicle vehicle);
-        public Vehicle GetVehicle(int vehicleId);
+        public Task<bool> DeleteVehicle(int vehicleId);
+        public Task<bool> DeleteVehicleDB(Vehicle vehicle);
+        public Task<Vehicle> GetVehicle(int vehicleId);
         public Task<bool> EditVehicle(EditVehicleViewModel model);
 
         string IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday);

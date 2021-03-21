@@ -40,7 +40,20 @@ namespace TransportManagement.Services.ImplementServices
             }
         }
 
-        public async Task<bool> DeleteVehicle(Vehicle vehicle)
+        public async Task<bool> DeleteVehicle(int vehicleId)
+        {
+            var vehicle = await _context.Vehicles.Where(v => v.VehicleId == vehicleId).SingleOrDefaultAsync();
+            if (vehicle != null)
+            {
+                _context.Vehicles.Attach(vehicle);
+                vehicle.IsDeleted = true;
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteVehicleDB(Vehicle vehicle)
         {
             try
             {
@@ -58,19 +71,22 @@ namespace TransportManagement.Services.ImplementServices
         {
             try
             {
-                var vehicle = GetVehicle(model.VehicleId);
+                var vehicle = await GetVehicle(model.VehicleId);
                 if (vehicle != null)
                 {
-                    _context.Vehicles.Attach(vehicle);
-                    vehicle.VehicleName = model.VehicleName;
-                    vehicle.FuelConsumptionPerTone = model.FuelConsumptionPerTone;
-                    vehicle.IsAvailable = model.IsAvailable;
-                    vehicle.IsInUse = model.IsInUse;
-                    vehicle.VehicleBrandId = model.VehicleBrandId;
-                    vehicle.Specifications = model.Specifications;
-                    vehicle.VehiclePayload = model.VehiclePayload;
-                    var result = await _context.SaveChangesAsync();
-                    return result > 0;
+                    if (!vehicle.IsDeleted)
+                    {
+                        _context.Vehicles.Attach(vehicle);
+                        vehicle.VehicleName = model.VehicleName;
+                        vehicle.FuelConsumptionPerTone = model.FuelConsumptionPerTone;
+                        vehicle.IsAvailable = model.IsAvailable;
+                        vehicle.IsInUse = model.IsInUse;
+                        vehicle.VehicleBrandId = model.VehicleBrandId;
+                        vehicle.Specifications = model.Specifications;
+                        vehicle.VehiclePayload = model.VehiclePayload;
+                        var result = await _context.SaveChangesAsync();
+                        return result > 0;
+                    }
                 }
             }
             catch (Exception)
@@ -82,7 +98,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<VehicleViewModel> GetAllVehicles()
         {
-            return _context.Vehicles.Include(v => v.Brand)
+            return _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .Select(v => new VehicleViewModel()
                                     {
                                         VehicleId = v.VehicleId,
@@ -97,8 +114,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<VehicleViewModel> GetAllVehicles(int page, int pageSize, string search)
         {
-            return _context.Vehicles.Include(v => v.Brand)
-                                    .Where(v => v.LicensePlate.Contains(search))
+            return _context.Vehicles.Where(v => v.LicensePlate.Contains(search) && v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(v => new VehicleViewModel()
@@ -115,7 +132,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<VehicleViewModel> GetAllVehicles(int page, int pageSize)
         {
-            return _context.Vehicles.Include(v => v.Brand)
+            return _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(v => new VehicleViewModel()
@@ -132,7 +150,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<VehicleViewModel> GetInUseVehicles()
         {
-            return _context.Vehicles.Include(v => v.Brand)
+            return _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .Where(v => v.IsInUse == true && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                     {
@@ -148,7 +167,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<VehicleViewModel> GetNotUseVehicles()
         {
-            return _context.Vehicles.Include(v => v.Brand)
+            return _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .Where(v => v.IsInUse == false && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                             {
@@ -163,11 +183,12 @@ namespace TransportManagement.Services.ImplementServices
                                                             }).ToList();
         }
 
-        public Vehicle GetVehicle(int vehicleId)
+        public async Task<Vehicle> GetVehicle(int vehicleId)
         {
-            return _context.Vehicles.Include(v => v.Brand)
-                                    .Where(v => v.VehicleId == vehicleId)
-                                    .SingleOrDefault();
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+                                            .Include(v => v.Brand)
+                                            .Where(v => v.VehicleId == vehicleId)
+                                            .SingleOrDefaultAsync();
         }
 
         public string IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday)

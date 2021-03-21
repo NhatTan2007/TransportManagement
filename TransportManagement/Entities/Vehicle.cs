@@ -17,7 +17,7 @@ namespace TransportManagement.Entities
         private string _specifications;
         private bool _isInUse;
         private bool _isAvailable;
-        private string _usingFrom;
+        private bool _isDeleted;
         [Key]
         public int VehicleId { get => _vehicleId; set => _vehicleId = value; }
         [Required]
@@ -42,7 +42,7 @@ namespace TransportManagement.Entities
         [MaxLength(1500)]
         public string Specifications { get => _specifications; set => _specifications = value; }
         [MaxLength(10)]
-        public string UsingFrom { get => _usingFrom; set => _usingFrom = value; }
+        public bool IsDeleted { get => _isDeleted; set => _isDeleted = value; }
         //Foreign key area
         public ICollection<TransportInformation> Transports { get; set; }
         

@@ -83,10 +83,10 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Edit(int vehicleId)
+        public async Task<IActionResult> Edit(int vehicleId)
         {
             string message = String.Empty;
-            var vehicle = _vehicleServices.GetVehicle(vehicleId);
+            var vehicle = await _vehicleServices.GetVehicle(vehicleId);
             if (vehicle != null)
             {
                 EditVehicleViewModel vehicleEdit = new EditVehicleViewModel()
@@ -131,10 +131,25 @@ namespace TransportManagement.Controllers
         public async Task<IActionResult> Delete(int vehicleId)
         {
             string message = String.Empty;
-            var vehicleDel = _vehicleServices.GetVehicle(vehicleId);
+            if (await _vehicleServices.DeleteVehicle(vehicleId))
+            {
+                message = "Phương tiện đã được xóa";
+                TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                return RedirectToAction(actionName: "Index");
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteVehicleDB(int vehicleId)
+        {
+            string message = String.Empty;
+            var vehicleDel = await _vehicleServices.GetVehicle(vehicleId);
             if (vehicleDel != null)
             {
-                if (await _vehicleServices.DeleteVehicle(vehicleDel))
+                if (await _vehicleServices.DeleteVehicleDB(vehicleDel))
                 {
                     message = $"Đã xóa phương tiện {vehicleDel.LicensePlate}";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);

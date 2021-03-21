@@ -26,7 +26,7 @@ namespace TransportManagement.Models.Vehicle
         public string VehicleName { get => _vehicleName; set => _vehicleName = value; }
         [Required(ErrorMessage = "Định mức tiêu thụ nhiên liệu không được bỏ trống")]
         [Range(0.1, Int16.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
-        [Display(Name = "Định mức nhiên liệu/tấn hàng hóa")]
+        [Display(Name = "Định mức nhiên liệu/tấn hàng hóa (lít/km)")]
         public int FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
         [Required(ErrorMessage = "Trọng tải hàng hóa tối đa không được bỏ trống")]
         [Range(0.1, Int16.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
