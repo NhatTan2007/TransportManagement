@@ -17,6 +17,7 @@ namespace TransportManagement.Entities
         private bool _isAvailable;
         private string _jobTitle;
         private string _department;
+        private int _rolePriority;
         [Required]
         public string FirstName { get => _firstName; set => _firstName = value; }
         public string MiddleName { get => _middleName; set => _middleName = value; }
@@ -31,9 +32,11 @@ namespace TransportManagement.Entities
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
         public string JobTitle { get => _jobTitle; set => _jobTitle = value; }
         public string Department { get => _department; set => _department = value; }
-
+        [Required]
+        public int RolePriority { get => _rolePriority; set => _rolePriority = value; }
         //Foreign Key area
         public ICollection<DayJob> DayJobs { get; set; }
         public ICollection<EditTransportInformation> ListEdit { get; set; }
+        
     }
 }

@@ -1,13 +1,44 @@
-﻿@model PaginationViewModel<UserViewModel>
-@{ 
+﻿@inject UserManager<AppIdentityUser> userManager
+@model PaginationViewModel<UserViewModel>
+@{
     List<UserViewModel> users = Model.Items.ToList();
+}
+
+@section Scripts{
+    <script>
+        function confirmDelete(id) {
+            bootbox.confirm({
+                size: "small",
+                message: "Bạn muốn xóa tài khoản này?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-dark pl-3 pr-3'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger pr-3 pl-3'
+                    }
+                },
+                callback: async function (result) {
+                    if (result) {
+                        window.location.href = `User/Delete?userId=${id}`;
+                    }
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            $('.js-select2-single').select2();
+        });
+    </script>
 }
 
 <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-12">
-                <h2 class="tm-block-title d-block text-center">QUẢN LÝ USER</h2>
+                <h3 class="tm-block-title d-block text-center">QUẢN LÝ USER</h3>
             </div>
             <div class="w-100 pagination row mx-auto">
                 <!--Search and pagesize-->
@@ -48,7 +79,7 @@
                             <th class="pr-1 pl-1 align-middle">Chức vụ</th>
                             <th class="p-0 align-middle">Số điện thoại</th>
                             <th class="p-0 align-middle">Trạng thái</th>
-                            <th class="p-0 align-middle w-25">Chức năng</th>
+                            <th class="p-0 align-middle" style="max-width: 80px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,9 +93,16 @@
                                 <td class="pr-1 pl-1 text-center">@users[i].JobTitle</td>
                                 <td class="p-0 text-center">@users[i].PhoneNumber</td>
                                 <td class="p-0 text-center">@status</td>
-                                <td class="p-0 text-center w-25">
-                                    <a asp-controller="User" asp-action="Edit" class="btn btn-small btn--primary">Edit</a>
-                                    <a asp-controller="User" asp-action="Delete" class="btn btn-small btn--danger">Delete</a>
+                                <td class="p-0 text-center" style="max-width: 80px">
+                                    <a class="button--edit mr-sm-2"
+                                       asp-controller="User"
+                                       asp-action="Edit"
+                                       asp-route-vehicleId="@users[i].UserId"
+                                       title="Điều chỉnh"><i class="fas fa-pen-square"></i></a>
+                                    <a class="delete-confirm"
+                                       onclick="confirmDelete('@users[i].UserId')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }

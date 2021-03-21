@@ -8,12 +8,13 @@ using TransportManagement.Models.Role;
 
 namespace TransportManagement.Models.User
 {
-    public class CreateUserViewModel
+    public class EditUserViewModel
     {
         private string _userName;
         private string _firstName;
         private string _middleName;
         private string _lastName;
+        private string _existsAvatar;
         private IFormFile _avatar;
         private string _password;
         private string _confirmPassword;
@@ -61,6 +62,6 @@ namespace TransportManagement.Models.User
         [Display(Name = "Phân quyền tài khoản")]
         public string RoleId { get => _roleId; set => _roleId = value; }
         public ICollection<RoleViewModel> Roles { get; set; }
-        
+        public string ExistsAvatar { get => _existsAvatar; set => _existsAvatar = value; }
     }
 }

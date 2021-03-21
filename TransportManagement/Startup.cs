@@ -43,6 +43,7 @@ namespace TransportManagement
             services.AddTransient<IVehicleServices, VehicleServices>();
             services.AddTransient<ITransInfoServices, TransInfoServices>();
             services.AddTransient<IDayJobServices, DayJobServices>();
+            services.AddTransient<IRoleServices, RoleServices>();
             services.AddDbContext<TransportDbContext>(opt =>
                 opt.UseSqlServer(_config.GetConnectionString("Dbconection")));
             services.AddIdentity<AppIdentityUser, AppIdentityRole>(opt =>

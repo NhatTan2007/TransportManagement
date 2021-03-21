@@ -1,0 +1,53 @@
+﻿@model LoginAccountViewModel
+
+@{ 
+    ViewBag.Title = "Trang Chủ - Đăng nhập";
+    Layout = "_HomeIndexLayout";
+}
+<section class="login-form row">
+    <div class="col-12 mx-auto tm-login-col">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="tm-block-title mb-4">CÔNG TY CP VẬN TẢI HÙNG ĐẠT</h2>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <form asp-controller="Account" asp-action="Login" method="post" class="tm-login-form">
+                        <div class="w-100 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100 justify-content-center justify-content-sm-start"
+                                      style="min-width: 130px">
+                                    Tên đăng nhập
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0" asp-for="UserName">
+                        </div>
+                        <span class="text-danger field-validation-valid" asp-validation-for="UserName"></span>
+                        <div class="w-100 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100 justify-content-center justify-content-sm-start"
+                                      style="min-width: 130px">
+                                    Mật khẩu
+                                </span>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0" asp-for="Password">
+                        </div>
+                        <span class="text-danger field-validation-valid" asp-validation-for="Password"></span>
+                        <div class="d-flex mt-2">
+                            <label asp-for="IsRemember" class="control-label text-white mr-2"></label>
+                            <input asp-for="IsRemember" class="form-control" />
+                        </div>
+                        <div class="form-group mt-3 mb-0">
+                            <button type="submit"
+                                    class="btn btn-primary btn-block text-uppercase">
+                                Đăng nhập
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

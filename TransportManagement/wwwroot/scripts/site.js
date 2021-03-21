@@ -68,6 +68,7 @@ if (notfication != null) {
         }, 3000);
     }
 }
+
 //make active
 //function makeActive() {
 //    const navLinks = document.getElementsByClassName("nav-link");

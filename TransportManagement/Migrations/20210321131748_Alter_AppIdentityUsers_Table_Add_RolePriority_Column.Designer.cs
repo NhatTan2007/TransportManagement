@@ -10,8 +10,8 @@ using TransportManagement.DbContexts;
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    [Migration("20210321064813_Alter_Vehicles_Table_Add_IsDeleted_Column")]
-    partial class Alter_Vehicles_Table_Add_IsDeleted_Column
+    [Migration("20210321131748_Alter_AppIdentityUsers_Table_Add_RolePriority_Column")]
+    partial class Alter_AppIdentityUsers_Table_Add_RolePriority_Column
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,6 +104,13 @@ namespace TransportManagement.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "84572bc3-25fc-4ef8-9056-67c4da04069b",
+                            RoleId = "8dd36636-b4d8-4010-8594-caebfbe55991"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -156,6 +163,17 @@ namespace TransportManagement.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "8dd36636-b4d8-4010-8594-caebfbe55991",
+                            ConcurrencyStamp = "3327e637-14a3-4364-9fb2-48a65721245e",
+                            IsActive = true,
+                            Name = "Quản trị viên hệ thống",
+                            NormalizedName = "QUẢN TRỊ VIÊN HỆ THỐNG",
+                            RolePriority = (byte)1
+                        });
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.AppIdentityUser", b =>
@@ -227,6 +245,9 @@ namespace TransportManagement.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("RolePriority")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -248,6 +269,29 @@ namespace TransportManagement.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "84572bc3-25fc-4ef8-9056-67c4da04069b",
+                            AccessFailedCount = 0,
+                            Avatar = "noavatar.png",
+                            ConcurrencyStamp = "0d3d81cc-1ef1-446f-bc33-6e07fb70f4b1",
+                            EmailConfirmed = false,
+                            FirstName = "Administrator",
+                            IsActive = true,
+                            IsAvailable = true,
+                            LastName = "System",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKD2FgkcwI8BEh2ctt6v52ywJmLMqVjF3KeOwCg8Sn7Hlvi8QJfdGhvIzBBFU49f2A==",
+                            PhoneNumber = "0911345992",
+                            PhoneNumberConfirmed = true,
+                            RolePriority = 0,
+                            SecurityStamp = "32411c6e-b62c-4855-bed0-37c8a0b9e335",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.DayJob", b =>
@@ -290,19 +334,14 @@ namespace TransportManagement.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransportId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransportInfoTransportId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserEditId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("EditId");
 
-                    b.HasIndex("TransportInfoTransportId");
+                    b.HasIndex("TransportId");
 
                     b.HasIndex("UserEditId");
 
@@ -563,13 +602,11 @@ namespace TransportManagement.Migrations
                 {
                     b.HasOne("TransportManagement.Entities.TransportInformation", "TransportInfo")
                         .WithMany("ListEdit")
-                        .HasForeignKey("TransportInfoTransportId");
+                        .HasForeignKey("TransportId");
 
                     b.HasOne("TransportManagement.Entities.AppIdentityUser", "UserEdit")
                         .WithMany("ListEdit")
-                        .HasForeignKey("UserEditId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserEditId");
 
                     b.Navigation("TransportInfo");
 

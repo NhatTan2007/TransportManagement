@@ -1,19 +1,32 @@
 ﻿@model CreateUserViewModel
-
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('.js-select2-single').select2();
+        });
+    </script>
+}
 <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-12">
-                <h2 class="tm-block-title d-block text-center">CREATE USER</h2>
+                <h3 class="tm-block-title d-block text-center">CREATE USER</h3>
             </div>
             <div class="form-group w-100">
                 <form enctype="multipart/form-data" asp-controller="User" asp-action="Create" method="post" class="form-group w-100 row m-0">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
                     <div class="col-xl-9 col-lg-9 col-md-12">
-                        <div class="form-group mb-3">
-                            <label asp-for="UserName" class="control-label"></label>
-                            <input asp-for="UserName" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="UserName" class="control-label"></label>
+                                <input asp-for="UserName" class="form-control" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
@@ -41,28 +54,41 @@
                         </div>
                         <div class="row">
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
-                                <label asp-for="Email" class="control-label"></label>
-                                <input asp-for="Email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                            <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="PhoneNumber" class="control-label"></label>
                                 <input asp-for="PhoneNumber" class="form-control" />
                                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="RoleId" class="control-label"></label>
+                                <select asp-for="RoleId" class="js-select2-single text-white form-control input-validation-error">
+                                    @if (Model.Roles != null)
+                                    {
+                                        if (Model.Roles.Any())
+                                        {
+                                            foreach (var role in Model.Roles)
+                                            {
+                                                <option value="@role.RoleId">
+                                                    @role.RoleName
+                                                </option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="RoleId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <div class="d-flex">
                                     <label asp-for="IsAvailable" class="control-label mr-2"></label>
-                                    <input asp-for="IsAvailable" class="form-control" checked/>
+                                    <input asp-for="IsAvailable" class="form-control" checked />
                                 </div>
                                 <span asp-validation-for="IsAvailable"></span>
                             </div>
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <div class="d-flex">
                                     <label asp-for="IsActive" class="control-label mr-2"></label>
-                                    <input asp-for="IsActive" class="form-control" checked/>
+                                    <input asp-for="IsActive" class="form-control" checked />
                                 </div>
                                 <span asp-validation-for="IsActive"></span>
                             </div>
@@ -78,11 +104,11 @@
                             </label>
                         </div>
                         <div class="custom-file mt-3 mb-3">
-                           
+
                         </div>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn--primary btn-block text-uppercase">CREATE NEW USER</button>
+                        <button type="submit" class="btn btn--primary btn-block text-uppercase">TẠO TÀI KHOẢN MỚI</button>
                     </div>
                 </form>
             </div>

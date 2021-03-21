@@ -255,6 +255,11 @@ namespace TransportManagement.Controllers
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return View(model);
         }
+        [HttpGet]
+        public IActionResult ViewHistory(string transportId)
+        {
+            return View();
+        }
 
     }
 }

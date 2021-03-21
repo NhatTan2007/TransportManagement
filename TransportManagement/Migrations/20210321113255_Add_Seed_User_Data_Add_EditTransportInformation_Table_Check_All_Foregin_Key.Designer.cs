@@ -10,8 +10,8 @@ using TransportManagement.DbContexts;
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    [Migration("20210320131537_Add_EditTransportInformation_Table_check_Foregin_Key_all_Tables")]
-    partial class Add_EditTransportInformation_Table_check_Foregin_Key_all_Tables
+    [Migration("20210321113255_Add_Seed_User_Data_Add_EditTransportInformation_Table_Check_All_Foregin_Key")]
+    partial class Add_Seed_User_Data_Add_EditTransportInformation_Table_Check_All_Foregin_Key
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,6 +104,13 @@ namespace TransportManagement.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "84572bc3-25fc-4ef8-9056-67c4da04069b",
+                            RoleId = "8dd36636-b4d8-4010-8594-caebfbe55991"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -134,6 +141,9 @@ namespace TransportManagement.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -142,9 +152,8 @@ namespace TransportManagement.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("RolePriority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte>("RolePriority")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
@@ -154,6 +163,17 @@ namespace TransportManagement.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "8dd36636-b4d8-4010-8594-caebfbe55991",
+                            ConcurrencyStamp = "64bd6762-7f0a-496a-82a4-fffbabe7ba38",
+                            IsActive = true,
+                            Name = "Quản trị viên hệ thống",
+                            NormalizedName = "QUẢN TRỊ VIÊN HỆ THỐNG",
+                            RolePriority = (byte)1
+                        });
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.AppIdentityUser", b =>
@@ -246,6 +266,28 @@ namespace TransportManagement.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "84572bc3-25fc-4ef8-9056-67c4da04069b",
+                            AccessFailedCount = 0,
+                            Avatar = "noavatar.png",
+                            ConcurrencyStamp = "9b3ec319-c005-4945-9bf4-5aba468a4b56",
+                            EmailConfirmed = false,
+                            FirstName = "Administrator",
+                            IsActive = true,
+                            IsAvailable = true,
+                            LastName = "System",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJ58Tab6s27I/6iv1vPCgdZSDGeAddm+51R0ygfNqZd/Y6CYgohnxLck79phlCshlA==",
+                            PhoneNumber = "0911345992",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "45e4aba9-fb17-4969-b2f4-531e4212e5e4",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.DayJob", b =>
@@ -288,23 +330,18 @@ namespace TransportManagement.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransportId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransportInfoTransportId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserEditId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("EditId");
 
-                    b.HasIndex("TransportInfoTransportId");
+                    b.HasIndex("TransportId");
 
                     b.HasIndex("UserEditId");
 
-                    b.ToTable("EditTransportInformation");
+                    b.ToTable("EditTransportInformations");
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.Location", b =>
@@ -443,6 +480,10 @@ namespace TransportManagement.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasMaxLength(10)
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsInUse")
                         .HasColumnType("bit");
 
@@ -453,10 +494,6 @@ namespace TransportManagement.Migrations
                     b.Property<string>("Specifications")
                         .HasMaxLength(1500)
                         .HasColumnType("nvarchar(1500)");
-
-                    b.Property<string>("UsingFrom")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("VehicleBrandId")
                         .IsRequired()
@@ -561,13 +598,11 @@ namespace TransportManagement.Migrations
                 {
                     b.HasOne("TransportManagement.Entities.TransportInformation", "TransportInfo")
                         .WithMany("ListEdit")
-                        .HasForeignKey("TransportInfoTransportId");
+                        .HasForeignKey("TransportId");
 
                     b.HasOne("TransportManagement.Entities.AppIdentityUser", "UserEdit")
                         .WithMany("ListEdit")
-                        .HasForeignKey("UserEditId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserEditId");
 
                     b.Navigation("TransportInfo");
 

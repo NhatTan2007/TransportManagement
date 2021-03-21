@@ -65,19 +65,22 @@
                                 <a class="dropdown-item" href="#">Yearly Report</a>
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" asp-action="Index" asp-controller="User" id="navbarDropdown" role="button" data-toggle="dropdown"
-                               aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-users"></i>
-                                <span>
-                                    Tài khoản <i class="fas fa-angle-down"></i>
-                                </span>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="~/User">Quản lý tài khoản</a>
-                                <a class="dropdown-item" asp-controller="User" asp-action="Create">Tạo mới tài khoản</a>
-                            </div>
-                        </li>
+                        @if (User.IsInRole("Nhân sự") || User.IsInRole("Quản trị viên hệ thống"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" asp-action="Index" asp-controller="User" id="navbarDropdown" role="button" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-users"></i>
+                                    <span>
+                                        Tài khoản <i class="fas fa-angle-down"></i>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="~/User">Quản lý tài khoản</a>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="Create">Tạo mới tài khoản</a>
+                                </div>
+                            </li>
+                        }
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" asp-controller="TransInfo" asp-action="Manage" id="navbarDropdown" role="button" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
@@ -103,7 +106,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-controller="Vehicle" asp-action="Index">Quản lý phương tiện</a>
-                                <a class="dropdown-item" asp-controller="VehicleBrand" asp-action="Index">Quản lý hiệu xe</a>
+                                <a class="dropdown-item" asp-controller="VehicleBrand" asp-action="Index">Quản lý nhãn hiệu xe</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -125,13 +128,21 @@
                         <li class="nav-item">
                             @if (user != null)
                             {
-                                <a class="nav-link d-block" asp-controller="User" asp-action="Logout">
-                                    @user.FullName <b>Đăng xuất</b>
-                                </a>
+                                <div class="h-100 nav-link d-flex align-items-center">
+                                    <a class="d-block text-white p-2 font-weight-bold" 
+                                       asp-controller="Account" 
+                                       asp-action="Profile" 
+                                       style="background-color: rgba(45, 159, 255, 0.85); border-radius: 5px; border: 2px solid #fff">
+                                        @user.FullName
+                                    </a>
+                                    <a class="d-block text-warning mt-md-3 ml-2 ml-sm-0" asp-controller="Account" asp-action="SignOut">
+                                        <b>Đăng xuất</b>
+                                    </a>
+                                </div>
                             }
                             else
                             {
-                                <a class="nav-link d-block" asp-controller="User" asp-action="Login">
+                                <a class="nav-link d-block" asp-controller="Account" asp-action="Login">
                                     <b>Đăng nhập</b>
                                 </a>
                             }

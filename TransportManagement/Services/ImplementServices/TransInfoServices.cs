@@ -58,38 +58,38 @@ namespace TransportManagement.Services.ImplementServices
                 _context.TransportInformations.Attach(transInfo);
                 if (transInfo.AdvanceMoney != transEdit.AdvanceMoney)
                 {
+                    editContent += $" Sửa tiền tạm ứng từ \"{transInfo.AdvanceMoney}\" thành \"{transEdit.AdvanceMoney}\" |";
                     transInfo.AdvanceMoney = transEdit.AdvanceMoney;
-                    editContent += $" Sửa tiền tạm ứng từ {transInfo.AdvanceMoney} thành {transEdit.AdvanceMoney} |";
                 }
                 if (transInfo.CargoTonnage != transEdit.CargoTonnage)
                 {
+                    editContent += $" Sửa khối lượng hàng hóa từ \"{transInfo.CargoTonnage}\" thành \"{transEdit.CargoTonnage}\" |";
                     transInfo.CargoTonnage = transEdit.CargoTonnage;
-                    editContent += $" Sửa khối lượng hàng hóa từ {transInfo.CargoTonnage} thành {transEdit.CargoTonnage} |";
                 }
                 if (transInfo.CargoTypes != transEdit.CargoTypes)
                 {
+                    editContent += $" Sửa loại hàng hóa từ \"{transInfo.CargoTypes}\" thành \"{transEdit.CargoTypes}\" |";
                     transInfo.CargoTypes = transEdit.CargoTypes;
-                    editContent += $" Sửa khối lượng hàng hóa từ {transInfo.CargoTypes} thành {transEdit.CargoTypes} |";
                 }
                 if (transInfo.IsCancel != transEdit.IsCancel)
                 {
+                    editContent += $" Sửa trạng thái hủy từ \"{transInfo.IsCancel}\" thành \"{transEdit.IsCancel}\" |";
                     transInfo.IsCancel = transEdit.IsCancel;
-                    editContent += $" Sửa trạng thái hủy từ {transInfo.IsCancel} thành {transEdit.IsCancel} |";
                 }
                 if (transInfo.Note != transEdit.Note)
                 {
+                    editContent += $" Sửa ghi chú từ \"{transInfo.Note}\" thành \"{transEdit.Note}\" |";
                     transInfo.Note = transEdit.Note;
-                    editContent += $" Sửa ghi chú từ {transInfo.Note} thành {transEdit.Note} |";
                 }
                 if (transInfo.ReasonCancel != transEdit.ReasonCancel)
                 {
+                    editContent += $" Sửa lý do hủy từ \"{transInfo.ReasonCancel}\" thành \"{transEdit.ReasonCancel}\" |";
                     transInfo.ReasonCancel = transEdit.ReasonCancel;
-                    editContent += $" Sửa lý do hủy từ {transInfo.ReasonCancel} thành {transEdit.ReasonCancel} |";
                 }
                 if (transInfo.ReturnOfAdvances != transEdit.ReturnOfAdvances)
                 {
+                    editContent += $" Sửa tiền hoàn ứng từ \"{transInfo.ReturnOfAdvances}\" thành \"{transEdit.ReturnOfAdvances}\" |";
                     transInfo.ReturnOfAdvances = transEdit.ReturnOfAdvances;
-                    editContent += $" Sửa tiền hoàn ứng từ {transInfo.ReturnOfAdvances} thành {transEdit.ReturnOfAdvances} |";
                 }
                 if (transInfo.DateCompletedUTC != transEdit.DateCompletedUTC)
                 {

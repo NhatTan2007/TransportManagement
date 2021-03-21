@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,11 +27,11 @@ namespace TransportManagement.Entities
         public double DateEditUTC { get => _dateEditUTC; set => _dateEditUTC = value; }
         [Required]
         public double DateEditLocal { get => _dateEditLocal; set => _dateEditLocal = value; }
-        [Required]
         public string UserEditId { get => _userEditId; set => _userEditId = value; }
+        [ForeignKey("UserEditId")]
         public AppIdentityUser UserEdit { get; set; }
-        [Required]
         public string TransportId { get => _transportId; set => _transportId = value; }
+        [ForeignKey("TransportId")]
         public TransportInformation TransportInfo { get; set; }
     }
 }
