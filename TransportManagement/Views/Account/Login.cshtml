@@ -15,6 +15,7 @@
             <div class="row mt-2">
                 <div class="col-12">
                     <form asp-controller="Account" asp-action="Login" method="post" class="tm-login-form">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="w-100 d-sm-flex flex-nowrap">
                             <div class="input-group-prepend">
                                 <span class="input-group-text w-100 justify-content-center justify-content-sm-start"
