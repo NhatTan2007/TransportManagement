@@ -22,6 +22,7 @@ namespace TransportManagement.Models.Route
         [Range(0, Int32.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
         [Display(Name = "Chiều dài tuyến đường")]
         public int Distance { get => _distance; set => _distance = value; }
+        [Display(Name = "Trạng thái hoạt động")]
         public string RouteId { get => _routeId; set => _routeId = value; }
     }
 }

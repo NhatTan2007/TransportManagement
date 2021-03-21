@@ -42,7 +42,8 @@ namespace TransportManagement.Controllers
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = model.RoleName,
-                    RolePriority = model.RolePriority
+                    RolePriority = model.RolePriority,
+                    IsActive = true
                 };
                 var result = await _roleManager.CreateAsync(newRole);
                 if (result.Succeeded)
@@ -60,6 +61,12 @@ namespace TransportManagement.Controllers
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return RedirectToAction(actionName: "Index");
         }
+        [HttpGet]
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Edit(EditRoleViewModel model)
         {
@@ -71,6 +78,7 @@ namespace TransportManagement.Controllers
                 {
                     roleEdit.Name = model.RoleName;
                     roleEdit.RolePriority = model.RolePriority;
+                    roleEdit.IsActive = model.IsActive;
                     var result = await _roleManager.UpdateAsync(roleEdit);
                     if (result.Succeeded)
                     {
@@ -90,7 +98,7 @@ namespace TransportManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(string roleId)
+        public async Task<IActionResult> DeleteRoleDB(string roleId)
         {
             string message = String.Empty;
             var roleDel = await _roleManager.FindByIdAsync(roleId);
@@ -121,7 +129,8 @@ namespace TransportManagement.Controllers
             {
                 RoleId = role.Id,
                 RoleName = role.Name,
-                RolePriority = role.RolePriority
+                RolePriority = role.RolePriority,
+                IsActive = role.IsActive
             };
             return Ok(viewRole);
         }
@@ -135,7 +144,8 @@ namespace TransportManagement.Controllers
                                         {
                                             RoleId = r.Id,
                                             RoleName = r.Name,
-                                            RolePriority = r.RolePriority
+                                            RolePriority = r.RolePriority,
+                                            IsActive = r.IsActive
                                         });
         }
     }

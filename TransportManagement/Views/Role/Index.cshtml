@@ -52,6 +52,7 @@
                             <th class="p-0 align-middle" style="width: 30px">STT</th>
                             <th class="pr-1 pl-1 align-middle">Tên phân quyền</th>
                             <th class="pr-1 pl-1 align-middle" style="max-width: 40px">Cấp bậc phân quyền</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 40px">Trạng thái</th>
                             <th class="p-0 align-middle" style="width: 20px"></th>
                         </tr>
                     </thead>
@@ -59,14 +60,28 @@
                         @for (int i = 0; i < roles.Count; i++)
                         {
                             int stt = i + 1;
-                            <tr>
-                                <td class="p-0 text-center" style="width: 30px">@stt</td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3"><a class="text-decoration-none text-white edit-toggle" href="javascript:;" id="@roles[i].RoleId" onclick="role.edit(event)">@roles[i].RoleName</a></td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center" style="max-width: 40px">@roles[i].RolePriority</td>
-                                <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
-                                    <a class="delete-confirm" onclick="confirmDelete('@roles[i].RoleId')"><i class="fas fa-trash"></i></a>
-                                </td>
-                            </tr>
+                            string status = String.Empty;
+                            if (roles[i].IsActive)
+                            {
+                                status = "Đang sử dụng";
+                            }
+                            else
+                            {
+                                status = "Không sử dụng";
+                            }
+                        <tr>
+                            <td class="p-0 text-center" style="width: 30px">@stt</td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3"><a class="text-decoration-none text-white edit-toggle" href="javascript:;" onclick="role.edit('@roles[i].RoleId')">@roles[i].RoleName</a></td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center" style="max-width: 40px">@roles[i].RolePriority</td>
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center" style="max-width: 40px">@status</td>
+                            <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
+                                <a class="text-decoration-none button--edit edit-toggle" 
+                                   href="javascript:;" 
+                                   onclick="role.edit('@roles[i].RoleId')"
+                                   title="Chỉnh sửa"
+                                   style="font-size:1.3rem"><i class="fas fa-pen-square"></i></a>
+                            </td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -191,6 +206,16 @@
                         <span class="text-danger field-validation-valid"
                               data-valmsg-for="EditRolePriority"
                               data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2 align-items-center">
+                            <div class="input-group-prepend">
+                                <label for="EditIsActive" class="input-group-text w-100" style="min-width: 170px; cursor: pointer">
+                                    Trạng thái hoạt động
+                                </label>
+                            </div>
+                            <input class="form-control ml-2" type="checkbox" 
+                                   data-val="true" data-val-required="The IsActive field is required." 
+                                   id="EditIsActive" name="IsActive" value="true">
+                        </div>
                     </div>
                     <input type="text" id="EditRoleId" name="RoleId" value="" hidden/>
                 </div>
