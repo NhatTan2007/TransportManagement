@@ -142,6 +142,7 @@ namespace TransportManagement.Services.ImplementServices
                                                     .Include(t => t.DayJob)
                                                     .Include(t => t.Route)
                                                     .Include(t => t.Vehicle)
+                                                    .OrderByDescending(t => t.DateStartLocal)
                                                     .ToList();
         }
 
@@ -151,6 +152,7 @@ namespace TransportManagement.Services.ImplementServices
                                                     .Include(t => t.DayJob)
                                                     .Include(t => t.Route)
                                                     .Include(t => t.Vehicle)
+                                                    .OrderByDescending(t => t.DateStartLocal)
                                                     .ToList();
         }
 
@@ -162,6 +164,7 @@ namespace TransportManagement.Services.ImplementServices
                                         .Include(t => t.Vehicle)
                                         .Where(t => t.DayJob.Driver.FullName.Contains(search)
                                                     || t.Vehicle.LicensePlate.Contains(search))
+                                        .OrderByDescending(t => t.DateStartLocal)
                                         .Select(t => new TransInfoViewModel
                                         {
                                             AdvanceMoney = t.AdvanceMoney,
@@ -183,6 +186,7 @@ namespace TransportManagement.Services.ImplementServices
                             .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                             .Include(t => t.Route)
                             .Include(t => t.Vehicle)
+                            .OrderByDescending(t => t.DateStartLocal)
                             .Select(t => new TransInfoViewModel
                             {
                                 AdvanceMoney = t.AdvanceMoney,
@@ -206,6 +210,7 @@ namespace TransportManagement.Services.ImplementServices
                             .Include(t => t.Vehicle)
                             .Where(t => t.DayJob.Driver.FullName.Contains(search)
                                         || t.Vehicle.LicensePlate.Contains(search))
+                            .OrderByDescending(t => t.DateStartLocal)
                             .Select(t => new TransInfoViewModel
                             {
                                 AdvanceMoney = t.AdvanceMoney,
@@ -227,6 +232,7 @@ namespace TransportManagement.Services.ImplementServices
                 .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                 .Include(t => t.Route)
                 .Include(t => t.Vehicle)
+                .OrderByDescending(t => t.DateStartLocal)
                 .Select(t => new TransInfoViewModel
                 {
                     AdvanceMoney = t.AdvanceMoney,

@@ -71,6 +71,10 @@ namespace TransportManagement
 
             app.UseMvc(routes =>
             {
+                routes.MapAreaRoute(
+                name: "areas",
+                areaName: "Driver",
+                template: "Driver/{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

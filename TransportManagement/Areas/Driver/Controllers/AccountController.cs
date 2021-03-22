@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TransportManagement.DbContexts;
 using TransportManagement.Entities;
 using TransportManagement.Models.Account;
 using TransportManagement.Utilities;
 
-namespace TransportManagement.Controllers
+namespace TransportManagement.Areas.Driver.Controllers
 {
-    [Authorize]
+    [Area("Driver")]
+    [Authorize(Roles = "Lái xe")]
     public class AccountController : Controller
     {
         private readonly SignInManager<AppIdentityUser> _signInManager;
@@ -43,7 +43,7 @@ namespace TransportManagement.Controllers
                 };
                 return View(model);
             }
-            return RedirectToAction(actionName: "Login");
+            return RedirectToAction(actionName: "Login", controllerName: "Account");
         }
 
         [HttpGet]
@@ -87,7 +87,7 @@ namespace TransportManagement.Controllers
                                 {
                                     message = "Mật khẩu đã được thay đổi";
                                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
-                                    return RedirectToAction(actionName: "SignOut");
+                                    return RedirectToAction(actionName: "SignOut", controllerName: "Account", new { area = ""});
                                 }
                                 foreach (var error in result.Errors)
                                 {
@@ -111,42 +111,6 @@ namespace TransportManagement.Controllers
                 return RedirectToAction(actionName: "Profile");
 
             }
-            return RedirectToAction(actionName: "Login");
-        }
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginAccountViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByNameAsync(model.UserName);
-                if (user != null)
-                {
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: model.IsRemember, lockoutOnFailure: false);
-                    if (result.Succeeded)
-                    {
-                        if (await _userManager.IsInRoleAsync(user, "Lái xe"))
-                        {
-                            return RedirectToAction(actionName: "Index", controllerName: "Home", new { area = "Driver" });
-                        }
-                        return RedirectToAction(actionName: "Index", controllerName: "Home");
-                    }
-                }
-            }
-            ModelState.AddModelError("", "Đăng nhập không thành công, xin mời kiểm tra lại");
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> SignOut()
-        {
-            await _signInManager.SignOutAsync();
             return RedirectToAction(actionName: "Login");
         }
     }

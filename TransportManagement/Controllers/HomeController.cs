@@ -19,9 +19,14 @@ namespace TransportManagement.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            if (!_signInManager.IsSignedIn(User))
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Lái xe"))
+            {
+                return RedirectToAction(actionName: "Index", controllerName: "Home", new {area = "Driver"});
+            }
+            if (user == null)
             {
                 return RedirectToAction(actionName: "Login", controllerName: "Account");
             }

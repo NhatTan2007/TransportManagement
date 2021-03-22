@@ -12,8 +12,8 @@ namespace TransportManagement.Entities
         private int _vehicleId;
         private string _licensePlate;
         private string _vehicleName;
-        private int _fuelConsumptionPerTone;
-        private int _vehiclePayload;
+        private decimal _fuelConsumptionPerTone;
+        private decimal _vehiclePayload;
         private string _specifications;
         private bool _isInUse;
         private bool _isAvailable;
@@ -30,11 +30,13 @@ namespace TransportManagement.Entities
         [ForeignKey("VehicleBrandId")]
         public VehicleBrand Brand { get; set; }
         [Required]
+        [Column(TypeName = "decimal(18, 2)")]
         [Range(0, Int16.MaxValue)]
-        public int FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
+        public decimal FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
         [Required]
+        [Column(TypeName = "decimal(18, 2)")]
         [Range(0, Int16.MaxValue)]
-        public int VehiclePayload { get => _vehiclePayload; set => _vehiclePayload = value; }
+        public decimal VehiclePayload { get => _vehiclePayload; set => _vehiclePayload = value; }
         [Required]
         public bool IsInUse { get => _isInUse; set => _isInUse = value; }
         [Required]

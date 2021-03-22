@@ -40,33 +40,37 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<UserViewModel> GetAllUsers()
         {
-            return _context.Users.Select(e => new UserViewModel {
-                                                            FullName = $"{e.LastName} {e.FirstName}",
-                                                            IsAvalable = e.IsAvailable,
-                                                            JobTitle = e.JobTitle,
-                                                            PhoneNumber = e.PhoneNumber,
-                                                            UserId = e.Id
-                                                            }).ToList();
+            return _context.Users.OrderBy(u => u.FirstName)
+                                    .Select(e => new UserViewModel 
+                                                    {
+                                                        FullName = $"{e.LastName} {e.FirstName}",
+                                                        IsAvalable = e.IsAvailable,
+                                                        JobTitle = e.JobTitle,
+                                                        PhoneNumber = e.PhoneNumber,
+                                                        UserId = e.Id
+                                                    }).ToList();
         }
 
         public ICollection<UserViewModel> GetAllUsers(int page, int pageSize, int userRolePriority, string search)
         {
             return _context.Users.Where(u => u.FirstName.Contains(search) || u.LastName.Contains(search))
+                                    .OrderBy(u => u.FirstName)
                                     .Skip((page - 1) * pageSize)
-                                        .Take(pageSize)
-                                            .Select(u => new UserViewModel
-                                                                {
-                                                                    FullName = $"{u.LastName} {u.FirstName}",
-                                                                    IsAvalable = u.IsAvailable,
-                                                                    JobTitle = u.JobTitle,
-                                                                    PhoneNumber = u.PhoneNumber,
-                                                                    UserId = u.Id
-                                                                }).ToList();
+                                    .Take(pageSize)
+                                    .Select(u => new UserViewModel
+                                                        {
+                                                            FullName = $"{u.LastName} {u.FirstName}",
+                                                            IsAvalable = u.IsAvailable,
+                                                            JobTitle = u.JobTitle,
+                                                            PhoneNumber = u.PhoneNumber,
+                                                            UserId = u.Id
+                                                        }).ToList();
         }
 
         public ICollection<UserViewModel> GetAllUsers(int page, int pageSize, int userRolePriority)
         {
             return _context.Users.Where(u => u.RolePriority > userRolePriority)
+                                    .OrderBy(u => u.FirstName)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(e => new UserViewModel
@@ -81,7 +85,13 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<AppIdentityUser> GetAvailableUsers()
         {
-            return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true).ToList();
+            return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true)
+                                    .OrderBy(u => u.FirstName).ToList();
+        }
+        public ICollection<AppIdentityUser> GetDriverAvailableUsers()
+        {
+            return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true && u.JobTitle == "Lái xe")
+                                    .OrderBy(u => u.FirstName).ToList();
         }
 
         public UserViewModel GetUser(string userId)
@@ -99,7 +109,10 @@ namespace TransportManagement.Services.ImplementServices
 
         public ICollection<UserViewModel> GetAllActiveUsers(int page, int pageSize, int userRolePriority, string search)
         {
-            return _context.Users.Where(u => (u.FirstName.Contains(search) || u.LastName.Contains(search)) && u.IsActive == true)
+            return _context.Users.Where(u => u.RolePriority > userRolePriority 
+                                        && (u.FirstName.Contains(search) || u.LastName.Contains(search)) 
+                                        && u.IsActive == true)
+                                    .OrderBy(u => u.FirstName)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(u => new UserViewModel
@@ -115,6 +128,7 @@ namespace TransportManagement.Services.ImplementServices
         public ICollection<UserViewModel> GetAllActiveUsers(int page, int pageSize, int userRolePriority)
         {
             return _context.Users.Where(u => u.RolePriority > userRolePriority && u.IsActive == true)
+                                    .OrderBy(u => u.FirstName)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(e => new UserViewModel

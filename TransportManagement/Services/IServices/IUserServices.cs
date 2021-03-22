@@ -20,6 +20,7 @@ namespace TransportManagement.Services.IServices
         int CountAvailableUsers();
         int CountActiveAndAvailableUsers();
         ICollection<AppIdentityUser> GetAvailableUsers();
+        ICollection<AppIdentityUser> GetDriverAvailableUsers();
         UserViewModel GetUser(string userId);
     }
 }

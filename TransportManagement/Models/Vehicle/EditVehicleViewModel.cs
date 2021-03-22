@@ -12,8 +12,8 @@ namespace TransportManagement.Models.Vehicle
         private int _vehicleId;
         private string _licensePlate;
         private string _vehicleName;
-        private int _fuelConsumptionPerTone;
-        private int _vehiclePayload;
+        private decimal _fuelConsumptionPerTone;
+        private decimal _vehiclePayload;
         private string _specifications;
         private bool _isInUse;
         private bool _isAvailable;
@@ -27,13 +27,13 @@ namespace TransportManagement.Models.Vehicle
         [MaxLength(100, ErrorMessage = "Độ dài tối đa cho phép là 100 ký tự")]
         public string VehicleName { get => _vehicleName; set => _vehicleName = value; }
         [Required(ErrorMessage = "Định mức tiêu thụ nhiên liệu không được bỏ trống")]
-        [Range(0.1, Int16.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
+        [Range(typeof(decimal), "0.1", "32767", ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
         [Display(Name = "Định mức nhiên liệu/tấn hàng hóa (lít/km)")]
-        public int FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
+        public decimal FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
         [Required(ErrorMessage = "Trọng tải hàng hóa tối đa không được bỏ trống")]
-        [Range(0.1, Int16.MaxValue, ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
+        [Range(typeof(decimal), "0.1", "32767", ErrorMessage = "Giá trị không đúng, xin mời nhập lại")]
         [Display(Name = "Trọng tải hàng hóa tối đa (tấn)")]
-        public int VehiclePayload { get => _vehiclePayload; set => _vehiclePayload = value; }
+        public decimal VehiclePayload { get => _vehiclePayload; set => _vehiclePayload = value; }
         [Required(ErrorMessage = "Nhãn hiệu phương tiện không được để trống")]
         [Display(Name = "Nhãn hiệu phương tiện")]
         public string VehicleBrandId { get; set; }

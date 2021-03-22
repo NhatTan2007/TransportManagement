@@ -1,0 +1,118 @@
+﻿@model AccountViewModel
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h3 class="tm-block-title d-block text-center">Hồ sơ @Model.FullName</h3>
+            </div>
+            <div class="form-group w-100">
+                <div class="form-group w-100 row m-0">
+                    <div class="col-xl-9 col-lg-9 col-md-12">
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="UserName" class="control-label"></label>
+                                <input asp-for="UserName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input asp-for="Email" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-12 mx-auto mb-4">
+                        <div class="mx-auto">
+                            <label asp-for="Avatar" class="w-100">
+                                <img src="@Url.Content($"~/images/account/{Model.Avatar}")" alt="Avatar" id="avatar" class="w-100" />
+                            </label>
+                        </div>
+                        <div class="custom-file mt-3 mb-3">
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 m-auto">
+                        <a role="button" data-toggle="modal" data-target="#editPassword" class="btn btn--primary btn-block text-uppercase">ĐỔI MẬT KHẨU</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="editPassword" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đổi mật khẩu tài khoản</h5>
+            </div>
+            <form asp-area="Driver" asp-controller="Account" asp-action="Edit" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 text-warning">Sau khi đổi mật khẩu sẽ tự thoát tài khoản</div>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text w-100" for="Password" style="min-width: 194px">
+                                    Mật khẩu hiện tại
+                                </label>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="password"
+                                   id="Password"
+                                   name="Password">
+                        </div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text w-100" for="NewPassword" style="min-width: 194px">
+                                    Mật khẩu mới
+                                </label>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="password"
+                                   id="NewPassword"
+                                   name="NewPassword">
+                        </div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="NewPassword" data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text w-100" for="ConfirmNewPassword" style="min-width: 194px">
+                                    Xác nhận mật khẩu mới
+                                </label>
+                            </div>
+                            <input class="form-control mt-1 mt-sm-0"
+                                   type="password" data-val="true"
+                                   data-val-equalto="Mật khẩu xác nhận không chính xác"
+                                   data-val-equalto-other="*.NewPassword"
+                                   id="ConfirmNewPassword" name="ConfirmNewPassword">
+                        </div>
+                        <span class="text-danger field-validation-valid col-12" data-valmsg-for="ConfirmNewPassword" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <input asp-for="AccountId" value="@Model.AccountId" hidden />
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

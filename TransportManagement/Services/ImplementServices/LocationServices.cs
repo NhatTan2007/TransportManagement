@@ -83,23 +83,25 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Locations.Where(l => l.LocationName.Contains(search))
                                         .Skip((page - 1) * pageSize)
-                                            .Take(pageSize)
-                                                .Select(l => new LocationViewModel 
-                                                {
-                                                    LocationId = l.LocationId,
-                                                    LocationName = l.LocationName
-                                                }).ToList();
+                                        .Take(pageSize)
+                                        .OrderBy(l => l.LocationName)
+                                        .Select(l => new LocationViewModel 
+                                        {
+                                            LocationId = l.LocationId,
+                                            LocationName = l.LocationName
+                                        }).ToList();
         }
 
         public ICollection<LocationViewModel> GetAllLocations(int page, int pageSize)
         {
             return _context.Locations.Skip((page - 1) * pageSize)
                                         .Take(pageSize)
-                                            .Select(l => new LocationViewModel
-                                            {
-                                                LocationId = l.LocationId,
-                                                LocationName = l.LocationName
-                                            }).ToList();
+                                        .OrderBy(l => l.LocationName)
+                                        .Select(l => new LocationViewModel
+                                        {
+                                            LocationId = l.LocationId,
+                                            LocationName = l.LocationName
+                                        }).ToList();
         }
 
         public Location GetLocation(string locationId)

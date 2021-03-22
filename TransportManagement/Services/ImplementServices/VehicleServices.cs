@@ -100,6 +100,7 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
                                     .Select(v => new VehicleViewModel()
                                     {
                                         VehicleId = v.VehicleId,
@@ -116,6 +117,7 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Vehicles.Where(v => v.LicensePlate.Contains(search) && v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(v => new VehicleViewModel()
@@ -134,6 +136,7 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .Select(v => new VehicleViewModel()
@@ -152,6 +155,7 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
                                     .Where(v => v.IsInUse == true && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                     {
@@ -169,6 +173,7 @@ namespace TransportManagement.Services.ImplementServices
         {
             return _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
                                     .Where(v => v.IsInUse == false && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                             {
@@ -188,6 +193,7 @@ namespace TransportManagement.Services.ImplementServices
             return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                             .Include(v => v.Brand)
                                             .Where(v => v.VehicleId == vehicleId)
+                                            .OrderBy(v => v.Brand.BrandName)
                                             .SingleOrDefaultAsync();
         }
 
@@ -198,7 +204,7 @@ namespace TransportManagement.Services.ImplementServices
             {
                 foreach (var trans in transportsByVehicleToday)
                 {
-                    if (trans.DayJob.DriverId != driverId)
+                    if (trans.DayJob.DriverId != driverId && trans.DateCompletedLocal == 0)
                     {
                         return trans.DayJob.DriverId;
                     }

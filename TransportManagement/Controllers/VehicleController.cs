@@ -57,6 +57,7 @@ namespace TransportManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateVehicleViewModel model)
         {
+            model.VehicleBrands = _brandServices.GetAllBrands().ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {

@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.Entities;
 using TransportManagement.Models.Pagination;
 using TransportManagement.Models.TransportInformation;
-using TransportManagement.Services;
 using TransportManagement.Services.IServices;
 using TransportManagement.Utilities;
 
-namespace TransportManagement.Controllers
+namespace TransportManagement.Areas.Driver.Controllers
 {
+    [Area("Driver")]
+    [Authorize(Roles = "Tài xế")]
     public class TransInfoController : Controller
     {
         private readonly IUserServices _userServices;
@@ -22,6 +23,8 @@ namespace TransportManagement.Controllers
         private readonly ITransInfoServices _transInfoServices;
         private readonly IDayJobServices _dayJobServices;
         private readonly UserManager<AppIdentityUser> _userManager;
+
+        public IRouteServices RouteServices => _routeServices;
 
         public TransInfoController(IUserServices userServices,
                                     IVehicleServices vehicleServices,
@@ -47,7 +50,7 @@ namespace TransportManagement.Controllers
             //get timestamp 0 AM 1st day of month
             DateTime startMonth = new DateTime(localTimeUTC7.Year, localTimeUTC7.Month, 01);
             double TSMonthUTC7 = SystemUtilites.ConvertToTimeStamp(startMonth);
-            
+
             PaginationViewModel<TransInfoViewModel> model = new PaginationViewModel<TransInfoViewModel>();
             if (page == 0) page = 1;
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
@@ -98,7 +101,7 @@ namespace TransportManagement.Controllers
             CreateTransInfoViewModel newTrans = new CreateTransInfoViewModel()
             {
                 Drivers = _userServices.GetDriverAvailableUsers().ToList(),
-                Routes = _routeServices.GetAllRoutes().ToList(),
+                Routes = RouteServices.GetAllRoutes().ToList(),
                 Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
             };
             return View(newTrans);
@@ -114,7 +117,7 @@ namespace TransportManagement.Controllers
             double TSUTCNow = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
             //get data for select elements
             model.Drivers = _userServices.GetDriverAvailableUsers().ToList();
-            model.Routes = _routeServices.GetAllRoutes().ToList();
+            model.Routes = RouteServices.GetAllRoutes().ToList();
             model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
@@ -181,12 +184,6 @@ namespace TransportManagement.Controllers
             var transInfo = _transInfoServices.GetTransport(transId);
             if (transInfo != null)
             {
-                if (transInfo.DateCompletedLocal > 0)
-                {
-                    message = "Không thể chỉnh sửa nếu đã HOÀN THÀNH hoặc HỦY";
-                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-                    return RedirectToAction(actionName: "Manage");
-                }
                 EditTransInfoViewModel model = new EditTransInfoViewModel()
                 {
                     AdvanceMoney = transInfo.AdvanceMoney,
@@ -202,7 +199,7 @@ namespace TransportManagement.Controllers
                     TransportId = transInfo.TransportId,
                     VehicleId = transInfo.VehicleId,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
-                    Routes = _routeServices.GetAllRoutes().ToList(),
+                    Routes = RouteServices.GetAllRoutes().ToList(),
                     Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
                 };
                 return View(model);
@@ -217,7 +214,7 @@ namespace TransportManagement.Controllers
         {
             //get data for select elements if error
             model.Drivers = _userServices.GetAvailableUsers().ToList();
-            model.Routes = _routeServices.GetAllRoutes().ToList();
+            model.Routes = RouteServices.GetAllRoutes().ToList();
             model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
             string message = String.Empty;
             if (ModelState.IsValid)

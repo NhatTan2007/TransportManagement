@@ -97,10 +97,11 @@
                                     <a class="button--edit mr-sm-2"
                                        asp-controller="User"
                                        asp-action="Edit"
-                                       asp-route-vehicleId="@users[i].UserId"
+                                       asp-route-userId="@users[i].UserId"
                                        title="Điều chỉnh"><i class="fas fa-pen-square"></i></a>
                                     <a class="delete-confirm"
-                                       onclick="confirmDelete('@users[i].UserId')">
+                                       onclick="confirmDelete('@users[i].UserId')"
+                                       title="Xóa">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
