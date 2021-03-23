@@ -14,7 +14,7 @@ using TransportManagement.Utilities;
 namespace TransportManagement.Areas.Driver.Controllers
 {
     [Area("Driver")]
-    [Authorize(Roles = "Tài xế")]
+    [Authorize(Roles = "Lái xe")]
     public class TransInfoController : Controller
     {
         private readonly IUserServices _userServices;
@@ -90,101 +90,14 @@ namespace TransportManagement.Areas.Driver.Controllers
             ViewBag.Search = search;
             return View(model);
         }
+        [HttpGet]
         public IActionResult Details(string transportId)
         {
-
-            return View();
-        }
-        [HttpGet]
-        public IActionResult Create()
-        {
-            CreateTransInfoViewModel newTrans = new CreateTransInfoViewModel()
-            {
-                Drivers = _userServices.GetDriverAvailableUsers().ToList(),
-                Routes = RouteServices.GetAllRoutes().ToList(),
-                Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
-            };
-            return View(newTrans);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateTransInfoViewModel model)
-        {
-            //get local time at Timezone UTC 7
-            DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
-            //get timestamp of day at 0 AM
-            double TStodayUTC7At0Am = SystemUtilites.ConvertToTimeStamp(localTimeUTC7.Date);
-            //get timestamp now at utc
-            double TSUTCNow = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
-            //get data for select elements
-            model.Drivers = _userServices.GetDriverAvailableUsers().ToList();
-            model.Routes = RouteServices.GetAllRoutes().ToList();
-            model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
             string message = String.Empty;
-            if (ModelState.IsValid)
-            {
-                //check the vehicle is used
-                string driverIdUseVehicle = _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7At0Am);
-                if (!String.IsNullOrEmpty(driverIdUseVehicle))
-                {
-                    var driverUseVehicle = _userServices.GetUser(driverIdUseVehicle);
-                    message = $"Xe đang được sử dụng bởi {driverUseVehicle.FullName}";
-                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-                    return View(model);
-                }
-
-                //create new TransportInformation
-                var user = await _userManager.GetUserAsync(User);
-                TransportInformation newTrans = new TransportInformation()
-                {
-                    TransportId = Guid.NewGuid().ToString(),
-                    AdvanceMoney = model.AdvanceMoney,
-                    DateStartUTC = TSUTCNow,
-                    DateStartLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7),
-                    TimeZone = "SE Asia Standard Time",
-                    CargoTypes = model.CargoTypes,
-                    Note = model.Note,
-                    VehicleId = model.VehicleId,
-                    RouteId = model.RouteId,
-                    UserCreateId = user.Id
-                };
-                //get or create if not dayjob has date match today timeStamp
-                DayJob driverDayJob = _dayJobServices.GetDayJob(model.DriverId, TStodayUTC7At0Am);
-                if (driverDayJob == null)
-                {
-                    driverDayJob = new DayJob()
-                    {
-                        DayJobId = Guid.NewGuid().ToString(),
-                        DriverId = model.DriverId,
-                        Date = TStodayUTC7At0Am
-                    };
-                    if (!(await _dayJobServices.Create(driverDayJob)))
-                    {
-                        message = "Lỗi không xác định, xin mời thao tác lại";
-                        TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-                        return View(model);
-                    }
-                }
-                newTrans.DayJobId = driverDayJob.DayJobId;
-                //create new TransInfo in SQL
-                if (await _transInfoServices.CreateNewTransInfo(newTrans))
-                {
-                    message = "Chuyến vận chuyển đã được tạo";
-                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
-                    return RedirectToAction(actionName: "Manage");
-                }
-            }
-            message = "Lỗi không xác định, xin mời thao tác lại";
-            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-            return View(model);
-        }
-        [HttpGet]
-        public IActionResult Edit(string transId)
-        {
-            string message = String.Empty;
-            var transInfo = _transInfoServices.GetTransport(transId);
+            var transInfo = _transInfoServices.GetTransport(transportId);
             if (transInfo != null)
             {
-                EditTransInfoViewModel model = new EditTransInfoViewModel()
+                DetailTransInfoViewModel model = new DetailTransInfoViewModel()
                 {
                     AdvanceMoney = transInfo.AdvanceMoney,
                     CargoTonnage = transInfo.CargoTonnage,
@@ -194,6 +107,43 @@ namespace TransportManagement.Areas.Driver.Controllers
                     IsCompleted = transInfo.IsCompleted,
                     Note = transInfo.Note,
                     ReasonCancel = transInfo.ReasonCancel,
+                    ReturnOfAdvances = transInfo.ReturnOfAdvances,
+                    RouteId = transInfo.RouteId,
+                    TransportId = transInfo.TransportId,
+                    VehicleId = transInfo.VehicleId,
+                    DateCompletedLocal = transInfo.DateCompletedLocal,
+                    DateStartLocal = transInfo.DateStartLocal,
+                    Drivers = _userServices.GetAvailableUsers().ToList(),
+                    Routes = _routeServices.GetAllRoutes().ToList(),
+                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                };
+                return View(model);
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Index");
+        }
+        
+        [HttpGet]
+        public IActionResult Edit(string transId)
+        {
+            string message = String.Empty;
+            var transInfo = _transInfoServices.GetTransport(transId);
+            if (transInfo != null)
+            {
+                if (transInfo.DateCompletedLocal > 0)
+                {
+                    message = "Không thể chỉnh sửa nếu đã HOÀN THÀNH hoặc HỦY";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
+                EditTransInfoViewModel model = new EditTransInfoViewModel()
+                {
+                    AdvanceMoney = transInfo.AdvanceMoney,
+                    CargoTonnage = transInfo.CargoTonnage,
+                    CargoTypes = transInfo.CargoTypes,
+                    DriverId = transInfo.DayJob.DriverId,
+                    Note = transInfo.Note,
                     ReturnOfAdvances = transInfo.ReturnOfAdvances,
                     RouteId = transInfo.RouteId,
                     TransportId = transInfo.TransportId,
@@ -245,11 +195,17 @@ namespace TransportManagement.Areas.Driver.Controllers
                     var user = await _userManager.GetUserAsync(User);
                     if (user != null)
                     {
+                        if (model.CargoTonnage > 0)
+                        {
+                            var vehicle = await _vehicleServices.GetVehicle(model.VehicleId);
+                            var route = _routeServices.GetRoute(model.RouteId);
+                            model.ReturnOfAdvances = model.CargoTonnage * vehicle.FuelConsumptionPerTone * route.Distance;
+                        }
                         if (await _transInfoServices.EditTransInfo(model, user.Id))
                         {
                             message = "Đơn vận chuyển đã được điều chỉnh thông tin";
                             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
-                            return RedirectToAction(actionName: "Manage");
+                            return RedirectToAction(actionName: "Index");
                         }
                     }
                 }
@@ -264,5 +220,30 @@ namespace TransportManagement.Areas.Driver.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DoneTransInfo(string transportId)
+        {
+            string message = String.Empty;
+            var trans = _transInfoServices.GetTransport(transportId);
+            var user = await _userManager.GetUserAsync(User);
+            if (trans != null)
+            {
+                if (trans.DateCompletedLocal > 0)
+                {
+                    message = "Chuyến vận chuyển đã được kết thúc";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return RedirectToAction(actionName: "Index");
+                }
+                if (await _transInfoServices.DoneTransInfo(trans, user.Id))
+                {
+                    message = "Đã hoàn thành chuyến vận chuyển";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                    return RedirectToAction(actionName: "Index");
+                }
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Index");
+        }
     }
 }

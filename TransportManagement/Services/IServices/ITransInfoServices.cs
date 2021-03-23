@@ -12,6 +12,7 @@ namespace TransportManagement.Services.IServices
         Task<bool> CreateNewTransInfo(TransportInformation newTransInfo);
         Task<bool> EditTransInfo(EditTransInfoViewModel transEdit, string userId);
         Task<bool> DeleteTransInfo(TransportInformation transDel);
+        Task<bool> DoneTransInfo(TransportInformation trans, string userId);
         TransportInformation GetTransport(string transportId);
         ICollection<TransportInformation> GetTransportsToday(double todayTS);
         ICollection<TransportInformation> GetTransportsByVehicleToday(int vehicleId, double todayTimeStamp);

@@ -22,6 +22,7 @@ namespace TransportManagement.Entities
         [MaxLength(2000)]
         public string EditContent { get => _editContent; set => _editContent = value; }
         [Required]
+        [MaxLength(200)]
         public string TimeZone { get => _timeZone; set => _timeZone = value; }
         [Required]
         public double DateEditUTC { get => _dateEditUTC; set => _dateEditUTC = value; }

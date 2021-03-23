@@ -1,3 +1,129 @@
-﻿@{ 
-    ViewBag.Title = "Trang chủ - Lái xe";
+﻿@model DayJob
+@{
+    List<TransportInformation> transports = new List<TransportInformation>();
+    if (Model.Transports != null)
+    {
+        transports = Model.Transports.ToList();
+    }
+    ViewBag.Title = "Quản lý chuyến vận chuyển";
+    string inUseStatus = String.Empty;
+    string avalableStatus = String.Empty;
 }
+
+@section Scripts{
+    <script>
+        function confirmDone(id) {
+            bootbox.confirm({
+                size: "small",
+                message: "Bạn muốn hoàn thành chuyến vận chuyển này?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-dark pl-3 pr-3'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger pr-3 pl-3'
+                    }
+                },
+                callback: async function (result) {
+                    if (result) {
+                        window.location.href = `/Driver/TransInfo/DoneTransInfo?transportId=${id}`;
+                        //await $.ajax({
+                        //    url: `Location/Delete?locationId=${id}`,
+                        //    method: 'GET',
+                        //    success: function (data) {
+                        //        window.location.reload();
+                        //    }
+                        //})
+                    }
+                }
+            })
+        }
+    </script>
+}
+
+<div class="w-100">
+    <div class="">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row pl-1 pr-1 pl-sm-5 pr-sm-5">
+            <div class="col-sm-12 text-danger h5" asp-validation-summary="ModelOnly"></div>
+            <div class="col-sm-12">
+                <h3 class="tm-block-title d-block text-center">CÔNG VIỆC ĐƯỢC GIAO</h3>
+            </div>
+            <div class="w-100 pagination row mx-auto">
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover w-100 table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle">STT</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Biển kiểm soát</th>
+                            <th class="pr-1 pl-1 align-middle" style="min-width: 80px;">Chuyến vận chuyển</th>
+                            <th class="pr-1 pl-1 align-middle">Trạng thái</th>
+                            <th class="p-0 align-middle" style="max-width: 60px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < transports.Count; i++)
+                        {
+                            int stt = i + 1;
+                            string routeName = $"{transports[i].Route.DeparturePlace} - {transports[i].Route.ArrivalPlace}";
+                            <tr class="text-center">
+                                <td class="p-0 text-center">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left" style="max-width: 100px">
+                                    <a class="text-white"
+                                       asp-action="Details" asp-controller="TransInfo"
+                                       asp-route-transportId="@transports[i].TransportId">
+                                        @transports[i].Vehicle.LicensePlate
+                                    </a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-justify">
+                                    <a class="text-white"
+                                       asp-action="Details" asp-controller="TransInfo"
+                                       asp-route-transportId="@transports[i].TransportId">
+                                        @routeName
+                                    </a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    @if (transports[i].IsCompleted)
+                                    {
+                                        <i class="fas fa-check-square text-success"
+                                           title="Đã hoàn thành"
+                                           style="font-size: 1.3rem"></i>
+                                    }
+                                    else if (transports[i].IsCancel)
+                                    {
+                                        <i class="fas fa-window-close text-danger"
+                                           title="Đã hủy"
+                                           style="font-size: 1.3rem"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-truck-loading text-white"
+                                           title="Đang chuyển hàng"
+                                           style="font-size: 1.3rem"></i>
+                                    }
+                                </td>
+                                <td class="p-0 text-center" style="max-width: 60px">
+                                    <a class="button--edit mr-2"
+                                       asp-controller="TransInfo"
+                                       asp-action="Edit"
+                                       asp-route-transId="@transports[i].TransportId"
+                                       title="Chỉnh sửa">
+                                        <i class="fas fa-pen-square"></i>
+                                    </a>
+                                    <a class="done-confirm"
+                                       href="javascript:;"
+                                       onclick="confirmDone('@transports[i].TransportId')"
+                                       style="font-size: 1.3rem">
+                                        <i class="fas fa-flag-checkered text-light"
+                                           title="Hoàn thành"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

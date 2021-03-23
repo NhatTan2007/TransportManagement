@@ -90,10 +90,20 @@
                                 <span asp-validation-for="CargoTypes" class="text-danger"></span>
                             </div>
                             <div class="form-group mb-3 col-xs-12 col-sm-6">
-                                <label asp-for="AdvanceMoney" class="control-label"></label>
-                                <input asp-for="AdvanceMoney" hidden/>
-                                <input type="text" oninput="formartCurrency(event)" value="0" class="form-control" />
-                                <span asp-validation-for="AdvanceMoney" class="text-danger"></span>
+                                @if (User.IsInRole("Quản lý vận chuyển"))
+                                {
+                                    <label asp-for="AdvanceMoney" class="control-label"></label>
+                                    <input asp-for="AdvanceMoney" hidden readonly/>
+                                    <input type="text" oninput="formartCurrency(event)" value="0" class="form-control" readonly/>
+                                    <span asp-validation-for="AdvanceMoney" class="text-danger"></span>
+                                }
+                                else
+                                {
+                                    <label asp-for="AdvanceMoney" class="control-label"></label>
+                                    <input asp-for="AdvanceMoney" hidden />
+                                    <input type="text" oninput="formartCurrency(event)" value="0" class="form-control" />
+                                    <span asp-validation-for="AdvanceMoney" class="text-danger"></span>
+                                }
                             </div>
                             @*<div class="form-group mb-3 col-xs-12 col-sm-6">
                                 <label asp-for="DateStart" class="control-label"></label>

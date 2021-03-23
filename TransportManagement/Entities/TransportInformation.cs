@@ -11,7 +11,7 @@ namespace TransportManagement.Entities
     {
         private string _transportId;
         private string _cargoTypes;
-        private int _cargoTonnage;
+        private decimal _cargoTonnage;
         private decimal _advanceMoney;
         private decimal _returnOfAdvances;
         private bool _isCompleted;
@@ -29,28 +29,26 @@ namespace TransportManagement.Entities
         [MaxLength(200)]
         public string CargoTypes { get => _cargoTypes; set => _cargoTypes = value; }
         [Range(0, Int16.MaxValue)]
-        public int CargoTonnage { get => _cargoTonnage; set => _cargoTonnage = value; }
-        [Column(TypeName = "decimal(18, 6)")]
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal CargoTonnage { get => _cargoTonnage; set => _cargoTonnage = value; }
+        [Column(TypeName = "decimal(18, 0)")]
         [Range(0, Int32.MaxValue)]
         public decimal AdvanceMoney { get => _advanceMoney; set => _advanceMoney = value; }
         [Range(0, Int32.MaxValue)]
-        [Column(TypeName = "decimal(18, 6)")]
+        [Column(TypeName = "decimal(18, 0)")]
         public decimal ReturnOfAdvances { get => _returnOfAdvances; set => _returnOfAdvances = value; }
         public bool IsCompleted { get => _isCompleted; set => _isCompleted = value; }
-        [Column(TypeName = "decimal(18, 0)")]
         public double DateCompletedUTC { get => _dateCompletedUTC; set => _dateCompletedUTC = value; }
-        [Column(TypeName = "decimal(18, 0)")]
         public double DateCompletedLocal { get => _dateCompletedLocal; set => _dateCompletedLocal = value; }
         public bool IsCancel { get => _isCancel; set => _isCancel = value; }
         [MaxLength(200)]
         public string ReasonCancel { get => _reasonCancel; set => _reasonCancel = value; }
         [Required]
-        [Column(TypeName = "decimal(18, 0)")]
         public double DateStartUTC { get => _dateStartUTC; set => _dateStartUTC = value; }
         [Required]
-        [Column(TypeName = "decimal(18, 0)")]
         public double DateStartLocal { get => _dateStartLocal; set => _dateStartLocal = value; }
         [Required]
+        [MaxLength(length:100)]
         public string TimeZone { get => _timeZone; set => _timeZone = value; }
         [MaxLength(1000)]
         public string Note { get => _note; set => _note = value; }

@@ -38,7 +38,7 @@ namespace TransportManagement.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Manage(int page, int pageSize, string search, string timeShow = "today")
+        public IActionResult Manage(int page, int pageSize, string search, string timeShow = "month")
         {
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
@@ -87,10 +87,38 @@ namespace TransportManagement.Controllers
             ViewBag.Search = search;
             return View(model);
         }
+        [HttpGet]
         public IActionResult Details(string transportId)
         {
-
-            return View();
+            string message = String.Empty;
+            var transInfo = _transInfoServices.GetTransport(transportId);
+            if (transInfo != null)
+            {
+                DetailTransInfoViewModel model = new DetailTransInfoViewModel()
+                {
+                    AdvanceMoney = transInfo.AdvanceMoney,
+                    CargoTonnage = transInfo.CargoTonnage,
+                    CargoTypes = transInfo.CargoTypes,
+                    DriverId = transInfo.DayJob.DriverId,
+                    IsCancel = transInfo.IsCancel,
+                    IsCompleted = transInfo.IsCompleted,
+                    Note = transInfo.Note,
+                    ReasonCancel = transInfo.ReasonCancel,
+                    ReturnOfAdvances = transInfo.ReturnOfAdvances,
+                    RouteId = transInfo.RouteId,
+                    TransportId = transInfo.TransportId,
+                    VehicleId = transInfo.VehicleId,
+                    DateCompletedLocal = transInfo.DateCompletedLocal,
+                    DateStartLocal = transInfo.DateStartLocal,
+                    Drivers = _userServices.GetAvailableUsers().ToList(),
+                    Routes = _routeServices.GetAllRoutes().ToList(),
+                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                };
+                return View(model);
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Manage");
         }
         [HttpGet]
         public IActionResult Create()
@@ -194,7 +222,6 @@ namespace TransportManagement.Controllers
                     CargoTypes = transInfo.CargoTypes,
                     DriverId = transInfo.DayJob.DriverId,
                     IsCancel = transInfo.IsCancel,
-                    IsCompleted = transInfo.IsCompleted,
                     Note = transInfo.Note,
                     ReasonCancel = transInfo.ReasonCancel,
                     ReturnOfAdvances = transInfo.ReturnOfAdvances,
@@ -267,5 +294,30 @@ namespace TransportManagement.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DoneTransInfo(string transportId)
+        {
+            string message = String.Empty;
+            var trans = _transInfoServices.GetTransport(transportId);
+            var user = await _userManager.GetUserAsync(User);
+            if (trans != null)
+            {
+                if (trans.DateCompletedLocal > 0)
+                {
+                    message = "Chuyến vận chuyển đã được kết thúc";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return RedirectToAction(actionName: "Manage");
+                }
+                if (await _transInfoServices.DoneTransInfo(trans, user.Id))
+                {
+                    message = "Đã hoàn thành chuyến vận chuyển";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
+                    return RedirectToAction(actionName: "Manage");
+                }
+            }
+            message = "Lỗi không xác định, xin mời thao tác lại";
+            TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+            return RedirectToAction(actionName: "Manage");
+        }
     }
 }

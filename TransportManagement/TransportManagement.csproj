@@ -19,8 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Driver\Models\TransInfo\" />
+    <Folder Include="Areas\Driver\Models\" />
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Areas\Driver\Views\Home\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

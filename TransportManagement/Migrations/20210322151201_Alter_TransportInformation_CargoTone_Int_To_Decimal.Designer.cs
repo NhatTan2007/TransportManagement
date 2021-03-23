@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportManagement.DbContexts;
 
 namespace TransportManagement.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    partial class TransportDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210322151201_Alter_TransportInformation_CargoTone_Int_To_Decimal")]
+    partial class Alter_TransportInformation_CargoTone_Int_To_Decimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,7 +168,7 @@ namespace TransportManagement.Migrations
                         new
                         {
                             Id = "8dd36636-b4d8-4010-8594-caebfbe55991",
-                            ConcurrencyStamp = "5abef0a2-8e29-4e00-96c3-10757f2babbc",
+                            ConcurrencyStamp = "0214610b-55f2-4c31-996c-04c241d70001",
                             IsActive = true,
                             Name = "Quản trị viên hệ thống",
                             NormalizedName = "QUẢN TRỊ VIÊN HỆ THỐNG",
@@ -274,7 +276,7 @@ namespace TransportManagement.Migrations
                             Id = "84572bc3-25fc-4ef8-9056-67c4da04069b",
                             AccessFailedCount = 0,
                             Avatar = "noavatar.png",
-                            ConcurrencyStamp = "a11d0a3c-45df-463c-b5b9-e04cb0a70583",
+                            ConcurrencyStamp = "7f1b5003-6d53-4daa-8f5f-2fd16e176d38",
                             EmailConfirmed = false,
                             FirstName = "Administrator",
                             IsActive = true,
@@ -282,11 +284,11 @@ namespace TransportManagement.Migrations
                             LastName = "System",
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMAQJcrq0MAAR/+TXLoacDQ4OiPk8BRyU9s71T1P28Bw74bUYOU+Wk7WBdzfuuRTPA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECbdKZdNlc7jPS4f7Hy4aTD5tMA3p956sC18OHyQBJ4rzR0zJh4dxGFV+VaV+wJPag==",
                             PhoneNumber = "0911345992",
                             PhoneNumberConfirmed = true,
                             RolePriority = 0,
-                            SecurityStamp = "d1f1401c-602a-4820-8531-34b62b2368c3",
+                            SecurityStamp = "d625b0d5-514d-4e0b-859a-c76a39062eaf",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -329,8 +331,7 @@ namespace TransportManagement.Migrations
 
                     b.Property<string>("TimeZone")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransportId")
                         .HasColumnType("nvarchar(450)");
@@ -345,26 +346,6 @@ namespace TransportManagement.Migrations
                     b.HasIndex("UserEditId");
 
                     b.ToTable("EditTransportInformations");
-                });
-
-            modelBuilder.Entity("TransportManagement.Entities.Fuel", b =>
-                {
-                    b.Property<int>("FuelId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FuelName")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("FuelPrice")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.HasKey("FuelId");
-
-                    b.ToTable("Fuels");
                 });
 
             modelBuilder.Entity("TransportManagement.Entities.Location", b =>
@@ -421,10 +402,10 @@ namespace TransportManagement.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("AdvanceMoney")
-                        .HasColumnType("decimal(18,0)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<decimal>("CargoTonnage")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<string>("CargoTypes")
                         .HasMaxLength(200)
@@ -461,7 +442,7 @@ namespace TransportManagement.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("ReturnOfAdvances")
-                        .HasColumnType("decimal(18,0)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<string>("RouteId")
                         .IsRequired()
@@ -500,9 +481,6 @@ namespace TransportManagement.Migrations
 
                     b.Property<decimal>("FuelConsumptionPerTone")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("FuelId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -625,8 +603,7 @@ namespace TransportManagement.Migrations
                 {
                     b.HasOne("TransportManagement.Entities.TransportInformation", "TransportInfo")
                         .WithMany("ListEdit")
-                        .HasForeignKey("TransportId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("TransportId");
 
                     b.HasOne("TransportManagement.Entities.AppIdentityUser", "UserEdit")
                         .WithMany("ListEdit")
