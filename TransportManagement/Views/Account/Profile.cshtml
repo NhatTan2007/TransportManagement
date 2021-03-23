@@ -1,4 +1,9 @@
-﻿@model AccountViewModel
+﻿@inject UserManager<AppIdentityUser> userManager
+@model AccountViewModel
+@{ 
+    var user = await userManager.GetUserAsync(User);
+    var account = Model.AccountId;
+}
 <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
@@ -36,18 +41,18 @@
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 mx-auto mb-4">
-                        <div class="mx-auto">
-                            <label asp-for="Avatar" class="w-100">
+                        <div class="mx-auto text-center">
+                            <label asp-for="Avatar" class="">
                                 <img src="@Url.Content($"~/images/account/{Model.Avatar}")" alt="Avatar" id="avatar" class="w-100" />
                             </label>
                         </div>
-                        <div class="custom-file mt-3 mb-3">
-
+                    </div>
+                    @if (user.Id == Model.AccountId)
+                    {
+                        <div class="col-md-6 m-auto">
+                            <a role="button" data-toggle="modal" data-target="#editPassword" class="btn btn--primary btn-block text-uppercase">ĐỔI MẬT KHẨU</a>
                         </div>
-                    </div>
-                    <div class="col-md-6 m-auto">
-                        <a role="button" data-toggle="modal" data-target="#editPassword" class="btn btn--primary btn-block text-uppercase">ĐỔI MẬT KHẨU</a>
-                    </div>
+                    }
                 </div>
             </div>
         </div>

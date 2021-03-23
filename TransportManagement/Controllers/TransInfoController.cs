@@ -38,7 +38,7 @@ namespace TransportManagement.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Manage(int page, int pageSize, string search, string timeShow = "month")
+        public async Task<IActionResult> Manage(int page, int pageSize, string search, string timeShow = "month")
         {
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
@@ -54,9 +54,9 @@ namespace TransportManagement.Controllers
 
             double utc = timeShow == "today" ? TStodayUTC7 : TSMonthUTC7;
             if (String.IsNullOrEmpty(search))
-                model.Items = _transInfoServices.GetTransportsToday(utc, page, pageSize);
+                model.Items = await _transInfoServices.GetTransportsToday(utc, page, pageSize);
             else
-                model.Items = _transInfoServices.GetTransportsToday(utc, page, pageSize, search);
+                model.Items = await _transInfoServices.GetTransportsToday(utc, page, pageSize, search);
 
             int countItems = 0;
             if (model.Items != null)
@@ -73,10 +73,10 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Details(string transportId)
+        public async Task<IActionResult> Details(string transportId)
         {
             string message = String.Empty;
-            var transInfo = _transInfoServices.GetTransport(transportId);
+            var transInfo = await _transInfoServices.GetTransport(transportId);
             if (transInfo != null)
             {
                 DetailTransInfoViewModel model = new DetailTransInfoViewModel()
@@ -97,7 +97,7 @@ namespace TransportManagement.Controllers
                     DateStartLocal = transInfo.DateStartLocal,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -106,13 +106,13 @@ namespace TransportManagement.Controllers
             return RedirectToAction(actionName: "Manage");
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             CreateTransInfoViewModel newTrans = new CreateTransInfoViewModel()
             {
                 Drivers = _userServices.GetDriverAvailableUsers().ToList(),
                 Routes = _routeServices.GetAllRoutes().ToList(),
-                Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
             };
             return View(newTrans);
         }
@@ -128,12 +128,12 @@ namespace TransportManagement.Controllers
             //get data for select elements
             model.Drivers = _userServices.GetDriverAvailableUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
-            model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
+            model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
                 //check the vehicle is used
-                string driverIdUseVehicle = _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7At0Am);
+                string driverIdUseVehicle = await _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7At0Am);
                 if (!String.IsNullOrEmpty(driverIdUseVehicle))
                 {
                     var driverUseVehicle = _userServices.GetUser(driverIdUseVehicle);
@@ -178,6 +178,22 @@ namespace TransportManagement.Controllers
                 //create new TransInfo in SQL
                 if (await _transInfoServices.CreateNewTransInfo(newTrans))
                 {
+                    var vehicle = await _vehicleServices.GetVehicle(newTrans.VehicleId);
+                    if (vehicle != null)
+                    {
+                        if (!vehicle.IsInUse)
+                        {
+                            await _vehicleServices.MakeVehicleInUsed(vehicle);
+                        }
+                    }
+                    var driver = await _userManager.FindByIdAsync(model.DriverId);
+                    if (driver != null)
+                    {
+                        if (driver.IsAvailable)
+                        {
+                            _userServices.MakeDriverIsBusy(driver);
+                        }
+                    }
                     message = "Chuyến vận chuyển đã được tạo";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Manage");
@@ -188,10 +204,10 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Edit(string transId)
+        public async Task<IActionResult> Edit(string transId)
         {
             string message = String.Empty;
-            var transInfo = _transInfoServices.GetTransport(transId);
+            var transInfo = await _transInfoServices.GetTransport(transId);
             if (transInfo != null)
             {
                 if (transInfo.DateCompletedLocal > 0)
@@ -215,7 +231,7 @@ namespace TransportManagement.Controllers
                     VehicleId = transInfo.VehicleId,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -230,7 +246,7 @@ namespace TransportManagement.Controllers
             //get data for select elements if error
             model.Drivers = _userServices.GetAvailableUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
-            model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
+            model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
@@ -273,17 +289,29 @@ namespace TransportManagement.Controllers
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return View(model);
         }
+
         [HttpGet]
-        public IActionResult ViewHistory(string transportId)
+        public async Task<IActionResult> ViewHistory(string transportId, int page, int pageSize)
         {
-            return View();
+            ViewBag.transId = transportId;
+            PaginationViewModel<EditTransportInformation> model = new PaginationViewModel<EditTransportInformation>();
+            if (page == 0) page = 1;
+            if (pageSize == 0) pageSize = model.PageSizeItem.Min();
+            List<EditTransportInformation> histories = (await _transInfoServices.Histories(transportId)).ToList();
+            if (histories == null)
+            {
+                histories = new List<EditTransportInformation>();
+            }
+            model.Pager = new Pager(histories.Count, page, pageSize);
+            model.Items = histories.Skip((page - 1) * pageSize).Take(pageSize);
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> DoneTransInfo(string transportId)
         {
             string message = String.Empty;
-            var trans = _transInfoServices.GetTransport(transportId);
+            var trans = await _transInfoServices.GetTransport(transportId);
             var user = await _userManager.GetUserAsync(User);
             if (trans != null)
             {
@@ -295,6 +323,24 @@ namespace TransportManagement.Controllers
                 }
                 if (await _transInfoServices.DoneTransInfo(trans, user.Id))
                 {
+                    var vehicle = await _vehicleServices.GetVehicle(trans.VehicleId);
+                    var listTransportByVehicle = await _transInfoServices.GetTransportsNotFinishByVehicle(vehicle.VehicleId);
+                    if (listTransportByVehicle != null && vehicle != null)
+                    {
+                        if (!listTransportByVehicle.Any() && vehicle.IsInUse)
+                        {
+                            await _vehicleServices.MakeVehicleIsFree(vehicle);
+                        }
+                    }
+                    var driver = await _userManager.FindByIdAsync(trans.DayJob.DriverId);
+                    var listTransportByDriver = await _transInfoServices.GetTransportsNotFinishByDriver(driver.Id);
+                    if (listTransportByDriver != null && driver != null)
+                    {
+                        if (!listTransportByDriver.Any() && !driver.IsAvailable)
+                        {
+                            await _userServices.MakeDriverIsFree(driver);
+                        }
+                    }
                     message = "Đã hoàn thành chuyến vận chuyển";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
                     return RedirectToAction(actionName: "Manage");

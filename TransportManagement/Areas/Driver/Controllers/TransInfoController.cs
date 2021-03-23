@@ -41,7 +41,7 @@ namespace TransportManagement.Areas.Driver.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Manage(int page, int pageSize, string search, string timeShow = "today")
+        public async Task<IActionResult> Manage(int page, int pageSize, string search, string timeShow = "today")
         {
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
@@ -58,22 +58,22 @@ namespace TransportManagement.Areas.Driver.Controllers
             {
                 if (timeShow == "today")
                 {
-                    model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize);
+                    model.Items = await _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize);
                 }
                 if (timeShow == "month")
                 {
-                    model.Items = _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize);
+                    model.Items = await _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize);
                 }
             }
             else
             {
                 if (timeShow == "today")
                 {
-                    model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize, search);
+                    model.Items = await _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize, search);
                 }
                 if (timeShow == "month")
                 {
-                    model.Items = _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize, search);
+                    model.Items = await _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize, search);
                 }
             }
             int countItems = 0;
@@ -91,10 +91,10 @@ namespace TransportManagement.Areas.Driver.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Details(string transportId)
+        public async Task<IActionResult> Details(string transportId)
         {
             string message = String.Empty;
-            var transInfo = _transInfoServices.GetTransport(transportId);
+            var transInfo = await _transInfoServices.GetTransport(transportId);
             if (transInfo != null)
             {
                 DetailTransInfoViewModel model = new DetailTransInfoViewModel()
@@ -115,7 +115,7 @@ namespace TransportManagement.Areas.Driver.Controllers
                     DateStartLocal = transInfo.DateStartLocal,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -125,10 +125,10 @@ namespace TransportManagement.Areas.Driver.Controllers
         }
         
         [HttpGet]
-        public IActionResult Edit(string transId)
+        public async Task<IActionResult> Edit(string transId)
         {
             string message = String.Empty;
-            var transInfo = _transInfoServices.GetTransport(transId);
+            var transInfo = await _transInfoServices.GetTransport(transId);
             if (transInfo != null)
             {
                 if (transInfo.DateCompletedLocal > 0)
@@ -150,7 +150,7 @@ namespace TransportManagement.Areas.Driver.Controllers
                     VehicleId = transInfo.VehicleId,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
                     Routes = RouteServices.GetAllRoutes().ToList(),
-                    Vehicles = _vehicleServices.GetNotUseVehicles().ToList()
+                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -165,7 +165,7 @@ namespace TransportManagement.Areas.Driver.Controllers
             //get data for select elements if error
             model.Drivers = _userServices.GetAvailableUsers().ToList();
             model.Routes = RouteServices.GetAllRoutes().ToList();
-            model.Vehicles = _vehicleServices.GetNotUseVehicles().ToList();
+            model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
@@ -214,17 +214,12 @@ namespace TransportManagement.Areas.Driver.Controllers
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return View(model);
         }
-        [HttpGet]
-        public IActionResult ViewHistory(string transportId)
-        {
-            return View();
-        }
 
         [HttpGet]
         public async Task<IActionResult> DoneTransInfo(string transportId)
         {
             string message = String.Empty;
-            var trans = _transInfoServices.GetTransport(transportId);
+            var trans = await _transInfoServices.GetTransport(transportId);
             var user = await _userManager.GetUserAsync(User);
             if (trans != null)
             {

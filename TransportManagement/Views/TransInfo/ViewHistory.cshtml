@@ -1,0 +1,89 @@
+﻿@model PaginationViewModel<EditTransportInformation>
+@{
+    ViewBag.Title = "Lịch sử chỉnh sửa chuyến vận chuyển";
+    var histories = Model.Items.ToList();
+}
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h3 class="tm-block-title d-block text-center">LỊCH SỬ CHỈNH SỬA</h3>
+            </div>
+            <div class="w-100 pagination row mx-auto">
+                <!--Search and pagesize-->
+                <div class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12 flex-nowrap align-items-center justify-content-between">
+                    <div>
+                        <span class="text-white">Show</span>
+                        <select class="ml-2 mr-2 text-center"
+                                style="min-width:5rem; height: 38px;"
+                                id="pageSize" onchange="changePageSize(this)">
+                            @foreach (var item in Model.PageSizeItem)
+                            {
+                                if (Model.Pager.PageSize == item)
+                                {
+                                    <option name="pageSize" selected value="@item">@item</option>
+                                }
+                                else
+                                {
+                                    <option name="pageSize" value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover w-100 table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle" style="width: 50px">STT</th>
+                            <th class="pr-1 pl-1 align-middle">Tên người chỉnh sửa</th>
+                            <th class="pr-1 pl-1 align-middle">Nội dung chỉnh sửa</th>
+                            <th class="p-0 align-middle">Ngày chỉnh sửa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < histories.Count; i++)
+                        {
+                            int stt = i + 1;
+                            string dateTime = SystemUtilites.GetDateTimeFromTimeStamp(histories[i].DateEditLocal).ToString("g");
+                            <tr>
+                                <td class="p-0 text-center" style="width: 50px">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    <a class="text-decoration-none text-white edit-toggle"
+                                       asp-controller="Account" asp-action="Profile"
+                                       asp-route-userId="@histories[i].UserEditId">@histories[i].UserEdit.FullName</a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    @histories[i].EditContent
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    @dateTime
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!--Footer of pagination-->
+                <div class="col-12 mt-2">
+                    <ul class="pagination col-12 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Location" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-100 justify-content-center text-center">
+                <a asp-controller="TransInfo" asp-action="Details" asp-route-transportId="@ViewBag.transId" role="button"
+                   class="btn btn--cancel text-uppercase pr-4 pl-4 mt-2 mt-sm-0 w-100">
+                    QUAY VỀ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

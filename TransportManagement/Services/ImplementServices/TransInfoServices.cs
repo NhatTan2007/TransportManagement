@@ -15,11 +15,13 @@ namespace TransportManagement.Services.ImplementServices
     public class TransInfoServices : ITransInfoServices
     {
         private readonly TransportDbContext _context;
+        private readonly UserManager<AppIdentityUser> _userManager;
 
         public TransInfoServices(TransportDbContext context,
                                     UserManager<AppIdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<bool> CreateNewTransInfo(TransportInformation newTransInfo)
         {
@@ -51,7 +53,7 @@ namespace TransportManagement.Services.ImplementServices
 
         public async Task<bool> EditTransInfo(EditTransInfoViewModel transEdit, string userId)
         {
-            var transInfo = GetTransport(transEdit.TransportId);
+            var transInfo = await GetTransport(transEdit.TransportId);
             if (transInfo != null)
             {
                 string editContent = String.Empty;
@@ -128,38 +130,38 @@ namespace TransportManagement.Services.ImplementServices
             return false;
         }
 
-        public TransportInformation GetTransport(string transportId)
+        public async Task<TransportInformation> GetTransport(string transportId)
         {
-            return _context.TransportInformations.Where(t => t.TransportId == transportId)
-                                                    .Include(t => t.DayJob)
-                                                    .Include(t => t.Route)
-                                                    .Include(t => t.Vehicle).ThenInclude(v => v.Fuel)
-                                                    .SingleOrDefault();
+            return await _context.TransportInformations.Where(t => t.TransportId == transportId)
+                                                        .Include(t => t.DayJob)
+                                                        .Include(t => t.Route)
+                                                        .Include(t => t.Vehicle).ThenInclude(v => v.Fuel)
+                                                        .SingleOrDefaultAsync();
         }
 
-        public ICollection<TransportInformation> GetTransportsToday(double todayTSLocal)
+        public async Task<ICollection<TransportInformation>> GetTransportsToday(double todayTSLocal)
         {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= todayTSLocal)
-                                                    .Include(t => t.DayJob)
-                                                    .Include(t => t.Route)
-                                                    .Include(t => t.Vehicle)
-                                                    .OrderByDescending(t => t.DateStartLocal)
-                                                    .ToList();
-        }
-
-        public ICollection<TransportInformation> GetTransportsByVehicleToday(int vehicleId, double todayTSLocal)
-        {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= todayTSLocal && t.VehicleId == vehicleId)
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTSLocal)
                                                     .Include(t => t.DayJob)
                                                     .Include(t => t.Route)
                                                     .Include(t => t.Vehicle)
                                                     .OrderByDescending(t => t.DateStartLocal)
-                                                    .ToList();
+                                                    .ToListAsync();
         }
 
-        public ICollection<TransInfoViewModel> GetTransportsToday(double todayTS, int page, int pageSize, string search)
+        public async Task<ICollection<TransportInformation>> GetTransportsByVehicleToday(int vehicleId, double todayTSLocal)
         {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTSLocal && t.VehicleId == vehicleId)
+                                                    .Include(t => t.DayJob)
+                                                    .Include(t => t.Route)
+                                                    .Include(t => t.Vehicle)
+                                                    .OrderByDescending(t => t.DateStartLocal)
+                                                    .ToListAsync();
+        }
+
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsToday(double todayTS, int page, int pageSize, string search)
+        {
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
                                         .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                                         .Include(t => t.Route)
                                         .Include(t => t.Vehicle)
@@ -178,12 +180,12 @@ namespace TransportManagement.Services.ImplementServices
                                             TransportId = t.TransportId,
                                             VehicleLicensePlate = t.Vehicle.LicensePlate
                                         })
-                                        .ToList();
+                                        .ToListAsync();
         }
 
-        public ICollection<TransInfoViewModel> GetTransportsToday(double todayTS, int page, int pageSize)
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsToday(double todayTS, int page, int pageSize)
         {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
                             .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                             .Include(t => t.Route)
                             .Include(t => t.Vehicle)
@@ -200,12 +202,12 @@ namespace TransportManagement.Services.ImplementServices
                                 TransportId = t.TransportId,
                                 VehicleLicensePlate = t.Vehicle.LicensePlate
                             })
-                            .ToList();
+                            .ToListAsync();
         }
 
-        public ICollection<TransInfoViewModel> GetTransportsThisMonth(double monthTS, int page, int pageSize, string search)
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsThisMonth(double monthTS, int page, int pageSize, string search)
         {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
                             .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                             .Include(t => t.Route)
                             .Include(t => t.Vehicle)
@@ -224,12 +226,12 @@ namespace TransportManagement.Services.ImplementServices
                                 TransportId = t.TransportId,
                                 VehicleLicensePlate = t.Vehicle.LicensePlate
                             })
-                            .ToList();
+                            .ToListAsync();
         }
 
-        public ICollection<TransInfoViewModel> GetTransportsThisMonth(double monthTS, int page, int pageSize)
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsThisMonth(double monthTS, int page, int pageSize)
         {
-            return _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
+            return await _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
                 .Include(t => t.DayJob).ThenInclude(j => j.Driver)
                 .Include(t => t.Route)
                 .Include(t => t.Vehicle)
@@ -246,7 +248,7 @@ namespace TransportManagement.Services.ImplementServices
                     TransportId = t.TransportId,
                     VehicleLicensePlate = t.Vehicle.LicensePlate
                 })
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<bool> DoneTransInfo(TransportInformation trans, string userId)
@@ -276,6 +278,27 @@ namespace TransportManagement.Services.ImplementServices
             {
                 return false;
             }
+        }
+
+        public async Task<ICollection<EditTransportInformation>> Histories(string transportId)
+        {
+            return await _context.EditTransportInformations.Where(e => e.TransportId == transportId)
+                                                        .Include(e => e.TransportInfo)
+                                                        .Include(e => e.UserEdit)
+                                                        .ToListAsync();
+        }
+
+        public async Task<ICollection<TransportInformation>> GetTransportsNotFinishByVehicle(int vehicleId)
+        {
+            return await _context.TransportInformations.Where(t => t.VehicleId == vehicleId && t.DateCompletedLocal == 0)
+                                                        .ToListAsync();
+        }
+
+        public async Task<ICollection<TransportInformation>> GetTransportsNotFinishByDriver(string driverId)
+        {
+            return await _context.TransportInformations.Include(t => t.DayJob)
+                                                            .Where(t => t.DayJob.DriverId == driverId && t.DateCompletedLocal == 0)
+                                                            .ToListAsync();
         }
     }
 }

@@ -22,5 +22,7 @@ namespace TransportManagement.Services.IServices
         ICollection<AppIdentityUser> GetAvailableUsers();
         ICollection<AppIdentityUser> GetDriverAvailableUsers();
         UserViewModel GetUser(string userId);
+        Task<bool> MakeDriverIsBusy(AppIdentityUser driver);
+        Task<bool> MakeDriverIsFree(AppIdentityUser driver);
     }
 }

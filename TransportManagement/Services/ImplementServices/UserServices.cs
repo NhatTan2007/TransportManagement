@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +13,13 @@ namespace TransportManagement.Services.ImplementServices
     public class UserServices : IUserServices
     {
         private readonly TransportDbContext _context;
+        private readonly UserManager<AppIdentityUser> _userManager;
 
-        public UserServices(TransportDbContext context)
+        public UserServices(TransportDbContext context,
+                                UserManager<AppIdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public int CountActiveAndAvailableUsers()
@@ -145,6 +149,42 @@ namespace TransportManagement.Services.ImplementServices
                                         UserId = e.Id,
                                         IsActive = e.IsActive
                                     }).ToList();
+        }
+
+        public async Task<bool> MakeDriverIsBusy(AppIdentityUser driver)
+        {
+            try
+            {
+                driver.IsAvailable = false;
+                var result = await _userManager.UpdateAsync(driver);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> MakeDriverIsFree(AppIdentityUser driver)
+        {
+            try
+            {
+                driver.IsAvailable = true;
+                var result = await _userManager.UpdateAsync(driver);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

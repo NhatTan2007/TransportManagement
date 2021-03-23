@@ -21,9 +21,9 @@ namespace TransportManagement.Services.ImplementServices
             _context = context;
             _transInfoServices = transInfoServices;
         }
-        public int CountVehicles()
+        public async Task<int> CountVehicles()
         {
-            return _context.Vehicles.Count();
+            return await _context.Vehicles.CountAsync();
         }
 
         public async Task<bool> CreateVehicle(Vehicle newVehicle)
@@ -96,9 +96,9 @@ namespace TransportManagement.Services.ImplementServices
             return false;
         }
 
-        public ICollection<VehicleViewModel> GetAllVehicles()
+        public async Task<ICollection<VehicleViewModel>> GetAllVehicles()
         {
-            return _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Select(v => new VehicleViewModel()
@@ -110,31 +110,12 @@ namespace TransportManagement.Services.ImplementServices
                                         IsInUse = v.IsInUse,
                                         VehicleName = v.VehicleName,
                                         VehiclePayload = v.VehiclePayload
-                                    }).ToList();
+                                    }).ToListAsync();
         }
 
-        public ICollection<VehicleViewModel> GetAllVehicles(int page, int pageSize, string search)
+        public async Task<ICollection<VehicleViewModel>> GetAllVehicles(int page, int pageSize, string search)
         {
-            return _context.Vehicles.Where(v => v.LicensePlate.Contains(search) && v.IsDeleted == false)
-                                    .Include(v => v.Brand)
-                                    .OrderBy(v => v.Brand.BrandName)
-                                    .Skip((page - 1) * pageSize)
-                                    .Take(pageSize)
-                                    .Select(v => new VehicleViewModel()
-                                    {
-                                        VehicleId = v.VehicleId,
-                                        LicensePlate = v.LicensePlate,
-                                        IsAvailable = v.IsAvailable,
-                                        BrandName = v.Brand.BrandName,
-                                        IsInUse = v.IsInUse,
-                                        VehicleName = v.VehicleName,
-                                        VehiclePayload = v.VehiclePayload
-                                    }).ToList();
-        }
-
-        public ICollection<VehicleViewModel> GetAllVehicles(int page, int pageSize)
-        {
-            return _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.LicensePlate.Contains(search) && v.IsDeleted == false)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Skip((page - 1) * pageSize)
@@ -148,12 +129,31 @@ namespace TransportManagement.Services.ImplementServices
                                         IsInUse = v.IsInUse,
                                         VehicleName = v.VehicleName,
                                         VehiclePayload = v.VehiclePayload
-                                    }).ToList();
+                                    }).ToListAsync();
         }
 
-        public ICollection<VehicleViewModel> GetInUseVehicles()
+        public async Task<ICollection<VehicleViewModel>> GetAllVehicles(int page, int pageSize)
         {
-            return _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .Select(v => new VehicleViewModel()
+                                    {
+                                        VehicleId = v.VehicleId,
+                                        LicensePlate = v.LicensePlate,
+                                        IsAvailable = v.IsAvailable,
+                                        BrandName = v.Brand.BrandName,
+                                        IsInUse = v.IsInUse,
+                                        VehicleName = v.VehicleName,
+                                        VehiclePayload = v.VehiclePayload
+                                    }).ToListAsync();
+        }
+
+        public async Task<ICollection<VehicleViewModel>> GetInUseVehicles()
+        {
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Where(v => v.IsInUse == true && v.IsAvailable == true)
@@ -166,12 +166,12 @@ namespace TransportManagement.Services.ImplementServices
                                                         IsInUse = v.IsInUse,
                                                         VehicleName = v.VehicleName,
                                                         VehiclePayload = v.VehiclePayload
-                                                    }).ToList();
+                                                    }).ToListAsync();
         }
 
-        public ICollection<VehicleViewModel> GetNotUseVehicles()
+        public async Task<ICollection<VehicleViewModel>> GetNotUseVehicles()
         {
-            return _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Where(v => v.IsInUse == false && v.IsAvailable == true)
@@ -185,7 +185,7 @@ namespace TransportManagement.Services.ImplementServices
                                                                 BrandId = v.VehicleBrandId,
                                                                 VehicleName = v.VehicleName,
                                                                 VehiclePayload = v.VehiclePayload
-                                                            }).ToList();
+                                                            }).ToListAsync();
         }
 
         public async Task<Vehicle> GetVehicle(int vehicleId)
@@ -196,9 +196,9 @@ namespace TransportManagement.Services.ImplementServices
                                             .SingleOrDefaultAsync();
         }
 
-        public string IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday)
+        public async Task<string> IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday)
         {
-            var transportsByVehicleToday = _transInfoServices.GetTransportsByVehicleToday(vehicleId, TStoday).ToList();
+            var transportsByVehicleToday = (await _transInfoServices.GetTransportsByVehicleToday(vehicleId, TStoday)).ToList();
             if (transportsByVehicleToday != null)
             {
                 foreach (var trans in transportsByVehicleToday)
@@ -210,6 +210,45 @@ namespace TransportManagement.Services.ImplementServices
                 }
             }
             return String.Empty;
+        }
+
+        public async Task<bool> MakeVehicleInUsed(Vehicle vehicle)
+        {
+            try
+            {
+                if (vehicle != null)
+                {
+                    _context.Vehicles.Attach(vehicle);
+                    vehicle.IsInUse = true;
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> MakeVehicleIsFree(Vehicle vehicle)
+        {
+            try
+            {
+                if (vehicle != null)
+                {
+                    _context.Vehicles.Attach(vehicle);
+                    vehicle.IsInUse = false;
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
         }
     }
 }

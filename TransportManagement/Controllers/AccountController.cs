@@ -25,9 +25,9 @@ namespace TransportManagement.Controllers
             _userManager = userManager;
         }
         [HttpGet]
-        public async Task<IActionResult> Profile()
+        public async Task<IActionResult> Profile(string userId)
         {
-            var account = await _userManager.GetUserAsync(User);
+            var account = String.IsNullOrEmpty(userId) ? await _userManager.GetUserAsync(User) : await _userManager.FindByIdAsync(userId);
             if (account != null)
             {
                 AccountViewModel model = new AccountViewModel()

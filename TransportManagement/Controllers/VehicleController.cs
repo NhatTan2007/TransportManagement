@@ -26,20 +26,20 @@ namespace TransportManagement.Controllers
             _brandServices = brandServices;
             _fuelServices = fuelServices;
         }
-        public IActionResult Index(int page, int pageSize, string search)
+        public async Task<IActionResult> Index(int page, int pageSize, string search)
         {
-            int countTotalVehicles = _vehicleServices.CountVehicles();
+            int countTotalVehicles = await _vehicleServices.CountVehicles();
             PaginationViewModel<VehicleViewModel> model = new PaginationViewModel<VehicleViewModel>();
             if (page == 0) page = 1;
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
             model.Pager = new Pager(countTotalVehicles, page, pageSize);
             if (String.IsNullOrEmpty(search))
             {
-                model.Items = _vehicleServices.GetAllVehicles(page, pageSize).ToList();
+                model.Items = (await _vehicleServices.GetAllVehicles(page, pageSize)).ToList();
             }
             else
             {
-                model.Items = _vehicleServices.GetAllVehicles(page, pageSize, search).ToList();
+                model.Items = (await _vehicleServices.GetAllVehicles(page, pageSize, search)).ToList();
             }
             if (_brandServices.CountBrands() > 0)
             {
