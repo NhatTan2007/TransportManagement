@@ -13,7 +13,6 @@ namespace TransportManagement.Models.TransportInformation
     {
         private string _cargoTypes;
         private decimal _advanceMoney;
-        private DateTime _dateStart;
         private string _note;
         private int _vehicleId;
         private string _routeId;
@@ -25,8 +24,6 @@ namespace TransportManagement.Models.TransportInformation
         [Display(Name = "Số tiền tạm ứng (VNĐ)")]
         [Range(typeof(decimal),"0", "2000000000", ErrorMessage = "Số tiền tạm ứng tối đa không quá 2 tỷ VNĐ")]
         public decimal AdvanceMoney { get => _advanceMoney; set => _advanceMoney = value; }
-        [Display(Name = "Ngày bắt đầu")]
-        public DateTime DateStart { get => _dateStart; set => _dateStart = value; }
         [Display(Name = "Ghi chú")]
         public string Note { get => _note; set => _note = value; }
         [Display(Name = "Lựa chọn phương tiện")]

@@ -50,6 +50,10 @@ a{
     cursor:default;
 }
 
+.form-control[disabled] {
+    cursor: default;
+}
+
 .form-control, select, i.fas {
     border-radius: 5px;
 }
@@ -61,13 +65,17 @@ a{
     align-items: center;
 }
     .select2-container--disabled .select2-selection--single {
-        background-color: #ffa64a91 !important;
+        background-color: #4e4c9b !important;
+        cursor: default;
     }
 .select2-selection__rendered {
     color: #fff !important;
 }
 .text-danger {
     color: #ffabb3!important;
+}
+.date-filter{
+    max-width: 200px;
 }
 /* typical phone screen resolution */
 @media only screen and (max-width : 667px) {

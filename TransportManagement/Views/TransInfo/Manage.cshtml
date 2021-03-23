@@ -12,10 +12,10 @@
 
 @section Scripts{
     <script>
-        function confirmDelete(id) {
+        function confirmDone(id) {
             bootbox.confirm({
-                size: "large",
-                message: "Bạn muốn xóa phương tiện này?",
+                size: "small",
+                message: "Bạn muốn hoàn thành chuyến vận chuyển này?",
                 buttons: {
                     cancel: {
                         label: 'Không',
@@ -28,7 +28,7 @@
                 },
                 callback: async function (result) {
                     if (result) {
-                        window.location.href = `Vehicle/Delete?vehicleId=${id}`;
+                        window.location.href = `/TransInfo/DoneTransInfo?transportId=${id}`;
                         //await $.ajax({
                         //    url: `Location/Delete?locationId=${id}`,
                         //    method: 'GET',
@@ -47,9 +47,9 @@
     </script>
 }
 
-<div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
-        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+<div class="w-100">
+    <div class="">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row pl-1 pr-1 pl-sm-5 pr-sm-5">
             <div class="col-sm-12 text-danger h5" asp-validation-summary="ModelOnly"></div>
             <div class="col-sm-12">
                 <h3 class="tm-block-title d-block text-center">QUẢN LÝ CHUYẾN VẬN CHUYỂN</h3>
@@ -93,15 +93,23 @@
                         <input class="form-control w-25 bg-light text-body" type="search" value="" name="search" onchange="searchKeyword(this)" placeholder="Search" />
                     }
                 </div>
+                <!--Filter-->
+                <!--<div class="w-100 d-flex align-items-center text-white">
+                    <label class="m-0 mr-2" for="start-date-filter">Từ</label>
+                    <input type="date" 
+                           class="date-filter form-control" 
+                           id="start-date-filter" name="name" value="" />
+                    <label class="m-0 ml-2 mr-2" for="end-date-filter">Đến</label>
+                    <input type="date" class="date-filter form-control" id="end-date-filter" name="name" value="" />
+                </div>-->
                 <!--Items of pagination-->
                 <table class="table table-bordered table-hover w-100 table-light">
                     <thead class="thead-light text-center text-uppercase">
                         <tr>
                             <th class="p-0 align-middle">STT</th>
                             <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Biển kiểm soát</th>
-                            <th class="pr-1 pl-1 align-middle">Tên tài xế</th>
-                            <th class="pr-1 pl-1 align-middle" style="width: 130px">Khối lượng hàng hóa(tấn)</th>
-                            <th class="pr-1 pl-1 align-middle">Ngày bắt đầu</th>
+                            <th class="pr-1 pl-1 align-middle" style="min-width: 80px;">Tên tài xế</th>
+                            <th class="pr-1 pl-1 align-middle" style="width: 90px">Ngày bắt đầu</th>
                             <th class="pr-1 pl-1 align-middle">Trạng thái</th>
                             <th class="p-0 align-middle" style="width: 60px"></th>
                         </tr>
@@ -114,37 +122,38 @@
                                 <td class="p-0 text-center">@stt</td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left" style="max-width: 100px">
                                     <a class="text-white"
-                                       asp-action="Edit" asp-controller="TransInfo"
-                                       asp-route-transId="@transports[i].TransportId">
+                                       asp-action="Details" asp-controller="TransInfo"
+                                       asp-route-transportId="@transports[i].TransportId">
                                         @transports[i].VehicleLicensePlate
                                     </a>
                                 </td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left">
-                                    @transports[i].DriverName
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left text-justify">
+                                    <a class="text-white"
+                                       asp-action="Details" asp-controller="TransInfo"
+                                       asp-route-transportId="@transports[i].TransportId">
+                                        @transports[i].DriverName
+                                    </a>
                                 </td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
-                                    @transports[i].CargoTonnage
-                                </td>
-                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3" style="width: 90px">
                                     @SystemUtilites.GetDateTimeFromTimeStamp(transports[i].DateStartLocal).ToString("dd/MM/yyyy")
                                 </td>
                                 <td class="p-0 pl-1 pr-1 pt-3 pb-3">
                                     @if (transports[i].IsCompleted)
                                     {
-                                        <i class="fas fa-check-square text-success" 
-                                           title="Đã hoàn thành" 
+                                        <i class="fas fa-check-square text-success"
+                                           title="Đã hoàn thành"
                                            style="font-size: 1.3rem"></i>
                                     }
-                                    else if(transports[i].IsCancel)
+                                    else if (transports[i].IsCancel)
                                     {
                                         <i class="fas fa-window-close text-danger"
-                                           title="Đã hủy" 
+                                           title="Đã hủy"
                                            style="font-size: 1.3rem"></i>
                                     }
                                     else
                                     {
-                                        <i class="fas fa-truck-loading text-white" 
-                                           title="Đang chuyển hàng" 
+                                        <i class="fas fa-truck-loading text-white"
+                                           title="Đang chuyển hàng"
                                            style="font-size: 1.3rem"></i>
                                     }
                                 </td>
@@ -154,12 +163,13 @@
                                        asp-action="Edit"
                                        asp-route-transId="@transports[i].TransportId"
                                        title="Chỉnh sửa">
-                                    <i class="fas fa-pen-square"></i></a>
+                                        <i class="fas fa-pen-square"></i>
+                                    </a>
                                     <a class="done-confirm"
                                        href="javascript:;"
                                        onclick="confirmDone('@transports[i].TransportId')"
                                        style="font-size: 1.3rem">
-                                        <i class="fas fa-flag-checkered text-light" 
+                                        <i class="fas fa-flag-checkered text-light"
                                            title="Hoàn thành"></i>
                                     </a>
                                 </td>

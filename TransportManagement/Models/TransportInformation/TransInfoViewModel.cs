@@ -12,14 +12,15 @@ namespace TransportManagement.Models.TransportInformation
         private string _transportId;
         private string _vehicleLicensePlate;
         private string _driverName;
-        private int _cargoTonnage;
+        private decimal _cargoTonnage;
         private decimal _advanceMoney;
         private decimal _returnOfAdvances;
         private bool _isCompleted;
         private bool _isCancel;
         private double _dateStartLocal;
         public string TransportId { get => _transportId; set => _transportId = value; }
-        public int CargoTonnage { get => _cargoTonnage; set => _cargoTonnage = value; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal CargoTonnage { get => _cargoTonnage; set => _cargoTonnage = value; }
         public decimal AdvanceMoney { get => _advanceMoney; set => _advanceMoney = value; }
         public decimal ReturnOfAdvances { get => _returnOfAdvances; set => _returnOfAdvances = value; }
         public bool IsCompleted { get => _isCompleted; set => _isCompleted = value; }

@@ -38,7 +38,8 @@ namespace TransportManagement.Services.ImplementServices
             SystemUtilites.GetDateTimeFromTimeStamp(date);
             return _context.DayJobs.Where(j => j.DriverId == driverId && j.Date == date)
                                     .Include(j => j.Driver)
-                                    .Include(j => j.Transports)
+                                    .Include(j => j.Transports).ThenInclude(t => t.Vehicle)
+                                    .Include(j => j.Transports).ThenInclude(t => t.Route)
                                     .SingleOrDefault();
         }
     }

@@ -56,7 +56,7 @@ namespace TransportManagement.Services.ImplementServices
             {
                 string editContent = String.Empty;
                 _context.TransportInformations.Attach(transInfo);
-                if (transInfo.AdvanceMoney != transEdit.AdvanceMoney)
+                if (transInfo.AdvanceMoney != null && transInfo.AdvanceMoney != transEdit.AdvanceMoney)
                 {
                     editContent += $" Sửa tiền tạm ứng từ \"{transInfo.AdvanceMoney}\" thành \"{transEdit.AdvanceMoney}\" |";
                     transInfo.AdvanceMoney = transEdit.AdvanceMoney;
@@ -97,6 +97,7 @@ namespace TransportManagement.Services.ImplementServices
                 }
                 if (transInfo.DateCompletedLocal != transEdit.DateCompletedLocal)
                 {
+                    editContent += $"Kết thúc chuyến vận chuyển";
                     transInfo.DateCompletedLocal = transEdit.DateCompletedLocal;
                 }
                 try
@@ -246,6 +247,35 @@ namespace TransportManagement.Services.ImplementServices
                     VehicleLicensePlate = t.Vehicle.LicensePlate
                 })
                 .ToList();
+        }
+
+        public async Task<bool> DoneTransInfo(TransportInformation trans, string userId)
+        {
+            _context.TransportInformations.Attach(trans);
+            trans.IsCompleted = true;
+            DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
+            trans.DateCompletedLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7);
+            trans.DateCompletedUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
+            try
+            {
+                EditTransportInformation newEdit = new EditTransportInformation()
+                {
+                    DateEditLocal = SystemUtilites.ConvertToTimeStamp(localTimeUTC7),
+                    DateEditUTC = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow),
+                    EditContent = "Kết thúc chuyến vận chuyển",
+                    EditId = Guid.NewGuid().ToString(),
+                    TimeZone = "SE Asia Standard Time",
+                    TransportId = trans.TransportId,
+                    UserEditId = userId
+                };
+                _context.EditTransportInformations.Add(newEdit);
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

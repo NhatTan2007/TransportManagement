@@ -23,16 +23,17 @@ namespace TransportManagement.DbContexts
         public DbSet<DayJob> DayJobs { get; set; }
         public DbSet<TransportInformation> TransportInformations { get; set; }
         public DbSet<EditTransportInformation> EditTransportInformations { get; set; }
+        public DbSet<Fuel> Fuels { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<Vehicle>()
                     .HasIndex(v => v.LicensePlate)
                     .IsUnique();
-            //builder.Entity<EditTransportInformation>()
-            //        .HasOne(t => t.TransportInfo)
-            //        .WithMany(e => e.ListEdit)
-            //        .OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<EditTransportInformation>()
+                    .HasOne(t => t.TransportInfo)
+                    .WithMany(e => e.ListEdit)
+                    .OnDelete(DeleteBehavior.SetNull);
 
             //seed user administrator account
             builder.Entity<AppIdentityRole>().HasData(new List<AppIdentityRole>
@@ -67,9 +68,9 @@ namespace TransportManagement.DbContexts
 
             builder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
-                    {
-                        RoleId = "8dd36636-b4d8-4010-8594-caebfbe55991",
-                        UserId = "84572bc3-25fc-4ef8-9056-67c4da04069b"
+                {
+                    RoleId = "8dd36636-b4d8-4010-8594-caebfbe55991",
+                    UserId = "84572bc3-25fc-4ef8-9056-67c4da04069b"
                 }
                 );
         }

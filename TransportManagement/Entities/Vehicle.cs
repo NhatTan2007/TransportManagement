@@ -26,10 +26,6 @@ namespace TransportManagement.Entities
         [MaxLength(200)]
         public string VehicleName { get => _vehicleName; set => _vehicleName = value; }
         [Required]
-        public string VehicleBrandId { get; set; }
-        [ForeignKey("VehicleBrandId")]
-        public VehicleBrand Brand { get; set; }
-        [Required]
         [Column(TypeName = "decimal(18, 2)")]
         [Range(0, Int16.MaxValue)]
         public decimal FuelConsumptionPerTone { get => _fuelConsumptionPerTone; set => _fuelConsumptionPerTone = value; }
@@ -46,6 +42,13 @@ namespace TransportManagement.Entities
         [MaxLength(10)]
         public bool IsDeleted { get => _isDeleted; set => _isDeleted = value; }
         //Foreign key area
+        [Required]
+        public string VehicleBrandId { get; set; }
+        [ForeignKey("VehicleBrandId")]
+        public VehicleBrand Brand { get; set; }
+        public int FuelId { get; set; }
+        [ForeignKey("FuelId")]
+        public Fuel Fuel { get; set; }
         public ICollection<TransportInformation> Transports { get; set; }
         
     }
