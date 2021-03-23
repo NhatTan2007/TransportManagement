@@ -22,12 +22,12 @@
         const showAdvanceMoney = document.getElementById("showAdvanceMoney");
         const returnOfAdvances = document.getElementById("ReturnOfAdvances");
         const showReturnAdvances = document.getElementById("ShowReturnAdvances");
-        showReturnAdvanceMoney
+
         if (advanceMoney.value > 0) {
             showAdvanceMoney.value = formartter.format(advanceMoney.value);
         }
-        if (returnAdvances.value > 0) {
-            showReturnAdvances.value = formartter.format(returnAdvances.value);
+        if (returnOfAdvances.value > 0) {
+            showReturnAdvances.value = formartter.format(returnOfAdvances.value);
         }
     </script>
 }
@@ -124,7 +124,7 @@
                         <div class="form-group mb-3 col-xs-12 col-sm-6">
                             <label asp-for="ReturnOfAdvances" class="control-label"></label>
                             <input asp-for="ReturnOfAdvances" class="form-control" hidden readonly />
-                            <input id="ShowReturnAdvances" type="text" oninput="formartCurrency(event)" value="0" class="form-control" readonly />
+                            <input id="ShowReturnAdvances" type="text" value="0" class="form-control" readonly />
                         </div>
                     </div>
                     <div class="row">

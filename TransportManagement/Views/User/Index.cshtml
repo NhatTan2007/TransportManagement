@@ -82,12 +82,13 @@
                             <th class="p-0 align-middle" style="max-width: 80px"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody >
                         @for (int i = 0; i < users.Count; i++)
                         {
+                            string className = (users[i].IsActive) ? "text-white" : "text-dark";
                             int stt = i + 1;
-                            string status = (users[i].IsAvalable) ? "Sẵn sàng" : "Không sẵn sàng";
-                            <tr>
+                            string status = (users[i].IsAvalable && users[i].IsActive) ? "Sẵn sàng" : "Không sẵn sàng";
+                            <tr class="@className">
                                 <td class="p-0 text-center">@stt</td>
                                 <td class="pr-1 pl-1">@users[i].FullName</td>
                                 <td class="pr-1 pl-1 text-center">@users[i].JobTitle</td>

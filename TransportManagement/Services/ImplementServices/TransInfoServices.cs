@@ -56,7 +56,7 @@ namespace TransportManagement.Services.ImplementServices
             {
                 string editContent = String.Empty;
                 _context.TransportInformations.Attach(transInfo);
-                if (transInfo.AdvanceMoney != null && transInfo.AdvanceMoney != transEdit.AdvanceMoney)
+                if (transInfo.AdvanceMoney != transEdit.AdvanceMoney)
                 {
                     editContent += $" Sửa tiền tạm ứng từ \"{transInfo.AdvanceMoney}\" thành \"{transEdit.AdvanceMoney}\" |";
                     transInfo.AdvanceMoney = transEdit.AdvanceMoney;
@@ -133,7 +133,7 @@ namespace TransportManagement.Services.ImplementServices
             return _context.TransportInformations.Where(t => t.TransportId == transportId)
                                                     .Include(t => t.DayJob)
                                                     .Include(t => t.Route)
-                                                    .Include(t => t.Vehicle)
+                                                    .Include(t => t.Vehicle).ThenInclude(v => v.Fuel)
                                                     .SingleOrDefault();
         }
 

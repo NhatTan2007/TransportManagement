@@ -128,14 +128,22 @@ namespace TransportManagement.Controllers
                 var user = await _userManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: model.IsRemember, lockoutOnFailure: false);
-                    if (result.Succeeded)
+                    if (user.IsActive)
                     {
-                        if (await _userManager.IsInRoleAsync(user, "Lái xe"))
+                        var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: model.IsRemember, lockoutOnFailure: false);
+                        if (result.Succeeded)
                         {
-                            return RedirectToAction(actionName: "Index", controllerName: "Home", new { area = "Driver" });
+                            if (await _userManager.IsInRoleAsync(user, "Lái xe"))
+                            {
+                                return RedirectToAction(actionName: "Index", controllerName: "Home", new { area = "Driver" });
+                            }
+                            return RedirectToAction(actionName: "Index", controllerName: "Home");
                         }
-                        return RedirectToAction(actionName: "Index", controllerName: "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Tài khoản đã bị khóa");
+                        return View(model);
                     }
                 }
             }

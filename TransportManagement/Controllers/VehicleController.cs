@@ -16,12 +16,15 @@ namespace TransportManagement.Controllers
     {
         private readonly IVehicleServices _vehicleServices;
         private readonly IVehicleBrandServices _brandServices;
+        private readonly IFuelServices _fuelServices;
 
         public VehicleController(IVehicleServices vehicleServices,
-                                    IVehicleBrandServices brandServices)
+                                    IVehicleBrandServices brandServices,
+                                    IFuelServices fuelServices)
         {
             _vehicleServices = vehicleServices;
             _brandServices = brandServices;
+            _fuelServices = fuelServices;
         }
         public IActionResult Index(int page, int pageSize, string search)
         {
@@ -50,7 +53,8 @@ namespace TransportManagement.Controllers
         {
             var model = new CreateVehicleViewModel()
             {
-                VehicleBrands = _brandServices.GetAllBrands().ToList()
+                VehicleBrands = _brandServices.GetAllBrands().ToList(),
+                Fuels = _fuelServices.GetFuels().ToList()
             };
             return View(model);
         }
@@ -58,6 +62,7 @@ namespace TransportManagement.Controllers
         public async Task<IActionResult> Create(CreateVehicleViewModel model)
         {
             model.VehicleBrands = _brandServices.GetAllBrands().ToList();
+            model.Fuels = _fuelServices.GetFuels().ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
@@ -71,6 +76,7 @@ namespace TransportManagement.Controllers
                     VehicleBrandId = model.VehicleBrandId,
                     Specifications = model.Specifications,
                     VehiclePayload = model.VehiclePayload,
+                    FuelId = model.FuelId
                 };
                 if (await _vehicleServices.CreateVehicle(newVehicle))
                 {
@@ -101,7 +107,8 @@ namespace TransportManagement.Controllers
                     VehicleBrandId = vehicle.VehicleBrandId,
                     Specifications = vehicle.Specifications,
                     VehiclePayload = vehicle.VehiclePayload,
-                    VehicleBrands = _brandServices.GetAllBrands().ToList()
+                    VehicleBrands = _brandServices.GetAllBrands().ToList(),
+                    Fuels = _fuelServices.GetFuels().ToList()
                 };
                 return View(vehicleEdit);
             }
@@ -114,6 +121,7 @@ namespace TransportManagement.Controllers
         {
             string message = String.Empty;
             model.VehicleBrands = _brandServices.GetAllBrands().ToList();
+            model.Fuels = _fuelServices.GetFuels().ToList();
             if (ModelState.IsValid)
             {
                 if (await _vehicleServices.EditVehicle(model))

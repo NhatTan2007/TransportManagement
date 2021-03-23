@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TransportManagement.Models.Fuel;
 using TransportManagement.Models.VehicleBrand;
 
 namespace TransportManagement.Models.Vehicle
@@ -17,6 +18,7 @@ namespace TransportManagement.Models.Vehicle
         private string _specifications;
         private bool _isInUse;
         private bool _isAvailable;
+        private int _fuelId;
         public int VehicleId { get => _vehicleId; set => _vehicleId = value; }
         [Required(ErrorMessage = "Biển số phương tiện không được để trống")]
         [MaxLength(15, ErrorMessage = "Độ dài tối đa cho phép là 15 ký tự")]
@@ -45,6 +47,8 @@ namespace TransportManagement.Models.Vehicle
         [Display(Name = "Đang sở hữu?")]
         public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }
         public List<VehicleBrandViewModel> VehicleBrands { get; set; }
-        
+        public List<FuelViewModel> Fuels { get; set; }
+        [Display(Name = "Nhiên liệu sử dụng")]
+        public int FuelId { get => _fuelId; set => _fuelId = value; }
     }
 }

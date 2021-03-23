@@ -51,28 +51,13 @@ namespace TransportManagement.Controllers
             PaginationViewModel<TransInfoViewModel> model = new PaginationViewModel<TransInfoViewModel>();
             if (page == 0) page = 1;
             if (pageSize == 0) pageSize = model.PageSizeItem.Min();
+
+            double utc = timeShow == "today" ? TStodayUTC7 : TSMonthUTC7;
             if (String.IsNullOrEmpty(search))
-            {
-                if (timeShow == "today")
-                {
-                    model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize);
-                }
-                if (timeShow == "month")
-                {
-                    model.Items = _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize);
-                }
-            }
+                model.Items = _transInfoServices.GetTransportsToday(utc, page, pageSize);
             else
-            {
-                if (timeShow == "today")
-                {
-                    model.Items = _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize, search);
-                }
-                if (timeShow == "month")
-                {
-                    model.Items = _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize, search);
-                }
-            }
+                model.Items = _transInfoServices.GetTransportsToday(utc, page, pageSize, search);
+
             int countItems = 0;
             if (model.Items != null)
             {

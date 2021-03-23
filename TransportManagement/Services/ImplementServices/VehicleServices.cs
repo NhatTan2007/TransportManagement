@@ -34,7 +34,7 @@ namespace TransportManagement.Services.ImplementServices
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -190,9 +190,8 @@ namespace TransportManagement.Services.ImplementServices
 
         public async Task<Vehicle> GetVehicle(int vehicleId)
         {
-            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false && v.VehicleId == vehicleId)
                                             .Include(v => v.Brand)
-                                            .Where(v => v.VehicleId == vehicleId)
                                             .OrderBy(v => v.Brand.BrandName)
                                             .SingleOrDefaultAsync();
         }

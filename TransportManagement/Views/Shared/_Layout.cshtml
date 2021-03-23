@@ -50,7 +50,7 @@
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
+                        @*<li class="nav-item dropdown">
 
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
@@ -64,7 +64,7 @@
                                 <a class="dropdown-item" href="#">Weekly Report</a>
                                 <a class="dropdown-item" href="#">Yearly Report</a>
                             </div>
-                        </li>
+                        </li>*@
                         @if (User.IsInRole("Nhân sự") || User.IsInRole("Quản trị viên hệ thống"))
                         {
                             <li class="nav-item dropdown">
@@ -130,6 +130,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-controller="Role" asp-action="Index">Quản lý phân quyền</a>
+                                    <a class="dropdown-item" asp-controller="Fuel" asp-action="Index">Quản lý nhiên liệu</a>
                                 </div>
                             </li>
                         }

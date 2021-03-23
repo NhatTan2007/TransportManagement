@@ -199,7 +199,7 @@ namespace TransportManagement.Areas.Driver.Controllers
                         {
                             var vehicle = await _vehicleServices.GetVehicle(model.VehicleId);
                             var route = _routeServices.GetRoute(model.RouteId);
-                            model.ReturnOfAdvances = model.CargoTonnage * vehicle.FuelConsumptionPerTone * route.Distance;
+                            model.ReturnOfAdvances = model.CargoTonnage * vehicle.FuelConsumptionPerTone * vehicle.Fuel.FuelPrice * route.Distance;
                         }
                         if (await _transInfoServices.EditTransInfo(model, user.Id))
                         {
@@ -232,18 +232,18 @@ namespace TransportManagement.Areas.Driver.Controllers
                 {
                     message = "Chuyến vận chuyển đã được kết thúc";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-                    return RedirectToAction(actionName: "Index");
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
                 if (await _transInfoServices.DoneTransInfo(trans, user.Id))
                 {
                     message = "Đã hoàn thành chuyến vận chuyển";
                     TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Success, message);
-                    return RedirectToAction(actionName: "Index");
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
             }
             message = "Lỗi không xác định, xin mời thao tác lại";
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-            return RedirectToAction(actionName: "Index");
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
     }
 }

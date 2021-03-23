@@ -1,0 +1,183 @@
+﻿@model List<FuelViewModel>
+@{
+    ViewBag.Title = "Quản lý loại nhiên liệu";
+}
+
+@section Scripts{
+    <script src="~/scripts/fuel.js"></script>
+}
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
+            <div class="col-12">
+                <h3 class="tm-block-title d-block text-center">QUẢN LÝ NHIÊN LIỆU</h3>
+            </div>
+            <div class="col-lg-8 col-sm-12 pagination row mx-auto">
+                @if (User.IsInRole("Quản trị viên hệ thống"))
+                {
+                    <div>
+                        <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
+                           style="font-size: 1.3rem; cursor: pointer"
+                           data-toggle="modal"
+                           data-target="#createFuel"></i>
+                    </div>
+                }
+                <!--Items of pagination-->
+                <table class="table table-bordered table-hover table-light">
+                    <thead class="thead-light text-center text-uppercase">
+                        <tr>
+                            <th class="p-0 align-middle" style="width: 30px">STT</th>
+                            <th class="pr-1 pl-1 align-middle">Tên nhiên liệu</th>
+                            <th class="pr-1 pl-1 align-middle" style="max-width: 40px">Giá</th>
+                            <th class="p-0 align-middle" style="width: 20px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            int stt = i + 1;
+                            <tr>
+                                <td class="p-0 text-center" style="width: 30px">@stt</td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                                    <a class="text-decoration-none text-white edit-toggle"
+                                       href="javascript:;"
+                                       onclick="fuel.edit('@Model[i].FuelId')">@Model[i].FuelName</a>
+                                </td>
+                                <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-center fuel-price" 
+                                    style="max-width: 40px">@Model[i].FuelPrice</td>
+                                <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
+                                    <a class="text-decoration-none button--edit edit-toggle"
+                                       href="javascript:;"
+                                       onclick="fuel.edit('@Model[i].FuelId')"
+                                       title="Chỉnh sửa"
+                                       style="font-size:1.3rem"><i class="fas fa-pen-square"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="createFuel" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo loại nhiên liệu mới</h5>
+            </div>
+            <form asp-controller="Fuel" asp-action="Create" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 130px">
+                                    Tên nhiên liệu
+                                </span>
+                            </div>
+                            <input class="form-control"
+                                   type="text" data-val="true"
+                                   data-val-maxlength="Tên nhiên liệu không vượt quá '200' ký tự"
+                                   data-val-maxlength-max="200"
+                                   data-val-required="Tên nhiên liệu không được để trống"
+                                   id="FuelName" maxlength="200" name="FuelName" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="FuelName"
+                              data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 130px">
+                                    Giá nhiên liệu
+                                </span>
+                            </div>
+                            <input type="number" name="FuelPrice" id="FuelPrice" hidden />
+                            <input class="form-control"
+                                   type="text" data-val="true"
+                                   data-val-range="Giá trị không phù hợp"
+                                   data-val-range-max="100000" data-val-range-min="0.1"
+                                   data-val-required="Giá nhiên liệu không được để trống"
+                                   id="ShowFuelPrice" name="FuelPrice" oninput="formartCurrency(event)">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="FuelPrice"
+                              data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editFuel" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa thông tin nhiên liệu</h5>
+            </div>
+            <form asp-controller="Fuel" asp-action="Edit" method="post">
+                <div class="modal-body">
+                    <div class="input-group col-sm-12 p-0 mb-2">
+                        <div class="col-sm-12 d-sm-flex flex-nowrap">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 130px">
+                                    Tên nhiên liệu
+                                </span>
+                            </div>
+                            <input class="form-control"
+                                   type="text" data-val="true"
+                                   data-val-maxlength="Tên nhiên liệu không vượt quá '200' ký tự"
+                                   data-val-maxlength-max="200"
+                                   data-val-required="Tên nhiên liệu không được để trống"
+                                   id="EditFuelName" maxlength="200" name="FuelName" value="">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="FuelName"
+                              data-valmsg-replace="true"></span>
+                        <div class="col-sm-12 d-sm-flex flex-nowrap mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text w-100" style="min-width: 130px">
+                                    Giá nhiên liệu
+                                </span>
+                            </div>
+                            <input type="number" name="FuelPrice" id="EditFuelPrice" hidden />
+                            <input class="form-control"
+                                   type="text" data-val="true"
+                                   data-val-range="Giá trị không phù hợp"
+                                   data-val-range-max="100000" data-val-range-min="0.1"
+                                   data-val-required="Giá nhiên liệu không được để trống"
+                                   id="ShowEditFuelPrice" name="FuelPrice" oninput="formartCurrency(event)">
+                        </div>
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="FuelPrice"
+                              data-valmsg-replace="true"></span>
+                        <input type="text" name="FuelId" id="EditFuelId" hidden/>
+                    </div>
+                </div>
+                <div class="modal-footer pb-1 pt-1">
+                    <button class="btn btn--radius btn--primary">Confirm</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+</script>

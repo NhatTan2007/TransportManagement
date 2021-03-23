@@ -42,6 +42,7 @@ namespace TransportManagement.Areas.Driver.Controllers
                     };
                     await _dayJobServices.Create(dayJob);
                 }
+                dayJob.Transports = dayJob.Transports.OrderByDescending(t => t.DateStartLocal).ToList();
                 return View(dayJob);
             }
             return RedirectToAction(actionName: "Login", controllerName: "Account", new { area = "" });

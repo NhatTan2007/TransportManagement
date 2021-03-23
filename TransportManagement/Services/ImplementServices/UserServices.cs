@@ -47,7 +47,8 @@ namespace TransportManagement.Services.ImplementServices
                                                         IsAvalable = e.IsAvailable,
                                                         JobTitle = e.JobTitle,
                                                         PhoneNumber = e.PhoneNumber,
-                                                        UserId = e.Id
+                                                        UserId = e.Id,
+                                                        IsActive = e.IsActive
                                                     }).ToList();
         }
 
@@ -63,7 +64,8 @@ namespace TransportManagement.Services.ImplementServices
                                                             IsAvalable = u.IsAvailable,
                                                             JobTitle = u.JobTitle,
                                                             PhoneNumber = u.PhoneNumber,
-                                                            UserId = u.Id
+                                                            UserId = u.Id,
+                                                            IsActive = u.IsActive
                                                         }).ToList();
         }
 
@@ -79,7 +81,8 @@ namespace TransportManagement.Services.ImplementServices
                                         IsAvalable = e.IsAvailable,
                                         JobTitle = e.JobTitle,
                                         PhoneNumber = e.PhoneNumber,
-                                        UserId = e.Id
+                                        UserId = e.Id,
+                                        IsActive = e.IsActive
                                     }).ToList();
         }
 
@@ -103,7 +106,8 @@ namespace TransportManagement.Services.ImplementServices
                                                             IsAvalable = u.IsAvailable,
                                                             JobTitle = u.JobTitle,
                                                             PhoneNumber = u.PhoneNumber,
-                                                            UserId = u.Id
+                                                            UserId = u.Id,
+                                                            IsActive = u.IsActive
                                                         }).SingleOrDefault();
         }
 
@@ -121,7 +125,8 @@ namespace TransportManagement.Services.ImplementServices
                                         IsAvalable = u.IsAvailable,
                                         JobTitle = u.JobTitle,
                                         PhoneNumber = u.PhoneNumber,
-                                        UserId = u.Id
+                                        UserId = u.Id,
+                                        IsActive = u.IsActive
                                     }).ToList();
         }
 
@@ -137,7 +142,8 @@ namespace TransportManagement.Services.ImplementServices
                                         IsAvalable = e.IsAvailable,
                                         JobTitle = e.JobTitle,
                                         PhoneNumber = e.PhoneNumber,
-                                        UserId = e.Id
+                                        UserId = e.Id,
+                                        IsActive = e.IsActive
                                     }).ToList();
         }
     }
