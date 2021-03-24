@@ -84,5 +84,12 @@ if (notfication != null) {
 //    }
 //}
 
-//bootbox call
+//show homepage button when driver login in mobile
+const hompageBtnMobile = document.getElementById("HomeMobile");
+if (hompageBtnMobile != null)
+{
+    if (screen.width <= 699) {
+        hompageBtnMobile.classList.remove("d-none");
+    }
+}
 

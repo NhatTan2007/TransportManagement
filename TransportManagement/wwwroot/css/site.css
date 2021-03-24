@@ -101,4 +101,19 @@ a{
     .delete-confirm{
         font-size: 1.1rem;
     }
+    h3{
+        font-size: 1.3rem;
+    }
+    .action{
+        width: 20px !important;
+    }
+    .action>a{
+        margin: 0!important;
+    }
+    #search{
+        max-width: 200px;
+    }
+    i.fas{
+        font-size: 1.1rem !important;
+    }
 }

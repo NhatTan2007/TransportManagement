@@ -135,7 +135,7 @@ namespace TransportManagement.Controllers
                         {
                             if (await _userManager.IsInRoleAsync(user, "Lái xe"))
                             {
-                                return RedirectToAction(actionName: "Index", controllerName: "Home", new { area = "Driver" });
+                                return RedirectToAction(actionName: "Mobile", controllerName: "Home", new { area = "Driver" });
                             }
                             return RedirectToAction(actionName: "Index", controllerName: "Home");
                         }

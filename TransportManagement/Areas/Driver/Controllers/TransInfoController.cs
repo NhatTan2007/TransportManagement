@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.Entities;
+using TransportManagement.Models.Filter;
 using TransportManagement.Models.Pagination;
 using TransportManagement.Models.TransportInformation;
 using TransportManagement.Services.IServices;
@@ -41,41 +42,38 @@ namespace TransportManagement.Areas.Driver.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Manage(int page, int pageSize, string search, string timeShow = "today")
+        public async Task<IActionResult> TransFinish(FilterTransPortModel filter)
         {
+            var user = await _userManager.GetUserAsync(User);
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
             //get timestamp of day at 0 AM
-            double TStodayUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7.Date);
+            double TSNowUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7);
             //get timestamp 0 AM 1st day of month
             DateTime startMonth = new DateTime(localTimeUTC7.Year, localTimeUTC7.Month, 01);
             double TSMonthUTC7 = SystemUtilites.ConvertToTimeStamp(startMonth);
-
+            double TSstartDate = 0;
+            double TSendDate = 0;
             PaginationViewModel<TransInfoViewModel> model = new PaginationViewModel<TransInfoViewModel>();
-            if (page == 0) page = 1;
-            if (pageSize == 0) pageSize = model.PageSizeItem.Min();
-            if (String.IsNullOrEmpty(search))
+            if (SystemUtilites.ConvertToTimeStamp(filter.StartDate) == -62135596800)
             {
-                if (timeShow == "today")
-                {
-                    model.Items = await _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize);
-                }
-                if (timeShow == "month")
-                {
-                    model.Items = await _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize);
-                }
+                TSstartDate = TSMonthUTC7;
             }
             else
             {
-                if (timeShow == "today")
-                {
-                    model.Items = await _transInfoServices.GetTransportsToday(TStodayUTC7, page, pageSize, search);
-                }
-                if (timeShow == "month")
-                {
-                    model.Items = await _transInfoServices.GetTransportsToday(TSMonthUTC7, page, pageSize, search);
-                }
+                TSstartDate = SystemUtilites.ConvertToTimeStamp(filter.StartDate);
             }
+            if (SystemUtilites.ConvertToTimeStamp(filter.EndDate) == -62135596800)
+            {
+                TSendDate = TSNowUTC7;
+            }
+            else TSendDate = SystemUtilites.ConvertToTimeStamp(filter.EndDate.AddDays(1));
+            if (filter.Page == 0) filter.Page = 1;
+            if (filter.PageSize == 0) filter.PageSize = model.PageSizeItem.Min();
+            if (String.IsNullOrEmpty(filter.Search)) filter.Search = "";
+
+            model.Items = await _transInfoServices.GetTransportsDoneByDriver(TSstartDate, TSendDate, user.Id);
+
             int countItems = 0;
             if (model.Items != null)
             {
@@ -84,10 +82,60 @@ namespace TransportManagement.Areas.Driver.Controllers
                     countItems = model.Items.Count();
                 }
             }
+            model.Search = filter.Search;
+            model.StartDate = filter.StartDate;
+            model.EndDate = filter.EndDate;
+            model.Items = model.Items.Skip((filter.Page - 1) * filter.PageSize).Take(filter.PageSize);
+            model.Pager = new Pager(countItems, filter.Page, filter.PageSize);
+            ViewBag.Search = filter.Search;
+            return View(model);
+        }
+        public async Task<IActionResult> TransNotFinishYet(FilterTransPortModel filter)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            //get local time at Timezone UTC 7
+            DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
+            //get timestamp of day at 0 AM
+            double TSNowUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7);
+            //get timestamp 0 AM 1st day of month
+            DateTime startMonth = new DateTime(localTimeUTC7.Year, localTimeUTC7.Month, 01);
+            double TSMonthUTC7 = SystemUtilites.ConvertToTimeStamp(startMonth);
+            double TSstartDate = 0;
+            double TSendDate = 0;
+            PaginationViewModel<TransInfoViewModel> model = new PaginationViewModel<TransInfoViewModel>();
+            if (SystemUtilites.ConvertToTimeStamp(filter.StartDate) == -62135596800)
+            {
+                TSstartDate = TSMonthUTC7;
+            }
+            else
+            {
+                TSstartDate = SystemUtilites.ConvertToTimeStamp(filter.StartDate);
+            }
+            if (SystemUtilites.ConvertToTimeStamp(filter.EndDate) == -62135596800)
+            {
+                TSendDate = TSNowUTC7;
+            }
+            else TSendDate = SystemUtilites.ConvertToTimeStamp(filter.EndDate.AddDays(1));
+            if (filter.Page == 0) filter.Page = 1;
+            if (filter.PageSize == 0) filter.PageSize = model.PageSizeItem.Min();
+            if (String.IsNullOrEmpty(filter.Search)) filter.Search = "";
 
-            model.Items = model.Items.Skip((page - 1) * pageSize).Take(pageSize);
-            model.Pager = new Pager(countItems, page, pageSize);
-            ViewBag.Search = search;
+            model.Items = await _transInfoServices.GetTransportsNotDoneByDriver(TSstartDate, TSendDate, user.Id);
+
+            int countItems = 0;
+            if (model.Items != null)
+            {
+                if (model.Items.Any())
+                {
+                    countItems = model.Items.Count();
+                }
+            }
+            model.Search = filter.Search;
+            model.StartDate = filter.StartDate;
+            model.EndDate = filter.EndDate;
+            model.Items = model.Items.Skip((filter.Page - 1) * filter.PageSize).Take(filter.PageSize);
+            model.Pager = new Pager(countItems, filter.Page, filter.PageSize);
+            ViewBag.Search = filter.Search;
             return View(model);
         }
         [HttpGet]
@@ -113,9 +161,9 @@ namespace TransportManagement.Areas.Driver.Controllers
                     VehicleId = transInfo.VehicleId,
                     DateCompletedLocal = transInfo.DateCompletedLocal,
                     DateStartLocal = transInfo.DateStartLocal,
-                    Drivers = _userServices.GetAvailableUsers().ToList(),
+                    Drivers = _userServices.GetDriverUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
+                    Vehicles = (await _vehicleServices.GetAllVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -156,7 +204,7 @@ namespace TransportManagement.Areas.Driver.Controllers
             }
             message = "Lỗi không xác định, xin mời thao tác lại";
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
-            return RedirectToAction(actionName: "Manage");
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
 
         [HttpPost]

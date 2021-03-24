@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_MobileLayout";
+}
+
+@section Scripts{
+    <script>
+        if (screen.width >= 700) {
+            document.location = "/Driver/Home/Index";
+        }
+    </script>
+}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between p-0 m-0 pr-4 pl-4">
+        <a asp-controller="Home" asp-action="Index" asp-area="Driver"
+           class="text-white btn btn-primary mr-1"
+           style="width: 48%">
+            <i class="fas fa-truck text-white"></i>
+            <p>DANH SÁCH CV TRONG NGÀY</p>
+        </a>
+        <a asp-controller="TransInfo" asp-action="TransFinish"
+           class="text-white btn btn-info ml-1"
+           style="width: 48%">
+            <i class="fas fa-truck text-danger"></i>
+            <p>DANH SÁCH CV ĐÃ THỰC HIỆN</p>
+        </a>
+    </div>
+    <div class="col-12 d-flex justify-content-between p-0 m-0 pr-4 pl-4 mt-3">
+        <a asp-controller="TransInfo" asp-action="TransNotFinishYet"
+           class="text-white btn btn-secondary mr-1"
+           style="width: 48%">
+            <i class="fas fa-hand-paper text-warning"></i>
+            <p>DANH SÁCH CV CHƯA XONG</p>
+        </a>
+        <a asp-controller="Home" asp-action="ReportAdvances"
+           class="text-white btn btn-success ml-1"
+           style="width: 48%">
+            <i class="fas fa-dollar-sign text-white"></i>
+            <p>BÁO CÁO HOÀN TẠM ỨNG</p>
+        </a>
+    </div>
+</div>

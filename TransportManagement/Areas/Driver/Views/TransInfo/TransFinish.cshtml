@@ -5,7 +5,7 @@
     {
         transports = Model.Items.ToList();
     }
-    ViewBag.Title = "Quản lý chuyến vận chuyển";
+    ViewBag.Title = "Danh sách chuyến vận chuyển đã hoàn thành";
     string inUseStatus = String.Empty;
     string avalableStatus = String.Empty;
     //get base Datetime
@@ -57,7 +57,7 @@
             </div>
             <div class="w-100 pagination row mx-auto">
                 <!--Search and pagesize-->
-                <form asp-controller="TransInfo" asp-action="Manage"
+                <form asp-controller="TransInfo" asp-action="TransFinish"
                       class="row mr-0 ml-0 pl-0 pr-0 mb-2 col-sm-12 align-items-center justify-content-between">
                     <div class="col-12 col-sm-5 pr-0 pl-0">
                         <span class="text-white">Show</span>
@@ -98,7 +98,7 @@
                             {
                                 <input type="date"
                                        class="date-filter form-control"
-                                       id="start-date-filter" name="StartDate" 
+                                       id="start-date-filter" name="StartDate"
                                        value="@Model.StartDate.ToString("yyyy-MM-dd")" />
                             }
                             else
@@ -112,8 +112,8 @@
                             <label class="m-0 mr-2" for="end-date-filter" style="width: 40px">Đến</label>
                             @if (Model.EndDate != baseDateTime)
                             {
-                                <input type="date" class="date-filter form-control" 
-                                       id="end-date-filter" name="EndDate" 
+                                <input type="date" class="date-filter form-control"
+                                       id="end-date-filter" name="EndDate"
                                        value="@Model.EndDate.ToString("yyyy-MM-dd")" />
                             }
                             else
@@ -133,7 +133,7 @@
                             <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Biển kiểm soát</th>
                             <th class="pr-1 pl-1 align-middle" style="min-width: 80px;">Tên tài xế</th>
                             <th class="pr-1 pl-1 align-middle" style="width: 90px">Ngày bắt đầu</th>
-                            <th class="pr-1 pl-1 align-middle">Trạng thái</th>
+                            <th class="pr-1 pl-1 align-middle" style="width: 40px">Trạng thái</th>
                             <th class="p-0 align-middle action" style="width: 70px"></th>
                         </tr>
                     </thead>
@@ -160,7 +160,7 @@
                                 <td class="p-0 pl-1 pr-1 pt-2 pb-2" style="width: 90px">
                                     @SystemUtilites.GetDateTimeFromTimeStamp(transports[i].DateStartLocal).ToString("dd/MM/yyyy")
                                 </td>
-                                <td class="p-0 pl-1 pr-1 pt-2 pb-2">
+                                <td class="p-0 pl-1 pr-1 pt-2 pb-2" style="width: 40px">
                                     @if (transports[i].IsCompleted)
                                     {
                                         <i class="fas fa-check-square text-success"
@@ -204,8 +204,8 @@
                 <div class="col-sm-12 mt-2 footer-pagination">
                     <ul class="pagination col-sm-12 justify-content-center" id="pagination">
                         <li class="page-item">
-                            <a class="page-link" 
-                               href="@Url.Action(action: "Manage", controller: "TransInfo",
+                            <a class="page-link"
+                               href="@Url.Action(action: "TransFinish", controller: "TransInfo",
                                                     new {Page = 1,
                                                             Search = Model.Search,
                                                             PageSize = Model.Pager.PageSize,
@@ -214,8 +214,8 @@
                                                         })">First</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" 
-                               href="@Url.Action(action: "Manage", controller: "TransInfo",
+                            <a class="page-link"
+                               href="@Url.Action(action: "TransFinish", controller: "TransInfo",
                                                     new {PageSize = Model.Pager.PageSize,
                                                             Search = Model.Search,
                                                             Page = Model.Pager.PreviousPage,
@@ -226,27 +226,26 @@
                         @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
                         {
                             <li class="page-item">
-                                <a class="page-link" 
-                                   href="@Url.Action(action: "Manage", controller: "TransInfo",new { Page = i,
+                                <a class="page-link"
+                                   href="@Url.Action(action: "TransFinish", controller: "TransInfo",new { Page = i,
                                                                                                     Search = Model.Search,
                                                                                                     PageSize = Model.Pager.PageSize,
                                                                                                     StartDate = Model.StartDate,
                                                                                                     EndDate = Model.EndDate
                                                                                                     })">@i</a>
-                            </li>
-                        }
+                                                                                                </li>
+                                                                                            }
                         <li class="page-item">
-                            <a class="page-link" 
-                               href="@Url.Action(action: "Manage", controller: "TransInfo"
+                            <a class="page-link"
+                               href="@Url.Action(action: "TransFinish", controller: "TransInfo"
                                                     , new {Page = Model.Pager.NextPage,
                                                             Search = Model.Search,
                                                             PageSize = Model.Pager.PageSize,
                                                             StartDate = Model.StartDate,
-                                                            EndDate = Model.EndDate})"
-                            >Next</a>
+                                                            EndDate = Model.EndDate})">Next</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="@Url.Action(action: "Manage", controller: "TransInfo",
+                            <a class="page-link" href="@Url.Action(action: "TransFinish", controller: "TransInfo",
                                                                         new {Page = Model.Pager.TotalPages,
                                                                             Search = Model.Search,
                                                                             PageSize = Model.Pager.PageSize,

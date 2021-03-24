@@ -159,98 +159,6 @@ namespace TransportManagement.Services.ImplementServices
                                                     .ToListAsync();
         }
 
-        public async Task<ICollection<TransInfoViewModel>> GetTransportsToday(double todayTS, int page, int pageSize, string search)
-        {
-            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
-                                        .Include(t => t.DayJob).ThenInclude(j => j.Driver)
-                                        .Include(t => t.Route)
-                                        .Include(t => t.Vehicle)
-                                        .Where(t => t.DayJob.Driver.FullName.Contains(search)
-                                                    || t.Vehicle.LicensePlate.Contains(search))
-                                        .OrderByDescending(t => t.DateStartLocal)
-                                        .Select(t => new TransInfoViewModel
-                                        {
-                                            AdvanceMoney = t.AdvanceMoney,
-                                            CargoTonnage = t.CargoTonnage,
-                                            DateStartLocal = t.DateStartLocal,
-                                            DriverName = t.DayJob.Driver.FullName,
-                                            IsCancel = t.IsCancel,
-                                            IsCompleted = t.IsCompleted,
-                                            ReturnOfAdvances = t.ReturnOfAdvances,
-                                            TransportId = t.TransportId,
-                                            VehicleLicensePlate = t.Vehicle.LicensePlate
-                                        })
-                                        .ToListAsync();
-        }
-
-        public async Task<ICollection<TransInfoViewModel>> GetTransportsToday(double todayTS, int page, int pageSize)
-        {
-            return await _context.TransportInformations.Where(t => t.DateStartLocal >= todayTS)
-                            .Include(t => t.DayJob).ThenInclude(j => j.Driver)
-                            .Include(t => t.Route)
-                            .Include(t => t.Vehicle)
-                            .OrderByDescending(t => t.DateStartLocal)
-                            .Select(t => new TransInfoViewModel
-                            {
-                                AdvanceMoney = t.AdvanceMoney,
-                                CargoTonnage = t.CargoTonnage,
-                                DateStartLocal = t.DateStartLocal,
-                                DriverName = t.DayJob.Driver.FullName,
-                                IsCancel = t.IsCancel,
-                                IsCompleted = t.IsCompleted,
-                                ReturnOfAdvances = t.ReturnOfAdvances,
-                                TransportId = t.TransportId,
-                                VehicleLicensePlate = t.Vehicle.LicensePlate
-                            })
-                            .ToListAsync();
-        }
-
-        public async Task<ICollection<TransInfoViewModel>> GetTransportsThisMonth(double monthTS, int page, int pageSize, string search)
-        {
-            return await _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
-                            .Include(t => t.DayJob).ThenInclude(j => j.Driver)
-                            .Include(t => t.Route)
-                            .Include(t => t.Vehicle)
-                            .Where(t => t.DayJob.Driver.FullName.Contains(search)
-                                        || t.Vehicle.LicensePlate.Contains(search))
-                            .OrderByDescending(t => t.DateStartLocal)
-                            .Select(t => new TransInfoViewModel
-                            {
-                                AdvanceMoney = t.AdvanceMoney,
-                                CargoTonnage = t.CargoTonnage,
-                                DateStartLocal = t.DateStartLocal,
-                                DriverName = t.DayJob.Driver.FullName,
-                                IsCancel = t.IsCancel,
-                                IsCompleted = t.IsCompleted,
-                                ReturnOfAdvances = t.ReturnOfAdvances,
-                                TransportId = t.TransportId,
-                                VehicleLicensePlate = t.Vehicle.LicensePlate
-                            })
-                            .ToListAsync();
-        }
-
-        public async Task<ICollection<TransInfoViewModel>> GetTransportsThisMonth(double monthTS, int page, int pageSize)
-        {
-            return await _context.TransportInformations.Where(t => t.DateStartLocal >= monthTS)
-                .Include(t => t.DayJob).ThenInclude(j => j.Driver)
-                .Include(t => t.Route)
-                .Include(t => t.Vehicle)
-                .OrderByDescending(t => t.DateStartLocal)
-                .Select(t => new TransInfoViewModel
-                {
-                    AdvanceMoney = t.AdvanceMoney,
-                    CargoTonnage = t.CargoTonnage,
-                    DateStartLocal = t.DateStartLocal,
-                    DriverName = t.DayJob.Driver.FullName,
-                    IsCancel = t.IsCancel,
-                    IsCompleted = t.IsCompleted,
-                    ReturnOfAdvances = t.ReturnOfAdvances,
-                    TransportId = t.TransportId,
-                    VehicleLicensePlate = t.Vehicle.LicensePlate
-                })
-                .ToListAsync();
-        }
-
         public async Task<bool> DoneTransInfo(TransportInformation trans, string userId)
         {
             _context.TransportInformations.Attach(trans);
@@ -299,6 +207,72 @@ namespace TransportManagement.Services.ImplementServices
             return await _context.TransportInformations.Include(t => t.DayJob)
                                                             .Where(t => t.DayJob.DriverId == driverId && t.DateCompletedLocal == 0)
                                                             .ToListAsync();
+        }
+
+        public async Task<ICollection<TransInfoViewModel>> GetTransports(double startDate, double endDate, string search)
+        {
+            var transports = await _context.TransportInformations.Where(t => t.DateStartLocal >= startDate && t.DateStartLocal <= endDate)
+                                                        .Include(t => t.DayJob).ThenInclude(j => j.Driver)
+                                                        .Include(t => t.Route)
+                                                        .Include(t => t.Vehicle)
+                                                        .OrderByDescending(t => t.DateStartLocal).ToListAsync();
+            return transports.Where(t => t.DayJob.Driver.FullName.ToLower().Contains(search) || t.Vehicle.LicensePlate.ToLower().Contains(search))
+                                .Select(t => new TransInfoViewModel
+                                {
+                                    AdvanceMoney = t.AdvanceMoney,
+                                    CargoTonnage = t.CargoTonnage,
+                                    DateStartLocal = t.DateStartLocal,
+                                    DriverName = t.DayJob.Driver.FullName,
+                                    IsCancel = t.IsCancel,
+                                    IsCompleted = t.IsCompleted,
+                                    ReturnOfAdvances = t.ReturnOfAdvances,
+                                    TransportId = t.TransportId,
+                                    VehicleLicensePlate = t.Vehicle.LicensePlate
+                                }).ToList();
+        }
+
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsDoneByDriver(double startDate, double endDate, string driverId)
+        {
+            var transports = await _context.TransportInformations.Where(t => t.DateStartLocal >= startDate && t.DateStartLocal <= endDate && t.DateCompletedLocal > 0)
+                                                        .Include(t => t.DayJob).ThenInclude(j => j.Driver)
+                                                        .Include(t => t.Route)
+                                                        .Include(t => t.Vehicle)
+                                                        .OrderByDescending(t => t.DateStartLocal).ToListAsync();
+            return transports.Where(t => t.DayJob.Driver.Id == driverId)
+                                .Select(t => new TransInfoViewModel
+                                {
+                                    AdvanceMoney = t.AdvanceMoney,
+                                    CargoTonnage = t.CargoTonnage,
+                                    DateStartLocal = t.DateStartLocal,
+                                    DriverName = t.DayJob.Driver.FullName,
+                                    IsCancel = t.IsCancel,
+                                    IsCompleted = t.IsCompleted,
+                                    ReturnOfAdvances = t.ReturnOfAdvances,
+                                    TransportId = t.TransportId,
+                                    VehicleLicensePlate = t.Vehicle.LicensePlate
+                                }).ToList();
+        }
+
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsNotDoneByDriver(double startDate, double endDate, string driverId)
+        {
+            var transports = await _context.TransportInformations.Where(t => t.DateStartLocal >= startDate && t.DateStartLocal <= endDate && t.DateCompletedLocal == 0)
+                                                        .Include(t => t.DayJob).ThenInclude(j => j.Driver)
+                                                        .Include(t => t.Route)
+                                                        .Include(t => t.Vehicle)
+                                                        .OrderByDescending(t => t.DateStartLocal).ToListAsync();
+            return transports.Where(t => t.DayJob.Driver.Id == driverId)
+                                .Select(t => new TransInfoViewModel
+                                {
+                                    AdvanceMoney = t.AdvanceMoney,
+                                    CargoTonnage = t.CargoTonnage,
+                                    DateStartLocal = t.DateStartLocal,
+                                    DriverName = t.DayJob.Driver.FullName,
+                                    IsCancel = t.IsCancel,
+                                    IsCompleted = t.IsCompleted,
+                                    ReturnOfAdvances = t.ReturnOfAdvances,
+                                    TransportId = t.TransportId,
+                                    VehicleLicensePlate = t.Vehicle.LicensePlate
+                                }).ToList();
         }
     }
 }

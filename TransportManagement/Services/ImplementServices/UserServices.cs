@@ -95,9 +95,15 @@ namespace TransportManagement.Services.ImplementServices
             return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true)
                                     .OrderBy(u => u.FirstName).ToList();
         }
-        public ICollection<AppIdentityUser> GetDriverAvailableUsers()
+        public ICollection<AppIdentityUser> GetDriverActiveUsers()
         {
-            return _context.Users.Where(u => u.IsActive == true && u.IsAvailable == true && u.JobTitle == "Lái xe")
+            return _context.Users.Where(u => u.IsActive == true && u.JobTitle == "Lái xe")
+                                    .OrderBy(u => u.FirstName).ToList();
+        }
+
+        public ICollection<AppIdentityUser> GetDriverUsers()
+        {
+            return _context.Users.Where(u => u.JobTitle == "Lái xe")
                                     .OrderBy(u => u.FirstName).ToList();
         }
 

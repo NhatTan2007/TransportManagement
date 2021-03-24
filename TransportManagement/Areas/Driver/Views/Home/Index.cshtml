@@ -29,13 +29,6 @@
                 callback: async function (result) {
                     if (result) {
                         window.location.href = `/Driver/TransInfo/DoneTransInfo?transportId=${id}`;
-                        //await $.ajax({
-                        //    url: `Location/Delete?locationId=${id}`,
-                        //    method: 'GET',
-                        //    success: function (data) {
-                        //        window.location.reload();
-                        //    }
-                        //})
                     }
                 }
             })
@@ -103,7 +96,7 @@
                                            style="font-size: 1.3rem"></i>
                                     }
                                 </td>
-                                <td class="p-0 text-center" style="max-width: 60px">
+                                <td class="p-0 pr-1 pl-1 text-center action" style="max-width: 60px">
                                     <a class="button--edit mr-2"
                                        asp-controller="TransInfo"
                                        asp-action="Edit"

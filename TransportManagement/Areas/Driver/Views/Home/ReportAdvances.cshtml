@@ -1,0 +1,63 @@
+﻿@model ReportAdvancesModel
+@{
+    ViewBag.Title = "Báo cáo hoàn tiền tạm ứng";
+    var info = CultureInfo.GetCultureInfo("vi-VN").NumberFormat;
+    info = (NumberFormatInfo)info.Clone();
+    info.CurrencySymbol = "VNĐ";
+    DateTime month = (DateTime)ViewBag.Month;
+}
+
+<div class="w-100">
+    <div class="">
+        <div class="tm-bg-primary-dark tm-block tm-block-h-auto row pl-1 pr-1 pl-sm-5 pr-sm-5">
+            <div class="col-sm-12 text-danger h5" asp-validation-summary="ModelOnly"></div>
+            <div class="col-sm-12">
+                <h3 class="tm-block-title d-block text-center">BÁO CÁO HOÀN TIỀN TẠM ỨNG</h3>
+            </div>
+            <div class="col-12 col-sm-8 m-auto">
+                <div class="d-flex justify-content-between">
+                    <a class="btn btn-success" 
+                       href="@Url.Action(action: "ReportAdvances", controller:"Home", new { Month = month.AddMonths(-1)})" 
+                       style="border-radius: 5px">Tháng trước</a>
+                    @if (month.ToString("MM/yyyy") != ViewBag.ThisMonth)
+                    {
+                        <a class="btn btn-success" 
+                           href="@Url.Action(action: "ReportAdvances", controller:"Home", new { Month = month.AddMonths(1)})" 
+                           style="border-radius: 5px">Tháng sau</a>
+                    }
+                </div>
+                <table class="table table-bordered table-hover table-light mt-2">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="p-2 text-center">Nội dung</th>
+                            <th class="p-2 text-center">Tháng @month.ToString("MM/yyyy")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-1">Số tiền đã tạm ứng</td>
+                            <td class="p-1 text-center">@String.Format(info, "{0:C0}", Model.Advances)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Số tiền đã hoàn tạm ứng</td>
+                            <td class="p-1 text-center">@String.Format(info, "{0:C0}", Model.ReturnOfAdvances)</td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="bg-info font-weight-bold">
+                        <tr>
+                            @if (Model.ReturnOfAdvances > 0)
+                            {
+                                <td class="p-1">Số tiền cần hoàn trả</td>
+                            }
+                            else
+                            {
+                                <td class="p-1">Số tiền được nhận lại</td>
+                            }
+                            <td class="p-1 text-center">@String.Format(info, "{0:C0}", Model.ReturnOfAdvances)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -96,10 +96,26 @@ namespace TransportManagement.Services.ImplementServices
             return false;
         }
 
-        public async Task<ICollection<VehicleViewModel>> GetAllVehicles()
+        public async Task<ICollection<VehicleViewModel>> GetAllNotDeletedVehicles()
         {
             return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
+                                    .Select(v => new VehicleViewModel()
+                                    {
+                                        VehicleId = v.VehicleId,
+                                        LicensePlate = v.LicensePlate,
+                                        IsAvailable = v.IsAvailable,
+                                        BrandName = v.Brand.BrandName,
+                                        IsInUse = v.IsInUse,
+                                        VehicleName = v.VehicleName,
+                                        VehiclePayload = v.VehiclePayload
+                                    }).ToListAsync();
+        }
+
+        public async Task<ICollection<VehicleViewModel>> GetAllVehicles()
+        {
+            return await _context.Vehicles.Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Select(v => new VehicleViewModel()
                                     {
@@ -171,10 +187,9 @@ namespace TransportManagement.Services.ImplementServices
 
         public async Task<ICollection<VehicleViewModel>> GetNotUseVehicles()
         {
-            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false && v.IsInUse == false && v.IsAvailable == true)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
-                                    .Where(v => v.IsInUse == false && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                             {
                                                                 VehicleId = v.VehicleId,

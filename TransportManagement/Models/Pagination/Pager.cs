@@ -65,7 +65,7 @@ namespace TransportManagement.Models.Pagination
 
             if (_currentPage < TotalPages)
             {
-                _nextPage = TotalPages - 1;
+                _nextPage = _currentPage + 1;
             }
             else
             {

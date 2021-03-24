@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TransportManagement.Entities;
+using TransportManagement.Models.Filter;
 using TransportManagement.Models.Pagination;
 using TransportManagement.Models.TransportInformation;
 using TransportManagement.Services;
@@ -38,25 +39,34 @@ namespace TransportManagement.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Manage(int page, int pageSize, string search, string timeShow = "month")
+        public async Task<IActionResult> Manage(FilterTransPortModel filter)
         {
             //get local time at Timezone UTC 7
             DateTime localTimeUTC7 = SystemUtilites.ConvertToTimeZone(DateTime.UtcNow, "SE Asia Standard Time");
             //get timestamp of day at 0 AM
-            double TStodayUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7.Date);
+            double TSNowUTC7 = SystemUtilites.ConvertToTimeStamp(localTimeUTC7);
             //get timestamp 0 AM 1st day of month
             DateTime startMonth = new DateTime(localTimeUTC7.Year, localTimeUTC7.Month, 01);
             double TSMonthUTC7 = SystemUtilites.ConvertToTimeStamp(startMonth);
-            
+            double TSstartDate = 0;
+            double TSendDate = 0;
             PaginationViewModel<TransInfoViewModel> model = new PaginationViewModel<TransInfoViewModel>();
-            if (page == 0) page = 1;
-            if (pageSize == 0) pageSize = model.PageSizeItem.Min();
-
-            double utc = timeShow == "today" ? TStodayUTC7 : TSMonthUTC7;
-            if (String.IsNullOrEmpty(search))
-                model.Items = await _transInfoServices.GetTransportsToday(utc, page, pageSize);
-            else
-                model.Items = await _transInfoServices.GetTransportsToday(utc, page, pageSize, search);
+            if (SystemUtilites.ConvertToTimeStamp(filter.StartDate) == -62135596800)
+            {
+                TSstartDate = TSMonthUTC7;
+            } else
+            {
+                TSstartDate = SystemUtilites.ConvertToTimeStamp(filter.StartDate);
+            }
+            if (SystemUtilites.ConvertToTimeStamp(filter.EndDate) == -62135596800) 
+            {
+                TSendDate = TSNowUTC7;
+            } else TSendDate = SystemUtilites.ConvertToTimeStamp(filter.EndDate.AddDays(1));
+            if (filter.Page == 0) filter.Page = 1;
+            if (filter.PageSize == 0) filter.PageSize = model.PageSizeItem.Min();
+            if (String.IsNullOrEmpty(filter.Search)) filter.Search = "";
+            
+            model.Items = await _transInfoServices.GetTransports(TSstartDate, TSendDate, filter.Search.ToLower());
 
             int countItems = 0;
             if (model.Items != null)
@@ -66,10 +76,11 @@ namespace TransportManagement.Controllers
                     countItems = model.Items.Count();
                 }
             }
-
-            model.Items = model.Items.Skip((page - 1) * pageSize).Take(pageSize);
-            model.Pager = new Pager(countItems, page, pageSize);
-            ViewBag.Search = search;
+            model.Search = filter.Search;
+            model.StartDate = filter.StartDate;
+            model.EndDate = filter.EndDate;
+            model.Items = model.Items.Skip((filter.Page - 1) * filter.PageSize).Take(filter.PageSize);
+            model.Pager = new Pager(countItems, filter.Page, filter.PageSize);
             return View(model);
         }
         [HttpGet]
@@ -95,9 +106,9 @@ namespace TransportManagement.Controllers
                     VehicleId = transInfo.VehicleId,
                     DateCompletedLocal = transInfo.DateCompletedLocal,
                     DateStartLocal = transInfo.DateStartLocal,
-                    Drivers = _userServices.GetAvailableUsers().ToList(),
+                    Drivers = _userServices.GetDriverUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
+                    Vehicles = (await _vehicleServices.GetAllVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -110,7 +121,7 @@ namespace TransportManagement.Controllers
         {
             CreateTransInfoViewModel newTrans = new CreateTransInfoViewModel()
             {
-                Drivers = _userServices.GetDriverAvailableUsers().ToList(),
+                Drivers = _userServices.GetDriverUsers().ToList(),
                 Routes = _routeServices.GetAllRoutes().ToList(),
                 Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
             };
@@ -126,7 +137,7 @@ namespace TransportManagement.Controllers
             //get timestamp now at utc
             double TSUTCNow = SystemUtilites.ConvertToTimeStamp(DateTime.UtcNow);
             //get data for select elements
-            model.Drivers = _userServices.GetDriverAvailableUsers().ToList();
+            model.Drivers = _userServices.GetDriverUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
             model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
             string message = String.Empty;
@@ -191,7 +202,7 @@ namespace TransportManagement.Controllers
                     {
                         if (driver.IsAvailable)
                         {
-                            _userServices.MakeDriverIsBusy(driver);
+                            await _userServices.MakeDriverIsBusy(driver);
                         }
                     }
                     message = "Chuyến vận chuyển đã được tạo";
