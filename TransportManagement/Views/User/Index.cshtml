@@ -2,7 +2,9 @@
 @model PaginationViewModel<UserViewModel>
 @{
     List<UserViewModel> users = Model.Items.ToList();
+    ViewBag.Title = "Quản lý tài khoản";
 }
+
 
 @section Scripts{
     <script>
@@ -39,6 +41,12 @@
         <div class="tm-bg-primary-dark tm-block tm-block-h-auto row">
             <div class="col-12">
                 <h3 class="tm-block-title d-block text-center">QUẢN LÝ USER</h3>
+            </div>
+            <div>
+                <a class="text-decoration-none" asp-controller="User" asp-action="Create">
+                    <i class="fas fa-plus-square pr-3 pl-3 pb-1 pt-1 btn--radius btn--primary h3"
+                       style="font-size: 1.3rem"></i>
+                </a>
             </div>
             <div class="w-100 pagination row mx-auto">
                 <!--Search and pagesize-->
@@ -82,7 +90,7 @@
                             <th class="p-0 align-middle" style="max-width: 80px"></th>
                         </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
                         @for (int i = 0; i < users.Count; i++)
                         {
                             string className = (users[i].IsActive) ? "text-white" : "text-dark";
@@ -90,7 +98,10 @@
                             string status = (users[i].IsAvalable && users[i].IsActive) ? "Sẵn sàng" : "Không sẵn sàng";
                             <tr class="@className">
                                 <td class="p-0 text-center">@stt</td>
-                                <td class="pr-1 pl-1">@users[i].FullName</td>
+                                <td class="pr-1 pl-1">
+                                    <a class="text-white" asp-controller="User" 
+                                       asp-action="Details" asp-route-userId="@users[i].UserId">@users[i].FullName</a>
+                                </td>
                                 <td class="pr-1 pl-1 text-center">@users[i].JobTitle</td>
                                 <td class="p-0 text-center">@users[i].PhoneNumber</td>
                                 <td class="p-0 text-center">@status</td>

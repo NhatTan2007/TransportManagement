@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace TransportManagement.Controllers
             _dayJobServices = dayJobServices;
             _userManager = userManager;
         }
-
+        [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Manage(FilterTransPortModel filter)
         {
             //get local time at Timezone UTC 7
@@ -84,6 +85,7 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Details(string transportId)
         {
             string message = String.Empty;
@@ -117,17 +119,19 @@ namespace TransportManagement.Controllers
             return RedirectToAction(actionName: "Manage");
         }
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển")]
         public async Task<IActionResult> Create()
         {
             CreateTransInfoViewModel newTrans = new CreateTransInfoViewModel()
             {
                 Drivers = _userServices.GetDriverUsers().ToList(),
                 Routes = _routeServices.GetAllRoutes().ToList(),
-                Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
+                Vehicles = (await _vehicleServices.GetAllNotDeletedAndAvailableVehicles()).ToList()
             };
             return View(newTrans);
         }
         [HttpPost]
+        [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển")]
         public async Task<IActionResult> Create(CreateTransInfoViewModel model)
         {
             //get local time at Timezone UTC 7
@@ -139,12 +143,12 @@ namespace TransportManagement.Controllers
             //get data for select elements
             model.Drivers = _userServices.GetDriverUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
-            model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
+            model.Vehicles = (await _vehicleServices.GetAllNotDeletedAndAvailableVehicles()).ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
                 //check the vehicle is used
-                string driverIdUseVehicle = await _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId, TStodayUTC7At0Am);
+                string driverIdUseVehicle = await _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId);
                 if (!String.IsNullOrEmpty(driverIdUseVehicle))
                 {
                     var driverUseVehicle = _userServices.GetUser(driverIdUseVehicle);
@@ -242,7 +246,7 @@ namespace TransportManagement.Controllers
                     VehicleId = transInfo.VehicleId,
                     Drivers = _userServices.GetAvailableUsers().ToList(),
                     Routes = _routeServices.GetAllRoutes().ToList(),
-                    Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList()
+                    Vehicles = (await _vehicleServices.GetAllNotDeletedAndAvailableVehicles()).ToList()
                 };
                 return View(model);
             }
@@ -257,10 +261,19 @@ namespace TransportManagement.Controllers
             //get data for select elements if error
             model.Drivers = _userServices.GetAvailableUsers().ToList();
             model.Routes = _routeServices.GetAllRoutes().ToList();
-            model.Vehicles = (await _vehicleServices.GetNotUseVehicles()).ToList();
+            model.Vehicles = (await _vehicleServices.GetAllNotDeletedAndAvailableVehicles()).ToList();
             string message = String.Empty;
             if (ModelState.IsValid)
             {
+                //check the vehicle is used
+                string driverIdUseVehicle = await _vehicleServices.IsVehicleInUsedByAnotherDriver(model.DriverId, model.VehicleId);
+                if (!String.IsNullOrEmpty(driverIdUseVehicle))
+                {
+                    var driverUseVehicle = _userServices.GetUser(driverIdUseVehicle);
+                    message = $"Xe đang được sử dụng bởi {driverUseVehicle.FullName}";
+                    TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
+                    return View(model);
+                }
                 //check cancel option and reason cancel
                 if (model.IsCancel && String.IsNullOrEmpty(model.ReasonCancel))
                 {
@@ -302,6 +315,7 @@ namespace TransportManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống")]
         public async Task<IActionResult> ViewHistory(string transportId, int page, int pageSize)
         {
             ViewBag.transId = transportId;
@@ -319,6 +333,7 @@ namespace TransportManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển")]
         public async Task<IActionResult> DoneTransInfo(string transportId)
         {
             string message = String.Empty;

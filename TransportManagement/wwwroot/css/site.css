@@ -77,6 +77,165 @@ a{
 .date-filter{
     max-width: 200px;
 }
+main.container{
+    min-height: 56.5vh;
+}
+.small-box {
+    border-radius: .25rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+    color:#fff
+}
+
+.small-box > .small-box-footer {
+    background: rgba(0,0,0,.1);
+    color: rgba(255,255,255,.8);
+    display: block;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.bg-info > a{
+    color: #fff !important;
+}
+.inner {
+    position: relative;
+    height: 200px;
+    border-radius: 5px;
+}
+
+.triangle-topleft {
+    /*    -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);*/
+    padding: 0;
+    height: 100px;
+    text-align: center;
+    border-bottom: 5px solid white;
+}
+    .triangle-topleft h3{
+        margin-top: .5rem;
+    }
+    .triangle-topleft p {
+        padding-top: 1.1rem;
+    }
+
+.triangle-bottomright {
+/*    -webkit-clip-path: polygon(0 100%, 100% 100%, 100% 50%, 0 50%);
+    clip-path: polygon(0 100%, 100% 100%, 100% 50%, 0 50%);*/
+    text-align: center;
+    padding: 0;
+    height: 100px;
+}
+    .triangle-bottomright > div {
+        bottom: 0;
+        right: 0;
+        width: 100%;
+    }
+    .triangle-bottomright h3 {
+        padding-top: 10px;
+    }
+
+#avatar {
+    width: 200px;
+    height: 200px;
+    -webkit-clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+}
+
+/*loading page*/
+/* Paste this css to your style sheet file or under head tag */
+/* This only works with JavaScript, 
+if it's not present, don't show loader */
+
+.loader-wrapper {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url(../images/loading.gif) center no-repeat #ededed;
+}
+
+/*.loader-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #242f3f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    border: 4px solid #Fff;
+    animation: loader 2s infinite ease;
+}
+
+.loader-inner {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
+    animation: loader-inner 2s infinite ease-in;
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(180deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    75% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loader-inner {
+    0% {
+        height: 0%;
+    }
+
+    25% {
+        height: 0%;
+    }
+
+    50% {
+        height: 100%;
+    }
+
+    75% {
+        height: 100%;
+    }
+
+    100% {
+        height: 0%;
+    }
+}*/
+
 /* typical phone screen resolution */
 @media only screen and (max-width : 667px) {
     .page-item {
@@ -115,5 +274,12 @@ a{
     }
     i.fas{
         font-size: 1.1rem !important;
+    }
+    .branch{
+        display:none;
+    }
+
+    .triangle-topleft p {
+        padding-top: 0.8rem;
     }
 }

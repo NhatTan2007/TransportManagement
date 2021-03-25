@@ -97,7 +97,7 @@
                             <th class="p-0 align-middle">STT</th>
                             <th class="pr-1 pl-1 align-middle">Biển kiểm soát</th>
                             <th class="pr-1 pl-1 align-middle">Tên phương tiện</th>
-                            <th class="pr-1 pl-1 align-middle">Nhãn hiệu</th>
+                            <th class="pr-1 pl-1 align-middle branch">Nhãn hiệu</th>
                             <th class="pr-1 pl-1 align-middle" style="max-width: 100px">Trọng tải (tấn)</th>
                             <th class="pr-1 pl-1 align-middle">Trạng thái</th>
                             <th class="pr-1 pl-1 align-middle">Tình trạng</th>
@@ -120,7 +120,7 @@
                             <td class="p-0 pl-1 pr-1 pt-3 pb-3 text-left">
                                 @vehicles[i].VehicleName
                             </td>
-                            <td class="p-0 pl-1 pr-1 pt-3 pb-3">
+                            <td class="p-0 pl-1 pr-1 pt-3 pb-3 branch">
                                 @vehicles[i].BrandName
                             </td>
                             <td class="p-0 pl-1 pr-1 pt-3 pb-3">
@@ -149,16 +149,19 @@
                                 @avalableStatus
                             </td>
                             <td class="p-0 text-center" style="width: 60px">
-                                <a class="button--edit mr-2" 
-                                   asp-controller="Vehicle" 
-                                   asp-action="Edit" 
+                                <a class="button--edit mr-sm-2"
+                                   asp-controller="Vehicle"
+                                   asp-action="Edit"
                                    asp-route-vehicleId="@vehicles[i].VehicleId"
                                    title="Điều chỉnh"><i class="fas fa-pen-square"></i></a>
-                                <a class="delete-confirm"
-                                   onclick="confirmDelete('@vehicles[i].VehicleId')"
-                                   title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                @if (User.IsInRole("Quản trị viên hệ thống"))
+                                {
+                                    <a class="delete-confirm"
+                                       onclick="confirmDelete('@vehicles[i].VehicleId')"
+                                       title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
                             </td>
                         </tr>
                         }
@@ -167,14 +170,14 @@
                 <!--Footer of pagination-->
                 <div class="col-sm-12 mt-2 footer-pagination">
                     <ul class="pagination col-sm-12 justify-content-center" id="pagination">
-                        <li class="page-item"><a class="page-link" asp-controller="Route" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="Route" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Vehicle" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Vehicle" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Previous</a></li>
                         @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
                         {
-                            <li class="page-item"><a class="page-link" asp-controller="Route" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
+                            <li class="page-item"><a class="page-link" asp-controller="Vehicle" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">@i</a></li>
                         }
-                        <li class="page-item"><a class="page-link" asp-controller="Route" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
-                        <li class="page-item"><a class="page-link" asp-controller="Route" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Vehicle" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Vehicle" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-search="@ViewBag.Search">Last</a></li>
                     </ul>
                 </div>
             </div>

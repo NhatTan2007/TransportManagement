@@ -10,6 +10,7 @@
     {
         locations = ViewBag.Locations as List<LocationViewModel>;
     }
+    ViewBag.Title = "Quản lý tuyến đường";
 }
 
 @section Scripts{
@@ -113,7 +114,7 @@
                             <th class="pr-1 pl-1 align-middle">Địa điểm xuất phát</th>
                             <th class="pr-1 pl-1 align-middle">Địa điểm đến</th>
                             <th class="pr-1 pl-1 align-middle" style="max-width: 150px">Chiều dài tuyến đường</th>
-                            <th class="p-0 align-middle" style="width: 20px"></th>
+                            @*<th class="p-0 align-middle" style="width: 20px"></th>*@
                         </tr>
                     </thead>
                     <tbody>
@@ -139,12 +140,12 @@
                                        onclick="editRoute(event)"
                                        href="javascript:;">@routes[i].Distance</a>
                                 </td>
-                                <td class="p-0 text-center pr-2 pl-2" style="width: 20px">
+                                @*<td class="p-0 text-center pr-2 pl-2" style="width: 20px">
                                     <a class="delete-confirm"
                                        onclick="confirmDelete('@routes[i].RouteId')">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                </td>
+                                </td>*@
                             </tr>
                         }
                     </tbody>

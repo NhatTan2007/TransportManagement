@@ -192,5 +192,11 @@ namespace TransportManagement.Services.ImplementServices
                 return false;
             }
         }
+
+        public ICollection<AppIdentityUser> GetDriverActiveBusyUsers()
+        {
+            return _context.Users.Where(u => u.IsActive == true && !u.IsAvailable && u.JobTitle == "Lái xe")
+                        .OrderBy(u => u.FirstName).ToList();
+        }
     }
 }

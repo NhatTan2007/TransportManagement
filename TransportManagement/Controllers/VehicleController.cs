@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace TransportManagement.Controllers
             _brandServices = brandServices;
             _fuelServices = fuelServices;
         }
+        [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Index(int page, int pageSize, string search)
         {
             int countTotalVehicles = await _vehicleServices.CountVehicles();
@@ -49,6 +51,7 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng, Kế toán")]
         public IActionResult Create()
         {
             var model = new CreateVehicleViewModel()
@@ -59,6 +62,7 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpPost]
+        [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Create(CreateVehicleViewModel model)
         {
             model.VehicleBrands = _brandServices.GetAllBrands().ToList();
@@ -90,6 +94,7 @@ namespace TransportManagement.Controllers
             return View(model);
         }
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Edit(int vehicleId)
         {
             string message = String.Empty;
@@ -117,6 +122,7 @@ namespace TransportManagement.Controllers
             return RedirectToAction(actionName: "Index");
         }
         [HttpPost]
+        [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng, Kế toán")]
         public async Task<IActionResult> Edit(EditVehicleViewModel model)
         {
             string message = String.Empty;
@@ -137,6 +143,7 @@ namespace TransportManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống")]
         public async Task<IActionResult> Delete(int vehicleId)
         {
             string message = String.Empty;
@@ -152,6 +159,7 @@ namespace TransportManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Quản trị viên hệ thống")]
         public async Task<IActionResult> DeleteVehicleDB(int vehicleId)
         {
             string message = String.Empty;

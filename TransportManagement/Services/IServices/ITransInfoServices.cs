@@ -19,6 +19,7 @@ namespace TransportManagement.Services.IServices
         Task<ICollection<TransportInformation>> GetTransportsNotFinishByVehicle(int vehicleId);
         Task<ICollection<TransportInformation>> GetTransportsNotFinishByDriver(string driverId);
         Task<ICollection<TransInfoViewModel>> GetTransports(double startDate, double endDate, string search);
+        Task<ICollection<TransInfoViewModel>> GetTransportsCompeleted(double startDate, double endDate, string search);
         Task<ICollection<TransInfoViewModel>> GetTransportsDoneByDriver(double startDate, double endDate, string driverId);
         Task<ICollection<TransInfoViewModel>> GetTransportsNotDoneByDriver(double startDate, double endDate, string driverId);
         Task<ICollection<EditTransportInformation>> Histories(string transportId);

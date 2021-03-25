@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using TransportManagement.Services.IServices;
 
 namespace TransportManagement.Controllers
 {
+    [Authorize(Roles = "Quản trị viên hệ thống, Quản lý vận chuyển")]
     public class LocationController : Controller
     {
         private readonly ILocationServices _locationServices;

@@ -11,7 +11,7 @@ using TransportManagement.Utilities;
 
 namespace TransportManagement.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Quản trị viên hệ thống, Kế toán trưởng")]
     public class FuelController : Controller
     {
         private readonly IFuelServices _fuelServices;

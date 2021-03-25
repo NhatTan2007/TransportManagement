@@ -10,8 +10,10 @@ namespace TransportManagement.Services.IServices
     public interface IVehicleServices
     {
         Task<ICollection<VehicleViewModel>> GetAllVehicles();
+        Task<ICollection<VehicleViewModel>> GetAllNotDeletedVehicles();
         Task<ICollection<VehicleViewModel>> GetNotUseVehicles();
         Task<ICollection<VehicleViewModel>> GetInUseVehicles();
+        Task<ICollection<VehicleViewModel>> GetAllNotDeletedAndAvailableVehicles();
         Task<ICollection<VehicleViewModel>> GetAllVehicles(int page, int pageSize, string search);
         Task<ICollection<VehicleViewModel>> GetAllVehicles(int page, int pageSize);
         Task<int> CountVehicles();
@@ -20,7 +22,7 @@ namespace TransportManagement.Services.IServices
         Task<bool> DeleteVehicleDB(Vehicle vehicle);
         Task<Vehicle> GetVehicle(int vehicleId);
         Task<bool> EditVehicle(EditVehicleViewModel model);
-        Task<string> IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday);
+        Task<string> IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId);
         Task<bool> MakeVehicleInUsed(Vehicle vehicle);
         Task<bool> MakeVehicleIsFree(Vehicle vehicle);
     }

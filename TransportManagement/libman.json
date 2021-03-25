@@ -2,10 +2,10 @@
   "version": "1.0",
   "defaultProvider": "cdnjs",
   "libraries": [
-    {
-      "library": "bootstrap-v4-rtl@4.6.0-1",
-      "destination": "wwwroot/lib/bootstrap-v4-rtl/"
-    },
+    //{
+    //  "library": "bootstrap-v4-rtl@4.6.0-1",
+    //  "destination": "wwwroot/lib/bootstrap-v4-rtl/"
+    //},
     {
       "library": "jquery@3.6.0",
       "destination": "wwwroot/lib/jquery/",

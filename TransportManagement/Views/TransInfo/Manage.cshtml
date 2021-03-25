@@ -92,7 +92,7 @@
                     </div>
 
                     <div class="flex-wrap d-flex align-items-center text-white mt-2 mt-sm-0">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center mr-sm-2">
                             <label class="m-0 mr-2" for="start-date-filter" style="width: 40px">Từ</label>
                             @if (Model.StartDate != baseDateTime)
                             {
@@ -188,13 +188,16 @@
                                        title="Chỉnh sửa">
                                         <i class="fas fa-pen-square"></i>
                                     </a>
-                                    <a class="done-confirm"
-                                       href="javascript:;"
-                                       onclick="confirmDone('@transports[i].TransportId')"
-                                       style="font-size: 1.3rem">
-                                        <i class="fas fa-flag-checkered text-light"
-                                           title="Hoàn thành"></i>
-                                    </a>
+                                    @if (!User.IsInRole("Kế toán") && !User.IsInRole("Kế toán trưởng"))
+                                    {
+                                        <a class="done-confirm"
+                                           href="javascript:;"
+                                           onclick="confirmDone('@transports[i].TransportId')"
+                                           style="font-size: 1.3rem">
+                                            <i class="fas fa-flag-checkered text-light"
+                                               title="Hoàn thành"></i>
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -216,9 +219,9 @@
                         <li class="page-item">
                             <a class="page-link" 
                                href="@Url.Action(action: "Manage", controller: "TransInfo",
-                                                    new {PageSize = Model.Pager.PageSize,
+                                                    new {Page = Model.Pager.PreviousPage,
                                                             Search = Model.Search,
-                                                            Page = Model.Pager.PreviousPage,
+                                                            PageSize = Model.Pager.PageSize,
                                                             StartDate = Model.StartDate,
                                                             EndDate = Model.EndDate
                                                         })">Previous</a>

@@ -12,6 +12,7 @@ using TransportManagement.Utilities;
 
 namespace TransportManagement.Controllers
 {
+    [Authorize(Roles = "Quản trị viên hệ thống")]
     public class RoleController : Controller
     {
         private readonly RoleManager<AppIdentityRole> _roleManager;
@@ -60,11 +61,6 @@ namespace TransportManagement.Controllers
             message = "Lỗi không xác định, xin mời thao tác lại";
             TempData["UserMessage"] = SystemUtilites.SendSystemNotification(NotificationType.Error, message);
             return RedirectToAction(actionName: "Index");
-        }
-        [HttpGet]
-        public IActionResult Edit()
-        {
-            return View();
         }
 
         [HttpPost]

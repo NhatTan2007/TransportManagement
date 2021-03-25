@@ -21,6 +21,7 @@ namespace TransportManagement.Services.IServices
         int CountActiveAndAvailableUsers();
         ICollection<AppIdentityUser> GetAvailableUsers();
         ICollection<AppIdentityUser> GetDriverActiveUsers();
+        ICollection<AppIdentityUser> GetDriverActiveBusyUsers();
         ICollection<AppIdentityUser> GetDriverUsers();
         UserViewModel GetUser(string userId);
         Task<bool> MakeDriverIsBusy(AppIdentityUser driver);

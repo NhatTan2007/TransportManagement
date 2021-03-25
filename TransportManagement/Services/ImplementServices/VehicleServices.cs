@@ -96,7 +96,7 @@ namespace TransportManagement.Services.ImplementServices
             return false;
         }
 
-        public async Task<ICollection<VehicleViewModel>> GetAllNotDeletedVehicles()
+        public async Task<ICollection<VehicleViewModel>> GetAllNotDeletedAndAvailableVehicles()
         {
             return await _context.Vehicles.Where(v => v.IsDeleted == false)
                                     .Include(v => v.Brand)
@@ -116,6 +116,23 @@ namespace TransportManagement.Services.ImplementServices
         public async Task<ICollection<VehicleViewModel>> GetAllVehicles()
         {
             return await _context.Vehicles.Include(v => v.Brand)
+                                    .OrderBy(v => v.Brand.BrandName)
+                                    .Select(v => new VehicleViewModel()
+                                    {
+                                        VehicleId = v.VehicleId,
+                                        LicensePlate = v.LicensePlate,
+                                        IsAvailable = v.IsAvailable,
+                                        BrandName = v.Brand.BrandName,
+                                        IsInUse = v.IsInUse,
+                                        VehicleName = v.VehicleName,
+                                        VehiclePayload = v.VehiclePayload
+                                    }).ToListAsync();
+        }
+
+        public async Task<ICollection<VehicleViewModel>> GetAllNotDeletedVehicles()
+        {
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+                                    .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
                                     .Select(v => new VehicleViewModel()
                                     {
@@ -169,10 +186,9 @@ namespace TransportManagement.Services.ImplementServices
 
         public async Task<ICollection<VehicleViewModel>> GetInUseVehicles()
         {
-            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+            return await _context.Vehicles.Where(v => v.IsDeleted == false && v.IsInUse && v.IsAvailable)
                                     .Include(v => v.Brand)
                                     .OrderBy(v => v.Brand.BrandName)
-                                    .Where(v => v.IsInUse == true && v.IsAvailable == true)
                                     .Select(v => new VehicleViewModel()
                                                     {
                                                         VehicleId = v.VehicleId,
@@ -183,6 +199,24 @@ namespace TransportManagement.Services.ImplementServices
                                                         VehicleName = v.VehicleName,
                                                         VehiclePayload = v.VehiclePayload
                                                     }).ToListAsync();
+        }
+
+        public async Task<ICollection<VehicleViewModel>> GetNotDeletedVehicles()
+        {
+            return await _context.Vehicles.Where(v => v.IsDeleted == false)
+                        .Include(v => v.Brand)
+                        .OrderBy(v => v.Brand.BrandName)
+                        .Where(v => v.IsAvailable == true)
+                        .Select(v => new VehicleViewModel()
+                        {
+                            VehicleId = v.VehicleId,
+                            LicensePlate = v.LicensePlate,
+                            IsAvailable = v.IsAvailable,
+                            BrandName = v.Brand.BrandName,
+                            IsInUse = v.IsInUse,
+                            VehicleName = v.VehicleName,
+                            VehiclePayload = v.VehiclePayload
+                        }).ToListAsync();
         }
 
         public async Task<ICollection<VehicleViewModel>> GetNotUseVehicles()
@@ -211,12 +245,12 @@ namespace TransportManagement.Services.ImplementServices
                                             .SingleOrDefaultAsync();
         }
 
-        public async Task<string> IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId, double TStoday)
+        public async Task<string> IsVehicleInUsedByAnotherDriver(string driverId, int vehicleId)
         {
-            var transportsByVehicleToday = (await _transInfoServices.GetTransportsByVehicleToday(vehicleId, TStoday)).ToList();
-            if (transportsByVehicleToday != null)
+            var transportsByVehicle = await _transInfoServices.GetTransportsNotFinishByVehicle(vehicleId);
+            if (transportsByVehicle != null)
             {
-                foreach (var trans in transportsByVehicleToday)
+                foreach (var trans in transportsByVehicle)
                 {
                     if (trans.DayJob.DriverId != driverId && trans.DateCompletedLocal == 0)
                     {

@@ -199,6 +199,7 @@ namespace TransportManagement.Services.ImplementServices
         public async Task<ICollection<TransportInformation>> GetTransportsNotFinishByVehicle(int vehicleId)
         {
             return await _context.TransportInformations.Where(t => t.VehicleId == vehicleId && t.DateCompletedLocal == 0)
+                                                        .Include(t => t.DayJob)
                                                         .ToListAsync();
         }
 
@@ -216,6 +217,28 @@ namespace TransportManagement.Services.ImplementServices
                                                         .Include(t => t.Route)
                                                         .Include(t => t.Vehicle)
                                                         .OrderByDescending(t => t.DateStartLocal).ToListAsync();
+            return transports.Where(t => t.DayJob.Driver.FullName.ToLower().Contains(search) || t.Vehicle.LicensePlate.ToLower().Contains(search))
+                                .Select(t => new TransInfoViewModel
+                                {
+                                    AdvanceMoney = t.AdvanceMoney,
+                                    CargoTonnage = t.CargoTonnage,
+                                    DateStartLocal = t.DateStartLocal,
+                                    DriverName = t.DayJob.Driver.FullName,
+                                    IsCancel = t.IsCancel,
+                                    IsCompleted = t.IsCompleted,
+                                    ReturnOfAdvances = t.ReturnOfAdvances,
+                                    TransportId = t.TransportId,
+                                    VehicleLicensePlate = t.Vehicle.LicensePlate
+                                }).ToList();
+        }
+
+        public async Task<ICollection<TransInfoViewModel>> GetTransportsCompeleted(double startDate, double endDate, string search)
+        {
+            var transports = await _context.TransportInformations.Where(t => t.DateStartLocal >= startDate && t.DateStartLocal <= endDate && t.IsCompleted)
+                                            .Include(t => t.DayJob).ThenInclude(j => j.Driver)
+                                            .Include(t => t.Route)
+                                            .Include(t => t.Vehicle)
+                                            .OrderByDescending(t => t.DateStartLocal).ToListAsync();
             return transports.Where(t => t.DayJob.Driver.FullName.ToLower().Contains(search) || t.Vehicle.LicensePlate.ToLower().Contains(search))
                                 .Select(t => new TransInfoViewModel
                                 {
